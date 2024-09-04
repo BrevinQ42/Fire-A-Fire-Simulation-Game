@@ -24,6 +24,10 @@ public class PlayerController : MonoBehaviour
     private int rotationCount;
     private float rollRotation;
 
+    [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
+    private Transform hitTransform;                        // (nearby) object that is being pointed at by the player
+    bool isHoldingObject;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +46,35 @@ public class PlayerController : MonoBehaviour
         rollingTimeLeft = 0.0f;
         rotationCount = 0;
         rollRotation = 5.0f;
+
+        hitTransform = null;
+        isHoldingObject = false;
+    }
+
+    void FixedUpdate()
+    {
+        if(isHoldingObject || currentState.Equals("Crawling") || currentState.Equals("Rolling")) hitTransform = null;
+        else
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, closeProximityValue))
+            {
+                if (hit.transform.gameObject.name.Equals("Floor")) hitTransform = null;
+                else
+                {
+                    Debug.DrawRay(cameraTransform.position, cameraTransform.forward * hit.distance, Color.yellow);
+                    Debug.Log(hit.transform.gameObject.name + ": " + hit.distance);
+
+                    hitTransform = hit.transform;
+                }
+            }
+            else
+            {
+                Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
+                Debug.Log("Did not Hit");
+                hitTransform = null;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -59,6 +92,9 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C)) ToggleCrawl();
             else if (Input.GetKeyDown(KeyCode.F)) ToggleRun();
             else if (Input.GetKeyDown(KeyCode.R)) InitiateRollOver();
+            else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
+            else if (Input.GetKeyDown(KeyCode.G)) DropObject();
+            
             if (Input.GetMouseButton(0)) CoverNose(); // holding of left click button
         }
 
@@ -133,7 +169,7 @@ public class PlayerController : MonoBehaviour
             SetupUprightState();
             currentSpeed = walkingSpeed;
         }
-        else
+        else if (!isHoldingObject)
         {
             currentState = "Crawling";
             SetupCrawlState();
@@ -159,19 +195,22 @@ public class PlayerController : MonoBehaviour
 
     void InitiateRollOver()
     {
-        isVerticalTiltEnabled = false;
-        isHorizontalTiltEnabled = false;
-        rollingTimeLeft = 5.0f;
-        rotationCount = 37;
-        rollRotation = 5.0f;
+        if(!isHoldingObject)
+        {
+            isVerticalTiltEnabled = false;
+            isHorizontalTiltEnabled = false;
+            rollingTimeLeft = 5.0f;
+            rotationCount = 37;
+            rollRotation = 5.0f;
 
-        transform.position = new Vector3(transform.position.x, 0.63f, transform.position.z);
-        transform.eulerAngles = new Vector3(75, transform.eulerAngles.y, transform.eulerAngles.z);
-        previousEulerAngles = transform.eulerAngles;
-        cameraTransform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
-        
-        currentSpeed = 0;
-        currentState = "Rolling";
+            transform.position = new Vector3(transform.position.x, 0.63f, transform.position.z);
+            transform.eulerAngles = new Vector3(75, transform.eulerAngles.y, transform.eulerAngles.z);
+            previousEulerAngles = transform.eulerAngles;
+            cameraTransform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+            
+            currentSpeed = 0;
+            currentState = "Rolling";
+        }
     }
 
     void RollOver()
@@ -191,6 +230,31 @@ public class PlayerController : MonoBehaviour
         {
             transform.eulerAngles = previousEulerAngles;
             ToggleCrawl();
+        }
+    }
+
+    void InteractWithObject()
+    {
+        if (hitTransform != null)
+        {
+            Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
+            hitRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+            
+            hitTransform.SetParent(transform);
+            hitTransform.SetLocalPositionAndRotation(new Vector3(0.0f, 0.0f, 1.0f), Quaternion.identity);
+            
+            isHoldingObject = true;
+        }
+    }
+
+    void DropObject()
+    {
+        if(isHoldingObject)
+        {
+            transform.GetChild(1).GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            transform.GetChild(1).SetParent(null);
+           
+            isHoldingObject = false;
         }
     }
 
