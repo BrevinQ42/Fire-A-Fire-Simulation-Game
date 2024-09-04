@@ -2476,7 +2476,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7676829244329504a8fe8ff5636c2f8c, type: 3}
       propertyPath: m_Name
-      value: uploads_files_1968276_Wooden_Table
+      value: Wooden Desk
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
