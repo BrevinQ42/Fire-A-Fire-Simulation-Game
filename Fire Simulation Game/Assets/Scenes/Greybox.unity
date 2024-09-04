@@ -2476,7 +2476,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7676829244329504a8fe8ff5636c2f8c, type: 3}
       propertyPath: m_Name
-      value: Wooden Desk
+      value: Wooden Table Drawer
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5663,6 +5663,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7712416990837257067, guid: 9b3e7e602a5fa5c48b18d88ed22da180, type: 3}
   m_PrefabInstance: {fileID: 1702813851810678561}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1328307111
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 13.437
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -24.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345602413096657141, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2205994557472356614, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
+      propertyPath: m_Name
+      value: Table
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
 --- !u!1001 &1343487126
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10718,3 +10775,4 @@ SceneRoots:
   - {fileID: 485930642}
   - {fileID: 1438550115}
   - {fileID: 428653603}
+  - {fileID: 1328307111}
