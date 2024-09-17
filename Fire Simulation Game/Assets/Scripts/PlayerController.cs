@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,8 +26,10 @@ public class PlayerController : MonoBehaviour
     private float rollRotation;
 
     [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
-    private Transform hitTransform;                        // (nearby) object that is being pointed at by the player
-    bool isHoldingObject;
+    private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
+    private FireFightingObject heldObject;
+
+    [SerializeField] private float throwForce;
 
     // Start is called before the first frame update
     void Start()
@@ -48,17 +51,18 @@ public class PlayerController : MonoBehaviour
         rollRotation = 5.0f;
 
         hitTransform = null;
-        isHoldingObject = false;
+        heldObject = null;
     }
 
     void FixedUpdate()
     {
-        if(isHoldingObject || currentState.Equals("Crawling") || currentState.Equals("Rolling")) hitTransform = null;
+        if(heldObject != null || currentState.Equals("Crawling") || currentState.Equals("Rolling")) hitTransform = null;
         else
         {
             RaycastHit hit;
             if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, closeProximityValue))
             {
+                // check will be changed to transform.comparetag instead
                 if (hit.transform.gameObject.name.Equals("Floor")) hitTransform = null;
                 else
                 {
@@ -95,7 +99,8 @@ public class PlayerController : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
             else if (Input.GetKeyDown(KeyCode.G)) DropObject();
             
-            if (Input.GetMouseButton(0)) CoverNose(); // holding of left click button
+            if(heldObject == null && Input.GetMouseButton(0)) CoverNose();
+            else if (heldObject != null && Input.GetMouseButtonDown(0)) UseObject();
         }
 
         TestFunction(); // for debugging (i.e. Debug.Log)
@@ -169,7 +174,7 @@ public class PlayerController : MonoBehaviour
             SetupUprightState();
             currentSpeed = walkingSpeed;
         }
-        else if (!isHoldingObject)
+        else if (heldObject == null)
         {
             currentState = "Crawling";
             SetupCrawlState();
@@ -195,7 +200,7 @@ public class PlayerController : MonoBehaviour
 
     void InitiateRollOver()
     {
-        if(!isHoldingObject)
+        if(heldObject == null)
         {
             isVerticalTiltEnabled = false;
             isHorizontalTiltEnabled = false;
@@ -237,25 +242,44 @@ public class PlayerController : MonoBehaviour
     {
         if (hitTransform != null)
         {
+            // for this functionality, will add checker if object is grabbable (fire fighting object)
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
             hitRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+
+            hitTransform.GetComponent<Collider>().enabled = false;
             
+            // grab object
             hitTransform.SetParent(transform);
             hitTransform.SetLocalPositionAndRotation(new Vector3(0.0f, 0.0f, 1.0f), Quaternion.identity);
             
-            isHoldingObject = true;
+            heldObject = hitTransform.GetComponent<FireFightingObject>();
+            heldObject.isHeld = true;
+
+            try
+            {
+                Pail pail = hitTransform.GetComponent<Pail>();
+                pail.closeProximityValue = closeProximityValue;
+                pail.playerCamera = transform.GetChild(0);
+            }
+            catch (Exception){}
         }
     }
 
     void DropObject()
     {
-        if(isHoldingObject)
+        if(heldObject != null)
         {
-            transform.GetChild(1).GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-            transform.GetChild(1).SetParent(null);
-           
-            isHoldingObject = false;
+            heldObject.Deattach();
+            heldObject = null;
         }
+    }
+
+    void UseObject()
+    {
+        bool isStillHeld;
+        heldObject.Use(throwForce, out isStillHeld);
+
+        if(!isStillHeld) heldObject = null;
     }
 
     void CoverNose()
