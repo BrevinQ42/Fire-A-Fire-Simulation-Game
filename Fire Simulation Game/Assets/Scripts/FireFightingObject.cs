@@ -5,6 +5,7 @@ using UnityEngine;
 public class FireFightingObject : MonoBehaviour
 {
     public bool isHeld;
+    public float fireFightingValue;
 
     public virtual void Use(float throwForce, out bool isStillHeld)
     {

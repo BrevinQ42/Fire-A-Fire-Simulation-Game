@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class Pail : FireFightingObject
 {
-    [SerializeField] private GameObject Water;
+    [SerializeField] private GameObject WaterObject;
     [SerializeField] private GameObject WaterInPail;
 
     [SerializeField] private bool isFilled;
     public float closeProximityValue;
     public Transform playerCamera;
     private Transform hitTransform;
+    [SerializeField] private Vector3 throwHeightOffset;
 
     // Start is called before the first frame update
     void Start()
     {
+        WaterObject.GetComponent<Water>().fireFightingValue = fireFightingValue;
+
         isFilled = false;
         closeProximityValue = 0.0f;
     }
@@ -26,10 +29,10 @@ public class Pail : FireFightingObject
             RaycastHit hit;
             if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, closeProximityValue))
             {
-                if (hit.transform.gameObject.name.Equals("WaterSource"))
+                if (hit.transform.name.Equals("WaterSource"))
                 {   
                     Debug.DrawRay(playerCamera.position, playerCamera.forward * hit.distance, Color.yellow);
-                    Debug.Log(hit.transform.gameObject.name + " found! : " + hit.distance);
+                    Debug.Log(hit.transform.name + " found! : " + hit.distance);
 
                     hitTransform = hit.transform;
                 }
@@ -50,19 +53,16 @@ public class Pail : FireFightingObject
         {
             isFilled = false;
 
-            WaterInPail.GetComponent<Collider>().enabled = true;
-            WaterInPail.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-            WaterInPail.transform.SetParent(null);
-
-            WaterInPail.GetComponent<Rigidbody>().AddForce(transform.forward * throwForce);
+            WaterInPail.GetComponent<Water>().Deattach();
+            WaterInPail.GetComponent<Rigidbody>().AddForce(transform.forward * throwForce + throwHeightOffset);
             WaterInPail = null;
         }
-                 // will check tag
-        else if (hitTransform.gameObject.name.Equals("WaterSource") && WaterInPail == null)
+                                        // will check tag
+        else if (hitTransform && hitTransform.name.Equals("WaterSource") && !WaterInPail)
         {
             isFilled = true;
 
-            WaterInPail = Instantiate(Water, transform.position, transform.rotation);
+            WaterInPail = Instantiate(WaterObject, transform.position, transform.rotation);
             WaterInPail.transform.SetParent(transform);
 
             Rigidbody waterRB = WaterInPail.GetComponent<Rigidbody>();

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -56,18 +55,18 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(heldObject != null || currentState.Equals("Crawling") || currentState.Equals("Rolling")) hitTransform = null;
+        if(heldObject || currentState.Equals("Crawling") || currentState.Equals("Rolling")) hitTransform = null;
         else
         {
             RaycastHit hit;
             if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, closeProximityValue))
             {
                 // check will be changed to transform.comparetag instead
-                if (hit.transform.gameObject.name.Equals("Floor")) hitTransform = null;
+                if (hit.transform.name.Equals("Floor") || hit.transform.name.Equals("Fire")) hitTransform = null;
                 else
                 {
                     Debug.DrawRay(cameraTransform.position, cameraTransform.forward * hit.distance, Color.yellow);
-                    Debug.Log(hit.transform.gameObject.name + ": " + hit.distance);
+                    Debug.Log(hit.transform.name + ": " + hit.distance);
 
                     hitTransform = hit.transform;
                 }
@@ -99,8 +98,8 @@ public class PlayerController : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
             else if (Input.GetKeyDown(KeyCode.G)) DropObject();
             
-            if(heldObject == null && Input.GetMouseButton(0)) CoverNose();
-            else if (heldObject != null && Input.GetMouseButtonDown(0)) UseObject();
+            if(!heldObject && Input.GetMouseButton(0)) CoverNose();
+            else if (heldObject && Input.GetMouseButtonDown(0)) UseObject();
         }
 
         TestFunction(); // for debugging (i.e. Debug.Log)
@@ -174,7 +173,7 @@ public class PlayerController : MonoBehaviour
             SetupUprightState();
             currentSpeed = walkingSpeed;
         }
-        else if (heldObject == null)
+        else if (!heldObject)
         {
             currentState = "Crawling";
             SetupCrawlState();
@@ -200,7 +199,7 @@ public class PlayerController : MonoBehaviour
 
     void InitiateRollOver()
     {
-        if(heldObject == null)
+        if(!heldObject)
         {
             isVerticalTiltEnabled = false;
             isHorizontalTiltEnabled = false;
@@ -240,7 +239,7 @@ public class PlayerController : MonoBehaviour
 
     void InteractWithObject()
     {
-        if (hitTransform != null)
+        if (hitTransform)
         {
             // for this functionality, will add checker if object is grabbable (fire fighting object)
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
@@ -255,19 +254,18 @@ public class PlayerController : MonoBehaviour
             heldObject = hitTransform.GetComponent<FireFightingObject>();
             heldObject.isHeld = true;
 
-            try
+            Pail pail = hitTransform.GetComponent<Pail>();
+            if(pail)
             {
-                Pail pail = hitTransform.GetComponent<Pail>();
                 pail.closeProximityValue = closeProximityValue;
                 pail.playerCamera = transform.GetChild(0);
             }
-            catch (Exception){}
         }
     }
 
     void DropObject()
     {
-        if(heldObject != null)
+        if(heldObject)
         {
             heldObject.Deattach();
             heldObject = null;
