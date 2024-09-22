@@ -15564,7 +15564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isHeld: 0
-  fireFightingValue: 40
+  fireFightingValue: 30
   WaterObject: {fileID: 8066359131496540432, guid: ea6bb195fb9611043a2a2a83c70d69a5, type: 3}
   WaterInPail: {fileID: 0}
   isFilled: 0

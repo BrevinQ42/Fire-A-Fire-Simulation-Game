@@ -44,11 +44,12 @@ public class Fire : MonoBehaviour
 
             if (obj)
             {
-                if (obj.fireFightingValue >= intensityValue) Destroy(gameObject);
+                if (obj.fireFightingValue >= intensityValue) AffectFire(-Math.Min(intensityValue, obj.fireFightingValue-intensityValue));
                 else AffectFire(Math.Min(obj.fireFightingValue, intensityValue-obj.fireFightingValue));
 
                 Water water = obj.GetComponent<Water>();
                 if(water) Destroy(collision.collider.gameObject);
+                // else burn fire resistant material ?
             }
         }
     }
