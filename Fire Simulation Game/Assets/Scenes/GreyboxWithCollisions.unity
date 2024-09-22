@@ -4721,7 +4721,7 @@ GameObject:
   - component: {fileID: 864322698}
   - component: {fileID: 864322697}
   m_Layer: 0
-  m_Name: Temporary Floor
+  m_Name: Temporary Outside Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
