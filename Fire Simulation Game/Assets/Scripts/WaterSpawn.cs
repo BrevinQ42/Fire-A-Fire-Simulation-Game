@@ -7,7 +7,7 @@ public class WaterSpawn : MonoBehaviour
     public GameObject waterDroplet;  
     public Transform spawnPoint;           
     private float spawnRate = 0.1f;         
-    private bool isRunning = true;        
+    private bool isRunning = true;              
 
     // Start is called before the first frame update
     void Start()
