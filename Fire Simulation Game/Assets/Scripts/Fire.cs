@@ -5,18 +5,30 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
-    private float intensityValue;
+    public float intensityValue;
+    private float growingSpeed;
 
     // Start is called before the first frame update
     void Start()
     {
-        intensityValue = 0;
+        intensityValue = 1.0f;
+        growingSpeed = 0.5f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(intensityValue == 0.0f) gameObject.SetActive(false);
+        else if (intensityValue < 100.0f) AffectFire(growingSpeed * Time.deltaTime);
+        else intensityValue = 100.0f;
+
+        transform.localScale = new Vector3(2.5f, 2.0f, 2.5f) * (intensityValue / 100.0f);
+    }
+
+    public void AffectFire (float amt)
+    {
+        if (amt > 0) intensityValue = Math.Min(intensityValue + amt, 100.0f);
+        else intensityValue = Math.Max(intensityValue + amt, 0.0f);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -33,7 +45,7 @@ public class Fire : MonoBehaviour
             if (obj)
             {
                 if (obj.fireFightingValue >= intensityValue) Destroy(gameObject);
-                else Debug.Log(intensityValue + " > " + obj.fireFightingValue);
+                else AffectFire(Math.Min(obj.fireFightingValue, intensityValue-obj.fireFightingValue));
 
                 Water water = obj.GetComponent<Water>();
                 if(water) Destroy(collision.collider.gameObject);
