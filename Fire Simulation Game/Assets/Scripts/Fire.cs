@@ -33,7 +33,16 @@ public class Fire : MonoBehaviour
             
             if (intensityValue > 5.0f) SmokeSpawner.Toggle(true);
         }
-        else intensityValue = Math.Max(intensityValue + amt, 0.0f);
+        else
+        {
+            intensityValue = Math.Max(intensityValue + amt, 0.0f);
+
+            if (Math.Round(intensityValue, 2) <= 0.01f)
+            {
+                SmokeSpawner.Toggle();
+                Destroy(gameObject);
+            }
+        }
     }
 
     void OnCollisionEnter(Collision collision)

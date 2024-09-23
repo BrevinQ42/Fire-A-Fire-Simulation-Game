@@ -217,7 +217,7 @@ public class PlayerController : MonoBehaviour
             rotationCount = 37;
             rollRotation = 5.0f;
 
-            transform.position = new Vector3(transform.position.x, 0.63f, transform.position.z);
+            transform.position = new Vector3(transform.position.x, 1.0f, transform.position.z);
             transform.eulerAngles = new Vector3(75, transform.eulerAngles.y, transform.eulerAngles.z);
             previousEulerAngles = transform.eulerAngles;
             cameraTransform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
