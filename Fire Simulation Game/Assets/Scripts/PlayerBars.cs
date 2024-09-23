@@ -1,18 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerBars : MonoBehaviour
 {
     // Hydration Level
     public float hydrationLevel = 100f;
     public float hydrationLevelDamage = 1000f;
+    public Slider hydrationBar;
 
     // Oxygen
     public float oxygen = 100f;
     public float oxygenDamage = 5f;
     public float collisionCount = 0;
     public bool isLosingOxygen = false;
+    public Slider oxygenBar;
 
     private PlayerController playerController;
     private Coroutine fireDamageCoroutine; 
@@ -91,6 +94,7 @@ public class PlayerBars : MonoBehaviour
         while (oxygen > 0)
         {
             oxygen -= (oxygenDamage * collisionCount) * Time.deltaTime;
+            oxygenBar.value = oxygen / 100;
             Debug.Log("Oxygen Level: " + oxygen);
             yield return new WaitForSeconds(1f);
         }
@@ -102,6 +106,7 @@ public class PlayerBars : MonoBehaviour
         while (hydrationLevel > 0)
         {
             hydrationLevel -= hydrationLevelDamage * Time.deltaTime;
+            hydrationBar.value = hydrationLevel / 100;
             //Debug.Log("Hydration Level: " + hydrationLevel);
             yield return new WaitForSeconds(1f);
         }
