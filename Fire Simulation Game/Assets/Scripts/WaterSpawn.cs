@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaterSpawn : MonoBehaviour
+public class Spawner : MonoBehaviour
 {
-    public GameObject waterDroplet;  
+    public GameObject spawnObject;  
     public Transform spawnPoint;           
     private float spawnRate = 0.25f;         
     [SerializeField] private bool isRunning = false;              
@@ -12,7 +12,7 @@ public class WaterSpawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        StartCoroutine(Spawn());
     }
 
     // Update is called once per frame
@@ -21,14 +21,12 @@ public class WaterSpawn : MonoBehaviour
 
     }
 
-    IEnumerator SpawnWater()
+    IEnumerator Spawn()
     {
         while (isRunning)
         {
-            // Instantiate a new water droplet
-            Instantiate(waterDroplet, spawnPoint.position, Quaternion.identity);
+            Instantiate(spawnObject, spawnPoint.position, Quaternion.identity);
 
-            // Wait for the next droplet spawn based on spawnRate
             yield return new WaitForSeconds(spawnRate);
         }
     }
