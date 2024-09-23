@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class PlayerBars : MonoBehaviour
 {
-    //Oxygen
+    // Hydration Level
+    public float hydrationLevel = 100f;
+    public float hydrationLevelDamage = 1000f;
+
+    // Oxygen
     public float oxygen = 100f;
     public float oxygenDamage = 5f;
     public float collisionCount = 0;
     public bool isLosingOxygen = false;
 
     private PlayerController playerController;
+    private Coroutine fireDamageCoroutine; 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,13 +26,33 @@ public class PlayerBars : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (playerController.isOnFire)
+        {
+            if (fireDamageCoroutine == null) 
+            {
+                fireDamageCoroutine = StartCoroutine(FireDamageOverTime());
+            }
+        }
+        else
+        {
+            if (fireDamageCoroutine != null) 
+            {
+                StopCoroutine(fireDamageCoroutine);
+                fireDamageCoroutine = null; 
+            }
+        }
+        if (hydrationLevel <= 0f)
+        {
+            Debug.Log("Player has burned to death!");
+            // Insert player death code here
+        }
+
         if (oxygen <= 0f)
         {
             Debug.Log("Player has run out of oxygen!");
             // Insert player death code here
         }
     }
-
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -49,7 +75,11 @@ public class PlayerBars : MonoBehaviour
             }
 
             Destroy(collision.gameObject);
+        }
 
+        if (collision.gameObject.CompareTag("Fire"))
+        {
+            // Fire collision logic if needed
         }
     }
 
@@ -62,6 +92,17 @@ public class PlayerBars : MonoBehaviour
         {
             oxygen -= (oxygenDamage * collisionCount) * Time.deltaTime;
             Debug.Log("Oxygen Level: " + oxygen);
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    // Coroutine to handle fire damage over time
+    IEnumerator FireDamageOverTime()
+    {
+        while (hydrationLevel > 0)
+        {
+            hydrationLevel -= hydrationLevelDamage * Time.deltaTime;
+            //Debug.Log("Hydration Level: " + hydrationLevel);
             yield return new WaitForSeconds(1f);
         }
     }

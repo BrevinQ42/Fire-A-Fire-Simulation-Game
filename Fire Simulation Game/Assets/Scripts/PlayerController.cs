@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private bool isHorizontalTiltEnabled;
 
     public bool isCoveringNose;
+    public bool isOnFire;
 
     private Vector3 previousEulerAngles;
     private float rollingTimeLeft;
@@ -50,6 +51,7 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
 
         isCoveringNose = false;
+        isOnFire = false;
 
         previousEulerAngles = Vector3.zero;
         rollingTimeLeft = 0.0f;
@@ -245,6 +247,8 @@ public class PlayerController : MonoBehaviour
             if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
             {
                 FireOnPlayer = null;
+                isOnFire = false;
+                Debug.Log("IsOnFire: " + isOnFire);
                 Destroy(transform.GetChild(1).gameObject);
             }
         }

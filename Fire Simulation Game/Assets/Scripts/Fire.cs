@@ -59,6 +59,7 @@ public class Fire : MonoBehaviour
                     player.FireOnPlayer = Instantiate(gameObject, player.transform.position + player.transform.forward * 0.5f, Quaternion.identity).GetComponent<Fire>();
                     player.FireOnPlayer.transform.SetParent(player.transform);
                     player.FireOnPlayer.intensityValue = intensityValue / 2.0f;
+                    player.isOnFire = true;
                 }
                 else player.FireOnPlayer.AffectFire(intensityValue / 2.0f);
             }
