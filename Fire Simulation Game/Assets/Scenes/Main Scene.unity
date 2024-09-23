@@ -6529,7 +6529,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Table
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7497752355412415670, guid: 3f8b79fa463468d4f851ac55b68444db, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -7496,9 +7497,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   smokeLayer1: {fileID: 1287553263}
-  timeToActivateLayer1: 25
+  timeToActivateLayer1: 180
   smokeLayer2: {fileID: 626579133}
-  timeToActivateLayer2: 40
+  timeToActivateLayer2: 360
 --- !u!4 &1431460404
 Transform:
   m_ObjectHideFlags: 0
@@ -10121,9 +10122,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91bca6ba444fb9d459d042d1c9fdaa7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkingSpeed: 1.5
-  crawlingSpeed: 0.75
-  runningSpeed: 2.75
+  FireOnPlayer: {fileID: 0}
+  walkingSpeed: 2.75
+  crawlingSpeed: 1.5
+  runningSpeed: 5
   currentSpeed: 0
   mouseSensitivity: 0.6
   isCoveringNose: 0

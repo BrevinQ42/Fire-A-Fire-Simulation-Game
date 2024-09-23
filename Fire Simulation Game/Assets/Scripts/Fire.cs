@@ -42,7 +42,16 @@ public class Fire : MonoBehaviour
         {
             if (collision.collider.name.Equals("Player"))
             {
+                PlayerController player = collision.collider.GetComponent<PlayerController>();
                 Debug.Log("Player is burning!");
+
+                if (!player.FireOnPlayer)
+                {
+                    player.FireOnPlayer = Instantiate(gameObject, player.transform.position + player.transform.forward * 0.5f, Quaternion.identity).GetComponent<Fire>();
+                    player.FireOnPlayer.transform.SetParent(player.transform);
+                    player.FireOnPlayer.intensityValue = intensityValue / 2.0f;
+                }
+                else player.FireOnPlayer.AffectFire(intensityValue / 2.0f);
             }
 
             else

@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public Fire FireOnPlayer;
+
     private Rigidbody rb;
     private Transform cameraTransform;
 
@@ -233,6 +236,17 @@ public class PlayerController : MonoBehaviour
         {
             rotationCount = 74;
             rollRotation = -rollRotation;
+        }
+
+        if (FireOnPlayer)
+        {
+            FireOnPlayer.AffectFire(-0.05f);
+
+            if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
+            {
+                FireOnPlayer = null;
+                Destroy(transform.GetChild(1).gameObject);
+            }
         }
 
         rollingTimeLeft -= Time.deltaTime;
