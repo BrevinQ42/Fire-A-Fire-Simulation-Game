@@ -18,6 +18,6 @@ public class Water : FireFightingObject
 
     void OnCollisionEnter(Collision collision)
     {
-        if(!collision.collider.name.Equals("Fire")) Destroy(gameObject);
+        if(!collision.collider.CompareTag("Fire") || !collision.collider.GetComponent<Pail>()) Destroy(gameObject);
     }
 }

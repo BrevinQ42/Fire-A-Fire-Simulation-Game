@@ -61,8 +61,7 @@ public class PlayerController : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, closeProximityValue))
             {
-                // check will be changed to transform.comparetag instead
-                if (hit.transform.name.Equals("Floor") || hit.transform.name.Equals("Fire")) hitTransform = null;
+                if (hit.transform.CompareTag("Floor") || hit.transform.CompareTag("Fire")) hitTransform = null;
                 else
                 {
                     Debug.DrawRay(cameraTransform.position, cameraTransform.forward * hit.distance, Color.yellow);
@@ -243,22 +242,31 @@ public class PlayerController : MonoBehaviour
         {
             // for this functionality, will add checker if object is grabbable (fire fighting object)
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
-            hitRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
 
-            hitTransform.GetComponent<Collider>().enabled = false;
-            
-            // grab object
-            hitTransform.SetParent(transform);
-            hitTransform.SetLocalPositionAndRotation(new Vector3(0.0f, 0.0f, 1.0f), Quaternion.identity);
-            
-            heldObject = hitTransform.GetComponent<FireFightingObject>();
-            heldObject.isHeld = true;
-
-            Pail pail = hitTransform.GetComponent<Pail>();
-            if(pail)
+            if (hitRB && hitTransform.CompareTag("Grabbable"))
             {
-                pail.closeProximityValue = closeProximityValue;
-                pail.playerCamera = transform.GetChild(0);
+                hitRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+
+                hitTransform.GetComponent<Collider>().enabled = false;
+                
+                Pail pail = hitTransform.GetComponent<Pail>();
+                if (pail)
+                {
+                    pail.closeProximityValue = closeProximityValue;
+                    pail.playerCamera = transform.GetChild(0);
+                }
+
+                // grab object
+                hitTransform.SetParent(transform);
+                hitTransform.SetLocalPositionAndRotation(new Vector3(0.0f, 0.0f, 1.0f), Quaternion.identity); 
+                
+                heldObject = hitTransform.GetComponent<FireFightingObject>();
+                heldObject.isHeld = true;
+            }
+            else if(hitTransform.CompareTag("WaterSource"))
+            {
+                WaterSpawn ws = hitTransform.GetChild(0).GetComponent<WaterSpawn>();
+                ws.Toggle();
             }
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,9 @@ public class Pail : FireFightingObject
     [SerializeField] private GameObject WaterObject;
     [SerializeField] private GameObject WaterInPail;
 
-    [SerializeField] private bool isFilled;
+    [SerializeField] private float fractionFilled;
+    private float maxFireFightingValue;
+
     public float closeProximityValue;
     public Transform playerCamera;
     private Transform hitTransform;
@@ -16,61 +19,46 @@ public class Pail : FireFightingObject
     // Start is called before the first frame update
     void Start()
     {
-        WaterObject.GetComponent<Water>().fireFightingValue = fireFightingValue;
+        maxFireFightingValue = fireFightingValue;
 
-        isFilled = false;
+        fractionFilled = 0.0f;
+        UpdateWaterInPail();
+
         closeProximityValue = 0.0f;
-    }
-
-    void FixedUpdate()
-    {
-        if(!isFilled && isHeld)
-        {
-            RaycastHit hit;
-            if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, closeProximityValue))
-            {
-                if (hit.transform.name.Equals("WaterSource"))
-                {   
-                    Debug.DrawRay(playerCamera.position, playerCamera.forward * hit.distance, Color.yellow);
-                    Debug.Log(hit.transform.name + " found! : " + hit.distance);
-
-                    hitTransform = hit.transform;
-                }
-            }
-            else
-            {
-                Debug.DrawRay(playerCamera.position, playerCamera.forward * 2.0f, Color.white);
-                Debug.Log("Did not Hit");
-
-                hitTransform = null;
-            }
-        }
     }
 
     public override void Use(float throwForce, out bool isStillHeld)
     {
-        if (isFilled)
+        if (fractionFilled > 0)
         {
-            isFilled = false;
+            GameObject ThrownWater = Instantiate(WaterObject, playerCamera.position + playerCamera.forward, playerCamera.rotation);
+            ThrownWater.transform.SetParent(transform);
 
-            WaterInPail.GetComponent<Water>().Deattach();
-            WaterInPail.GetComponent<Rigidbody>().AddForce(transform.forward * throwForce + throwHeightOffset);
-            WaterInPail = null;
-        }
-                                        // will check tag
-        else if (hitTransform && hitTransform.name.Equals("WaterSource") && !WaterInPail)
-        {
-            isFilled = true;
-
-            WaterInPail = Instantiate(WaterObject, transform.position, transform.rotation);
-            WaterInPail.transform.SetParent(transform);
-
-            Rigidbody waterRB = WaterInPail.GetComponent<Rigidbody>();
-            waterRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
-
-            WaterInPail.GetComponent<Collider>().enabled = false;
+            Water water = ThrownWater.GetComponent<Water>();
+            water.fireFightingValue = maxFireFightingValue * fractionFilled;
+            water.Deattach();
+            ThrownWater.GetComponent<Rigidbody>().AddForce(playerCamera.forward * throwForce + throwHeightOffset);
+            
+            fractionFilled = 0.0f;
+            UpdateWaterInPail();
         }
 
         isStillHeld = isHeld;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.CompareTag("WaterDroplet"))
+        {
+            if (fractionFilled < 1.0f) fractionFilled = Math.Min(fractionFilled + 0.05f, 1.0f);
+            UpdateWaterInPail();
+
+            Destroy(collision.collider.gameObject);
+        }
+    }
+
+    void UpdateWaterInPail()
+    {
+        WaterInPail.transform.localScale = new Vector3(125.0f, 75.0f * fractionFilled, 125.0f);
     }
 }

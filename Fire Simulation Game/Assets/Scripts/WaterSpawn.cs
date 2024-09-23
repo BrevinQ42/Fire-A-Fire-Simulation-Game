@@ -6,19 +6,21 @@ public class WaterSpawn : MonoBehaviour
 {
     public GameObject waterDroplet;  
     public Transform spawnPoint;           
-    private float spawnRate = 0.1f;         
-    private bool isRunning = true;              
+    private float spawnRate = 0.25f;         
+    [SerializeField] private bool isRunning = false;              
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnWater());
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+
     }
+
     IEnumerator SpawnWater()
     {
         while (isRunning)
@@ -29,5 +31,11 @@ public class WaterSpawn : MonoBehaviour
             // Wait for the next droplet spawn based on spawnRate
             yield return new WaitForSeconds(spawnRate);
         }
+    }
+
+    public void Toggle()
+    {
+        isRunning = !isRunning;
+        if (isRunning) StartCoroutine(SpawnWater());
     }
 }
