@@ -34,6 +34,6 @@ public class Spawner : MonoBehaviour
     public void Toggle()
     {
         isRunning = !isRunning;
-        if (isRunning) StartCoroutine(SpawnWater());
+        if (isRunning) StartCoroutine(Spawn());
     }
 }

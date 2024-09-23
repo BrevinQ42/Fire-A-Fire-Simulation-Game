@@ -265,7 +265,7 @@ public class PlayerController : MonoBehaviour
             }
             else if(hitTransform.CompareTag("WaterSource"))
             {
-                WaterSpawn ws = hitTransform.GetChild(0).GetComponent<WaterSpawn>();
+                Spawner ws = hitTransform.GetChild(0).GetComponent<Spawner>();
                 ws.Toggle();
             }
         }

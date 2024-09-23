@@ -233,6 +233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnObject: {fileID: 516978698}
   spawnPoint: {fileID: 21954009}
+  isRunning: 0
 --- !u!1001 &24566410
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4646,6 +4647,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 201684658350187564, guid: 086860ecb1b9277449d928895bffc771, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
     - target: {fileID: 3627676404325555927, guid: 086860ecb1b9277449d928895bffc771, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4817,7 +4822,7 @@ GameObject:
   - component: {fileID: 864322697}
   m_Layer: 6
   m_Name: Temporary Outside Floor
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6682,6 +6687,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 201684658350187564, guid: 086860ecb1b9277449d928895bffc771, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
     - target: {fileID: 3627676404325555927, guid: 086860ecb1b9277449d928895bffc771, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -7266,6 +7275,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 201684658350187564, guid: 086860ecb1b9277449d928895bffc771, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
     - target: {fileID: 3627676404325555927, guid: 086860ecb1b9277449d928895bffc771, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -7430,6 +7443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnObject: {fileID: 7780095199341733078, guid: 59dcb85eeaf11f543bbce6fcaca50db0, type: 3}
   spawnPoint: {fileID: 1413375691}
+  isRunning: 0
 --- !u!4 &1413375691
 Transform:
   m_ObjectHideFlags: 0
@@ -8346,6 +8360,10 @@ PrefabInstance:
     - target: {fileID: 201684658350187564, guid: 086860ecb1b9277449d928895bffc771, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 201684658350187564, guid: 086860ecb1b9277449d928895bffc771, type: 3}
+      propertyPath: m_TagString
+      value: Floor
       objectReference: {fileID: 0}
     - target: {fileID: 3627676404325555927, guid: 086860ecb1b9277449d928895bffc771, type: 3}
       propertyPath: m_Mesh
