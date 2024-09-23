@@ -6,7 +6,7 @@ public class Spawner : MonoBehaviour
 {
     public GameObject spawnObject;  
     public Transform spawnPoint;           
-    private float spawnRate = 0.25f;         
+    [SerializeField] private float spawnRate = 0.25f;         
     [SerializeField] private bool isRunning = false;              
 
     // Start is called before the first frame update
@@ -35,5 +35,12 @@ public class Spawner : MonoBehaviour
     {
         isRunning = !isRunning;
         if (isRunning) StartCoroutine(Spawn());
+    }
+
+    public void Toggle(bool hasPermissionToRun)
+    {
+        bool mustToggle = (isRunning && !hasPermissionToRun) || (!isRunning && hasPermissionToRun);
+
+        if (mustToggle) Toggle();
     }
 }

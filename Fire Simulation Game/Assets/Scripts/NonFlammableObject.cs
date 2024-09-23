@@ -13,6 +13,7 @@ public class NonFlammableObject : FireFightingObject
     void Throw(float throwForce)
     {
         Deattach();
+        transform.position += Vector3.up * 0.67f;
         GetComponent<Rigidbody>().AddForce(transform.forward * throwForce);
     }
 }

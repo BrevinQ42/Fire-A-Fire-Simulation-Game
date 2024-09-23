@@ -14,7 +14,6 @@ public class Pail : FireFightingObject
     public float closeProximityValue;
     public Transform playerCamera;
     private Transform hitTransform;
-    [SerializeField] private Vector3 throwHeightOffset;
 
     // Start is called before the first frame update
     void Start()
@@ -37,7 +36,7 @@ public class Pail : FireFightingObject
             Water water = ThrownWater.GetComponent<Water>();
             water.fireFightingValue = maxFireFightingValue * fractionFilled;
             water.Deattach();
-            ThrownWater.GetComponent<Rigidbody>().AddForce(playerCamera.forward * throwForce + throwHeightOffset);
+            ThrownWater.GetComponent<Rigidbody>().AddForce(playerCamera.forward * throwForce);
             
             fractionFilled = 0.0f;
             UpdateWaterInPail();
