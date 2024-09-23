@@ -26,20 +26,22 @@ public class PlayerBars : MonoBehaviour
         }
     }
 
-    // Called when a particle system's particles collide with this object
-    void OnParticleCollision(GameObject other)
+
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Smoke")) 
+        if (collision.gameObject.CompareTag("Smoke"))  
         {
             collisionCount++;
 
-            Debug.Log("Player made contact with smoke! Current collision count: " + collisionCount);
+            Debug.Log("Player made contact with a smoke sphere! Current collision count: " + collisionCount);
 
-            // Start the oxygen depletion coroutine if it hasn't already started
+
             if (!isLosingOxygen)
             {
                 StartCoroutine(OxygenDamageOverTime());
             }
+
+            Destroy(collision.gameObject);
 
         }
     }
