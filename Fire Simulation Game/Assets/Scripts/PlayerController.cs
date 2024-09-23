@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     private bool isVerticalTiltEnabled;
     private bool isHorizontalTiltEnabled;
 
+    public bool isCoveringNose;
+
     private Vector3 previousEulerAngles;
     private float rollingTimeLeft;
     private int rotationCount;
@@ -44,6 +46,8 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
 
+        isCoveringNose = false;
+
         previousEulerAngles = Vector3.zero;
         rollingTimeLeft = 0.0f;
         rotationCount = 0;
@@ -55,7 +59,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(heldObject || currentState.Equals("Crawling") || currentState.Equals("Rolling")) hitTransform = null;
+        if (heldObject || currentState.Equals("Crawling") || currentState.Equals("Rolling")) hitTransform = null;
         else
         {
             RaycastHit hit;
@@ -87,7 +91,7 @@ public class PlayerController : MonoBehaviour
         LookAround();
 
         if (currentState.Equals("Rolling")) RollOver();
-        
+
         else
         {
             // actions
@@ -96,8 +100,12 @@ public class PlayerController : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.R)) InitiateRollOver();
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
             else if (Input.GetKeyDown(KeyCode.G)) DropObject();
-            
-            if(!heldObject && Input.GetMouseButton(0)) CoverNose();
+
+            if (!heldObject)
+            {
+                if (Input.GetMouseButton(0)) CoverNose();
+                else isCoveringNose = false;
+            }
             else if (heldObject && Input.GetMouseButtonDown(0)) UseObject();
         }
 
@@ -117,7 +125,7 @@ public class PlayerController : MonoBehaviour
         {
             movementVector = new Vector3(-transform.forward.x, 0.0f, -transform.forward.z);
         }
-        
+
         if (Input.GetKey(KeyCode.A))
         {
             movementVector += new Vector3(-transform.right.x, 0.0f, -transform.right.z);
@@ -198,7 +206,7 @@ public class PlayerController : MonoBehaviour
 
     void InitiateRollOver()
     {
-        if(!heldObject)
+        if (!heldObject)
         {
             isVerticalTiltEnabled = false;
             isHorizontalTiltEnabled = false;
@@ -210,7 +218,7 @@ public class PlayerController : MonoBehaviour
             transform.eulerAngles = new Vector3(75, transform.eulerAngles.y, transform.eulerAngles.z);
             previousEulerAngles = transform.eulerAngles;
             cameraTransform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
-            
+
             currentSpeed = 0;
             currentState = "Rolling";
         }
@@ -248,7 +256,7 @@ public class PlayerController : MonoBehaviour
                 hitRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
 
                 hitTransform.GetComponent<Collider>().enabled = false;
-                
+
                 Pail pail = hitTransform.GetComponent<Pail>();
                 if (pail)
                 {
@@ -258,12 +266,12 @@ public class PlayerController : MonoBehaviour
 
                 // grab object
                 hitTransform.SetParent(transform);
-                hitTransform.SetLocalPositionAndRotation(new Vector3(0.0f, 0.0f, 1.0f), Quaternion.identity); 
-                
+                hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
+
                 heldObject = hitTransform.GetComponent<FireFightingObject>();
                 heldObject.isHeld = true;
             }
-            else if(hitTransform.CompareTag("WaterSource"))
+            else if (hitTransform.CompareTag("WaterSource"))
             {
                 Spawner ws = hitTransform.GetChild(0).GetComponent<Spawner>();
                 ws.Toggle();
@@ -273,7 +281,7 @@ public class PlayerController : MonoBehaviour
 
     void DropObject()
     {
-        if(heldObject)
+        if (heldObject)
         {
             heldObject.Deattach();
             heldObject = null;
@@ -285,12 +293,13 @@ public class PlayerController : MonoBehaviour
         bool isStillHeld;
         heldObject.Use(throwForce, out isStillHeld);
 
-        if(!isStillHeld) heldObject = null;
+        if (!isStillHeld) heldObject = null;
     }
 
     void CoverNose()
     {
         Debug.Log("Covering nose");
+        isCoveringNose = true;
     }
 
     void SetupUprightState()
@@ -299,11 +308,12 @@ public class PlayerController : MonoBehaviour
         isHorizontalTiltEnabled = true;
         transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z);
         cameraTransform.eulerAngles = new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z);
+        transform.position = new Vector3(transform.position.x, 1.2f, transform.position.z);
     }
 
     void SetupCrawlState()
     {
-        transform.position = new Vector3(transform.position.x, 0.63f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, 1.0f, transform.position.z);
         isVerticalTiltEnabled = false;
         isHorizontalTiltEnabled = true;
         transform.eulerAngles = new Vector3(75, transform.eulerAngles.y, transform.eulerAngles.z);
