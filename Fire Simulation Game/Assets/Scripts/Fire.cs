@@ -37,9 +37,9 @@ public class Fire : MonoBehaviour
         {
             intensityValue = Math.Max(intensityValue + amt, 0.0f);
 
-            if (Math.Round(intensityValue, 2) <= 0.01f)
+            if (intensityValue <= 0.01f)
             {
-                SmokeSpawner.Toggle();
+                SmokeSpawner.Toggle(false);
                 Destroy(gameObject);
             }
         }
@@ -56,10 +56,18 @@ public class Fire : MonoBehaviour
 
                 if (!player.FireOnPlayer)
                 {
-                    player.FireOnPlayer = Instantiate(gameObject, player.transform.position + player.transform.forward * 0.5f, Quaternion.identity).GetComponent<Fire>();
+                    player.FireOnPlayer = Instantiate(gameObject,
+                                                        player.transform.position + player.transform.forward * 0.5f,
+                                                        Quaternion.identity).GetComponent<Fire>();
+
                     player.FireOnPlayer.transform.SetParent(player.transform);
                     player.FireOnPlayer.intensityValue = intensityValue / 2.0f;
-                    player.isOnFire = true;
+
+                    player.FireOnPlayer.SmokeSpawner = Instantiate(SmokeSpawner,
+                                                        player.transform.position + player.transform.forward * 0.5f + new Vector3(0.0f, 0.5f, 0.0f),
+                                                        Quaternion.identity).GetComponent<Spawner>();
+
+                    player.FireOnPlayer.SmokeSpawner.transform.SetParent(player.FireOnPlayer.transform);
                 }
                 else player.FireOnPlayer.AffectFire(intensityValue / 2.0f);
             }
@@ -70,8 +78,7 @@ public class Fire : MonoBehaviour
 
                 if (obj)
                 {
-                    if (obj.fireFightingValue >= intensityValue) AffectFire(-Math.Min(intensityValue, obj.fireFightingValue-intensityValue));
-                    else AffectFire(Math.Min(obj.fireFightingValue, intensityValue-obj.fireFightingValue));
+                    AffectFire(-Math.Min(intensityValue, Math.Abs(obj.fireFightingValue-intensityValue)));
 
                     Water water = obj.GetComponent<Water>();
                     if(water) Destroy(collision.collider.gameObject);

@@ -10277,6 +10277,8 @@ MonoBehaviour:
   currentSpeed: 0
   mouseSensitivity: 0.6
   isCoveringNose: 0
+  isOnFire: 0
+  rollTimePerRotation: 0.0234
   closeProximityValue: 1.75
   throwForce: 350
 --- !u!54 &2112114420
@@ -10407,10 +10409,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7431a6870bab68742a28ee5c5ca1f0e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hydrationLevel: 100
+  hydrationLevelDamage: 1000
+  hydrationBar: {fileID: 0}
   oxygen: 100
   oxygenDamage: 5
   collisionCount: 0
   isLosingOxygen: 0
+  oxygenBar: {fileID: 0}
 --- !u!1 &2144206085 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b28c795f1807dae4d9417329c2ff423b, type: 3}

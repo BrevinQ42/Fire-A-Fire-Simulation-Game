@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float runningSpeed;
     [SerializeField] private float currentSpeed;
 
-    private Vector3 previousMousePosition;
+    private Vector2 cameraRotation;
     [SerializeField] private float mouseSensitivity;
     private bool isVerticalTiltEnabled;
     private bool isHorizontalTiltEnabled;
@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private float rollingTimeLeft;
     private int rotationCount;
     private float rollRotation;
+    [SerializeField] private float rollTimePerRotation;
 
     [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
     private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
@@ -46,9 +47,8 @@ public class PlayerController : MonoBehaviour
         SetupUprightState();
         currentSpeed = walkingSpeed;
 
-        previousMousePosition = Input.mousePosition;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Confined;
+        cameraRotation = Vector2.zero;
+        Cursor.lockState = CursorLockMode.Locked;
 
         isCoveringNose = false;
         isOnFire = false;
@@ -152,29 +152,14 @@ public class PlayerController : MonoBehaviour
         rb.velocity = movementVector.normalized * currentSpeed;
     }
 
+    // adjusting camera when looking around
     void LookAround()
     {
-        // adjusting camera when looking around
-        Vector3 currentMousePosition = Input.mousePosition;
 
-        if (isHorizontalTiltEnabled)
-        {
-            transform.Rotate(0, (currentMousePosition.x - previousMousePosition.x) * mouseSensitivity, 0, Space.World);
+        if (isHorizontalTiltEnabled) cameraRotation.x += Input.GetAxis("Mouse X") * mouseSensitivity;
+        if (isVerticalTiltEnabled) cameraRotation.y += Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-            // configure x rotation
-            float xRotation = transform.eulerAngles.x;
-
-            if (xRotation > 180) xRotation -= 360;
-
-            // limit the x rotation between -75 and 75 degrees
-            if (xRotation > 75.0f) transform.Rotate(-(xRotation - 75.0f), 0, 0, Space.Self);
-            else if (xRotation < -75.0f) transform.Rotate(-(xRotation + 75.0f), 0, 0, Space.Self);
-        }
-
-        if (isVerticalTiltEnabled)
-            transform.Rotate(-(currentMousePosition.y - previousMousePosition.y) * mouseSensitivity, 0, 0, Space.Self);
-
-        previousMousePosition = currentMousePosition;
+        transform.localRotation = Quaternion.Euler(-cameraRotation.y, cameraRotation.x, 0);
     }
 
     void ToggleCrawl()
@@ -226,39 +211,46 @@ public class PlayerController : MonoBehaviour
 
             currentSpeed = 0;
             currentState = "Rolling";
+
+            StartCoroutine(RollOver());
         }
     }
 
-    void RollOver()
+    IEnumerator RollOver()
     {
-        transform.Rotate(0.0f, rollRotation, 0.0f, Space.Self);
-        rotationCount--;
-
-        if (rotationCount == 0)
+        while (rollingTimeLeft > 0.0f && currentState.Equals("Rolling"))
         {
-            rotationCount = 74;
-            rollRotation = -rollRotation;
-        }
+            transform.Rotate(0.0f, rollRotation, 0.0f, Space.Self);
+            rotationCount--;
 
-        if (FireOnPlayer)
-        {
-            FireOnPlayer.AffectFire(-0.05f);
-
-            if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
+            if (rotationCount == 0)
             {
-                FireOnPlayer = null;
-                isOnFire = false;
-                Debug.Log("IsOnFire: " + isOnFire);
-                Destroy(transform.GetChild(1).gameObject);
+                rotationCount = 74;
+                rollRotation = -rollRotation;
             }
-        }
 
-        rollingTimeLeft -= Time.deltaTime;
+            if (FireOnPlayer)
+            {
+                FireOnPlayer.AffectFire(-0.05f);
 
-        if (rollingTimeLeft <= 0.0f)
-        {
-            transform.eulerAngles = previousEulerAngles;
-            ToggleCrawl();
+                if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
+                {
+                    FireOnPlayer = null;
+                    isOnFire = false;
+                    Debug.Log("IsOnFire: " + isOnFire);
+                    Destroy(transform.GetChild(1).gameObject);
+                }
+            }
+
+            yield return new WaitForSeconds(rollTimePerRotation);
+
+            rollingTimeLeft -= rollTimePerRotation;
+
+            if (rollingTimeLeft <= 0.0f)
+            {
+                transform.eulerAngles = previousEulerAngles;
+                ToggleCrawl();
+            }
         }
     }
 
