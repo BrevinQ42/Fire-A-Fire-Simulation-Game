@@ -10,10 +10,12 @@ public class Fire : MonoBehaviour
     public float intensityValue;
     [SerializeField] private float growingSpeed;
 
+    public string type;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        type = "Class A";
     }
 
     // Update is called once per frame
@@ -68,6 +70,7 @@ public class Fire : MonoBehaviour
                                                         Quaternion.identity).GetComponent<Spawner>();
 
                     player.FireOnPlayer.SmokeSpawner.transform.SetParent(player.FireOnPlayer.transform);
+                    player.FireOnPlayer.SmokeSpawner.Toggle(true);
                 }
                 else player.FireOnPlayer.AffectFire(intensityValue / 2.0f);
             }
@@ -78,7 +81,18 @@ public class Fire : MonoBehaviour
 
                 if (obj)
                 {
-                    AffectFire(-Math.Min(intensityValue, Math.Abs(obj.fireFightingValue-intensityValue)));
+                    if (type.Equals("Electrical"))
+                    {
+                        Debug.Log("Explosion happens");
+                        // proceed to game over screen
+                    }
+                    else
+                    {
+                        if (type.Equals("Grease"))
+                            AffectFire(obj.fireFightingValue);
+                        else if (type.Equals("Class A"))
+                            AffectFire(-Math.Min(intensityValue, Math.Abs(obj.fireFightingValue-intensityValue)));
+                    }
 
                     Water water = obj.GetComponent<Water>();
                     if(water) Destroy(collision.collider.gameObject);

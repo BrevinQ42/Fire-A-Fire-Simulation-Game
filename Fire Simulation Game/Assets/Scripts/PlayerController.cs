@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float runningSpeed;
     [SerializeField] private float currentSpeed;
 
-    private Vector2 cameraRotation;
+    private Vector3 previousMousePosition;
     [SerializeField] private float mouseSensitivity;
     private bool isVerticalTiltEnabled;
     private bool isHorizontalTiltEnabled;
@@ -47,8 +47,9 @@ public class PlayerController : MonoBehaviour
         SetupUprightState();
         currentSpeed = walkingSpeed;
 
-        cameraRotation = Vector2.zero;
-        Cursor.lockState = CursorLockMode.Locked;
+        previousMousePosition = Input.mousePosition;
+        Cursor.visible = false;
+        // Cursor.lockState = CursorLockMode.Confined;
 
         isCoveringNose = false;
         isOnFire = false;
@@ -155,11 +156,27 @@ public class PlayerController : MonoBehaviour
     // adjusting camera when looking around
     void LookAround()
     {
+        // adjusting camera when looking around
+        Vector3 currentMousePosition = Input.mousePosition;
 
-        if (isHorizontalTiltEnabled) cameraRotation.x += Input.GetAxis("Mouse X") * mouseSensitivity;
-        if (isVerticalTiltEnabled) cameraRotation.y += Input.GetAxis("Mouse Y") * mouseSensitivity;
+        if (isHorizontalTiltEnabled)
+        {
+            transform.Rotate(0, (currentMousePosition.x - previousMousePosition.x) * mouseSensitivity, 0, Space.World);
 
-        transform.localRotation = Quaternion.Euler(-cameraRotation.y, cameraRotation.x, 0);
+            // configure x rotation
+            float xRotation = transform.eulerAngles.x;
+
+            if (xRotation > 180) xRotation -= 360;
+
+            // limit the x rotation between -75 and 75 degrees
+            if (xRotation > 75.0f) transform.Rotate(-(xRotation - 75.0f), 0, 0, Space.Self);
+            else if (xRotation < -75.0f) transform.Rotate(-(xRotation + 75.0f), 0, 0, Space.Self);
+        }
+
+        if (isVerticalTiltEnabled)
+            transform.Rotate(-(currentMousePosition.y - previousMousePosition.y) * mouseSensitivity, 0, 0, Space.Self);
+
+        previousMousePosition = currentMousePosition;
     }
 
     void ToggleCrawl()

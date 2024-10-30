@@ -10275,7 +10275,7 @@ MonoBehaviour:
   crawlingSpeed: 1.5
   runningSpeed: 5
   currentSpeed: 0
-  mouseSensitivity: 0.6
+  mouseSensitivity: 0.8
   isCoveringNose: 0
   isOnFire: 0
   rollTimePerRotation: 0.0234
