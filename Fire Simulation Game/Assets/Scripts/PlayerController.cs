@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float runningSpeed;
     [SerializeField] private float currentSpeed;
 
-    private Vector3 previousMousePosition;
+    private Vector2 cameraRotation;
     [SerializeField] private float mouseSensitivity;
     private bool isVerticalTiltEnabled;
     private bool isHorizontalTiltEnabled;
@@ -47,9 +47,8 @@ public class PlayerController : MonoBehaviour
         SetupUprightState();
         currentSpeed = walkingSpeed;
 
-        previousMousePosition = Input.mousePosition;
-        Cursor.visible = false;
-        // Cursor.lockState = CursorLockMode.Confined;
+        cameraRotation = Vector2.zero;
+        Cursor.lockState = CursorLockMode.Locked;
 
         isCoveringNose = false;
         isOnFire = false;
@@ -156,27 +155,17 @@ public class PlayerController : MonoBehaviour
     // adjusting camera when looking around
     void LookAround()
     {
-        // adjusting camera when looking around
-        Vector3 currentMousePosition = Input.mousePosition;
-
         if (isHorizontalTiltEnabled)
         {
-            transform.Rotate(0, (currentMousePosition.x - previousMousePosition.x) * mouseSensitivity, 0, Space.World);
-
-            // configure x rotation
-            float xRotation = transform.eulerAngles.x;
-
-            if (xRotation > 180) xRotation -= 360;
-
-            // limit the x rotation between -75 and 75 degrees
-            if (xRotation > 75.0f) transform.Rotate(-(xRotation - 75.0f), 0, 0, Space.Self);
-            else if (xRotation < -75.0f) transform.Rotate(-(xRotation + 75.0f), 0, 0, Space.Self);
+            cameraRotation.x += Input.GetAxis("Mouse X") * mouseSensitivity;
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, cameraRotation.x, transform.eulerAngles.z);
         }
 
         if (isVerticalTiltEnabled)
-            transform.Rotate(-(currentMousePosition.y - previousMousePosition.y) * mouseSensitivity, 0, 0, Space.Self);
-
-        previousMousePosition = currentMousePosition;
+        {
+            cameraRotation.y += Input.GetAxis("Mouse Y") * mouseSensitivity;
+            transform.eulerAngles = new Vector3(-cameraRotation.y, transform.eulerAngles.y, transform.eulerAngles.z);
+        }
     }
 
     void ToggleCrawl()
