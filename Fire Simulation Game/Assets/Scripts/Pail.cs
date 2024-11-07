@@ -13,7 +13,6 @@ public class Pail : FireFightingObject
 
     public float closeProximityValue;
     public Transform playerCamera;
-    private Transform hitTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -28,19 +27,7 @@ public class Pail : FireFightingObject
 
     public override void Use(float throwForce, out bool isStillHeld)
     {
-        if (fractionFilled > 0)
-        {
-            GameObject ThrownWater = Instantiate(WaterObject, playerCamera.position + playerCamera.forward, playerCamera.rotation);
-            ThrownWater.transform.SetParent(transform);
-
-            Water water = ThrownWater.GetComponent<Water>();
-            water.fireFightingValue = maxFireFightingValue * fractionFilled;
-            water.Deattach();
-            ThrownWater.GetComponent<Rigidbody>().AddForce(playerCamera.forward * throwForce);
-            
-            fractionFilled = 0.0f;
-            UpdateWaterInPail();
-        }
+        if (fractionFilled > 0) StartCoroutine(ThrowWater(throwForce));
 
         isStillHeld = isHeld;
     }
@@ -59,5 +46,29 @@ public class Pail : FireFightingObject
     void UpdateWaterInPail()
     {
         WaterInPail.transform.localScale = new Vector3(125.0f, 75.0f * fractionFilled, 125.0f);
+    }
+
+    IEnumerator ThrowWater(float throwForce)
+    {
+        transform.SetPositionAndRotation(
+                    playerCamera.position + playerCamera.forward - playerCamera.up * 0.67f, 
+                    transform.rotation);
+
+        GameObject ThrownWater = Instantiate(WaterObject, playerCamera.position + playerCamera.forward, playerCamera.rotation);
+        ThrownWater.transform.SetParent(transform);
+
+        Water water = ThrownWater.GetComponent<Water>();
+        water.fireFightingValue = maxFireFightingValue * fractionFilled;
+        water.Deattach();
+        ThrownWater.GetComponent<Rigidbody>().AddForce(playerCamera.forward * throwForce);
+        
+        fractionFilled = 0.0f;
+        UpdateWaterInPail();
+
+        yield return new WaitForSeconds(0.2f);
+
+        transform.SetPositionAndRotation(
+            transform.position + playerCamera.right * 0.7f - playerCamera.up * 0.15f,
+            transform.rotation);
     }
 }

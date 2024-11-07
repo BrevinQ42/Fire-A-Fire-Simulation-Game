@@ -237,7 +237,7 @@ public class PlayerController : MonoBehaviour
 
             if (FireOnPlayer)
             {
-                FireOnPlayer.AffectFire(-0.05f);
+                FireOnPlayer.AffectFire(-0.1f);
 
                 if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
                 {
@@ -273,16 +273,19 @@ public class PlayerController : MonoBehaviour
 
                 hitTransform.GetComponent<Collider>().enabled = false;
 
+                hitTransform.SetParent(transform);
+
                 Pail pail = hitTransform.GetComponent<Pail>();
                 if (pail)
                 {
                     pail.closeProximityValue = closeProximityValue;
                     pail.playerCamera = transform.GetChild(0);
+                    hitTransform.SetPositionAndRotation(
+                        transform.position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
+                        transform.rotation);
                 }
-
-                // grab object
-                hitTransform.SetParent(transform);
-                hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
+                else
+                    hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
 
                 heldObject = hitTransform.GetComponent<FireFightingObject>();
                 heldObject.isHeld = true;
