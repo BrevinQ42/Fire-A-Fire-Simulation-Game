@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    private SmokeSystemManager smokeManager;
+
     public GameObject spawnObject;  
     public Transform spawnPoint;           
     [SerializeField] private float spawnRate = 0.25f;         
@@ -12,6 +14,8 @@ public class Spawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        smokeManager = GameObject.Find("SmokeSystemManager").GetComponent<SmokeSystemManager>();
+
         StartCoroutine(Spawn());
     }
 
@@ -34,13 +38,31 @@ public class Spawner : MonoBehaviour
     public void Toggle()
     {
         isRunning = !isRunning;
-        if (isRunning) StartCoroutine(Spawn());
+
+        if (smokeManager == null)
+                smokeManager = GameObject.Find("SmokeSystemManager").GetComponent<SmokeSystemManager>();
+
+        if (isRunning)
+        {
+            StartCoroutine(Spawn());
+            smokeManager.IncrementCounter();
+        }
+        else smokeManager.DecrementCounter();
     }
 
     public void Toggle(bool hasPermissionToRun)
     {
         bool mustToggle = (isRunning && !hasPermissionToRun) || (!isRunning && hasPermissionToRun);
 
-        if (mustToggle) Toggle();
+        if (mustToggle)
+        {
+            Toggle();
+
+            if (smokeManager == null)
+                smokeManager = GameObject.Find("SmokeSystemManager").GetComponent<SmokeSystemManager>();
+
+            if (isRunning) smokeManager.IncrementCounter();
+            else smokeManager.DecrementCounter();
+        }
     }
 }

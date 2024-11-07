@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SmokeSystemManager : MonoBehaviour
 {
+    private int spawnersActive = 0; // updated in spawner script
+
     public GameObject smokeLayer1;      
     public float timeToActivateLayer1 = 180f;
     public GameObject smokeLayer2;
@@ -21,23 +23,25 @@ public class SmokeSystemManager : MonoBehaviour
 
     void Update()
     {
-
-        elapsedTime += Time.deltaTime;
-
-        // After 3 minutes, activate layer 1
-        if (elapsedTime >= timeToActivateLayer1 && isSmokeLayer1Activated == false)
+        if (spawnersActive > 0)
         {
-            DeleteSmokeSpheres();     
-            ActivateSmokeLayer1();      
-            isSmokeLayer1Activated = true; 
-        }
+            elapsedTime += Time.deltaTime;
 
-        // After 6 minutes, activate layer 1
-        if (elapsedTime >= timeToActivateLayer2 && isSmokeLayer2Activated == false)
-        {
-            DeleteSmokeSpheres();
-            ActivateSmokeLayer2();
-            isSmokeLayer2Activated = true;
+            // After 3 minutes, activate layer 1
+            if (elapsedTime >= timeToActivateLayer1 && isSmokeLayer1Activated == false)
+            {
+                DeleteSmokeSpheres();     
+                ActivateSmokeLayer1();      
+                isSmokeLayer1Activated = true; 
+            }
+
+            // After 6 minutes, activate layer 1
+            if (elapsedTime >= timeToActivateLayer2 && isSmokeLayer2Activated == false)
+            {
+                DeleteSmokeSpheres();
+                ActivateSmokeLayer2();
+                isSmokeLayer2Activated = true;
+            }
         }
     }
 
@@ -71,5 +75,15 @@ public class SmokeSystemManager : MonoBehaviour
 
         smokeLayer2.SetActive(true);
         Debug.Log("Smoke layer2 activated.");
+    }
+
+    public void IncrementCounter()
+    {
+        spawnersActive++;
+    }
+
+    public void DecrementCounter()
+    {
+        spawnersActive--;
     }
 }

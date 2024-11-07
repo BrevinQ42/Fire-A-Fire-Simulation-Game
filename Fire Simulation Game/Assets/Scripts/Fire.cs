@@ -15,7 +15,7 @@ public class Fire : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        type = "Class A";
+        if (type == "") type = "Class A";
     }
 
     // Update is called once per frame
@@ -81,21 +81,25 @@ public class Fire : MonoBehaviour
 
                 if (obj)
                 {
-                    if (type.Equals("Electrical"))
-                    {
-                        Debug.Log("Explosion happens");
-                        // proceed to game over screen
-                    }
-                    else
-                    {
-                        if (type.Equals("Grease"))
-                            AffectFire(obj.fireFightingValue);
-                        else if (type.Equals("Class A"))
-                            AffectFire(-Math.Min(intensityValue, Math.Abs(obj.fireFightingValue-intensityValue)));
-                    }
-
                     Water water = obj.GetComponent<Water>();
-                    if(water) Destroy(collision.collider.gameObject);
+                    if(water)
+                    {
+                        Destroy(collision.collider.gameObject);
+
+                        if (type.Equals("Electrical"))
+                        {
+                            Debug.Log("Explosion happens");
+                            // proceed to game over screen
+                        }
+                        else
+                        {
+                            if (type.Equals("Grease"))
+                                AffectFire(obj.fireFightingValue);
+                            else if (type.Equals("Class A"))
+                                AffectFire(-obj.fireFightingValue);
+                        }
+                    }
+                    else AffectFire(-obj.fireFightingValue);
                 }
             }
         }
