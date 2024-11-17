@@ -17,13 +17,21 @@ public class PlayerBars : MonoBehaviour
     public bool isLosingOxygen = false;
     public Slider oxygenBar;
 
+    // Stamina
+    public float stamina = 100f;
+    public Slider staminaBar;
+
+    public bool isRunning;
+
     private PlayerController playerController;
-    private Coroutine fireDamageCoroutine; 
+    private Coroutine fireDamageCoroutine;
+    private Coroutine staminaDepletionCoroutine;
 
     // Start is called before the first frame update
     void Start()
     {
         playerController = GetComponent<PlayerController>();
+        isRunning = false;
     }
 
     // Update is called once per frame
@@ -55,6 +63,32 @@ public class PlayerBars : MonoBehaviour
             Debug.Log("Player has run out of oxygen!");
             // Insert player death code here
         }
+
+        // Stamina Related
+        if (playerController.currentState == "Running")
+        {
+            if (!isRunning) 
+            {
+                isRunning = true;
+                if (staminaDepletionCoroutine == null) // Ensure no coroutine stacking
+                {
+                    staminaDepletionCoroutine = StartCoroutine(StaminaDepletionOverTime());
+                }
+            }
+        }
+        else if (playerController.currentState == "Walking")
+        {
+            if (isRunning)
+            {
+                isRunning = false;
+                Debug.Log("Player stopped running");
+                if (staminaDepletionCoroutine != null)
+                {
+                    StopCoroutine(staminaDepletionCoroutine);
+                    staminaDepletionCoroutine = null;
+                }
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -72,7 +106,7 @@ public class PlayerBars : MonoBehaviour
                 Debug.Log("Player made contact with a smoke sphere! Current collision count: " + collisionCount);
             }
 
-            if (!isLosingOxygen)
+            if (isLosingOxygen == false)
             {
                 StartCoroutine(OxygenDamageOverTime());
             }
@@ -109,6 +143,18 @@ public class PlayerBars : MonoBehaviour
             hydrationBar.value = hydrationLevel / 100;
             //Debug.Log("Hydration Level: " + hydrationLevel);
             yield return new WaitForSeconds(1f);
+        }
+    }
+
+    // Coroutine to handle stamina over time
+    IEnumerator StaminaDepletionOverTime()
+    {
+        while (stamina > 0)
+        {
+            stamina -= 10f;
+            staminaBar.value = stamina / 100;
+            //Debug.Log("Stamina: " + stamina);
+            yield return new WaitForSeconds(1.0f);
         }
     }
 }

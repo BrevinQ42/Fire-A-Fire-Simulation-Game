@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Transform cameraTransform;
 
-    private string currentState;
+    public string currentState;
 
     [SerializeField] private float walkingSpeed;
     [SerializeField] private float crawlingSpeed;
