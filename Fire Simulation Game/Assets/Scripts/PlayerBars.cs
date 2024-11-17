@@ -22,16 +22,19 @@ public class PlayerBars : MonoBehaviour
     public Slider staminaBar;
 
     public bool isRunning;
+    public bool isWalking;
 
     private PlayerController playerController;
     private Coroutine fireDamageCoroutine;
-    private Coroutine staminaDepletionCoroutine;
+    private Coroutine staminaRunDepletionCoroutine;
+    private Coroutine staminaWalkRegenerationCoroutine;
 
     // Start is called before the first frame update
     void Start()
     {
         playerController = GetComponent<PlayerController>();
         isRunning = false;
+        isWalking = true;
     }
 
     // Update is called once per frame
@@ -70,22 +73,38 @@ public class PlayerBars : MonoBehaviour
             if (!isRunning) 
             {
                 isRunning = true;
-                if (staminaDepletionCoroutine == null) // Ensure no coroutine stacking
+                isWalking = false;
+                if (staminaWalkRegenerationCoroutine != null)
                 {
-                    staminaDepletionCoroutine = StartCoroutine(StaminaDepletionOverTime());
+                    StopCoroutine(staminaWalkRegenerationCoroutine);
+                    staminaWalkRegenerationCoroutine = null;
+                }
+                if (staminaRunDepletionCoroutine == null) 
+                {
+                    staminaRunDepletionCoroutine = StartCoroutine(StaminaRunDepletionOverTime());
                 }
             }
         }
         else if (playerController.currentState == "Walking")
         {
+            isWalking = true;
             if (isRunning)
             {
                 isRunning = false;
                 Debug.Log("Player stopped running");
-                if (staminaDepletionCoroutine != null)
+                if (staminaRunDepletionCoroutine != null)
                 {
-                    StopCoroutine(staminaDepletionCoroutine);
-                    staminaDepletionCoroutine = null;
+                    StopCoroutine(staminaRunDepletionCoroutine);
+                    staminaRunDepletionCoroutine = null;
+                }
+            }
+
+            if (isWalking)
+            {
+                Debug.Log("Player is walking");
+                if (staminaWalkRegenerationCoroutine == null)
+                {
+                    staminaWalkRegenerationCoroutine = StartCoroutine(WalkRegenerationOverTime());
                 }
             }
         }
@@ -147,11 +166,22 @@ public class PlayerBars : MonoBehaviour
     }
 
     // Coroutine to handle stamina over time
-    IEnumerator StaminaDepletionOverTime()
+    IEnumerator StaminaRunDepletionOverTime()
     {
         while (stamina > 0)
         {
             stamina -= 10f;
+            staminaBar.value = stamina / 100;
+            //Debug.Log("Stamina: " + stamina);
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
+
+    IEnumerator WalkRegenerationOverTime()
+    {
+        while (stamina < 100)
+        {
+            stamina += 2f;
             staminaBar.value = stamina / 100;
             //Debug.Log("Stamina: " + stamina);
             yield return new WaitForSeconds(1.0f);
