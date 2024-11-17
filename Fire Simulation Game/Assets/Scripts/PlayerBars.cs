@@ -150,6 +150,27 @@ public class PlayerBars : MonoBehaviour
                 }
             }
         }
+        if (playerController.currentState == "Crawling")
+        {
+            isRolling = false;
+            isRunning = false;
+            isWalking = false;
+            if (staminaRunDepletionCoroutine != null)
+            {
+                StopCoroutine(staminaRunDepletionCoroutine);
+                staminaRunDepletionCoroutine = null;
+            }
+            if (staminaWalkRegenerationCoroutine != null)
+            {
+                StopCoroutine(staminaWalkRegenerationCoroutine);
+                staminaWalkRegenerationCoroutine = null;
+            }
+            if (staminaRollDepletionCoroutine != null)
+            {
+                StopCoroutine(staminaRollDepletionCoroutine);
+                staminaRollDepletionCoroutine = null;
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
