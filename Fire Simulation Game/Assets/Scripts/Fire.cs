@@ -64,6 +64,7 @@ public class Fire : MonoBehaviour
 
                     player.FireOnPlayer.transform.SetParent(player.transform);
                     player.FireOnPlayer.intensityValue = intensityValue / 2.0f;
+                    player.isOnFire = true;
 
                     player.FireOnPlayer.SmokeSpawner = Instantiate(SmokeSpawner,
                                                         player.transform.position + player.transform.forward * 0.5f + new Vector3(0.0f, 0.5f, 0.0f),
