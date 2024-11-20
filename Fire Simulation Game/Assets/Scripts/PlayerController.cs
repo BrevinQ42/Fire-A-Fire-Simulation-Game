@@ -237,7 +237,7 @@ public class PlayerController : MonoBehaviour
 
             if (FireOnPlayer)
             {
-                FireOnPlayer.AffectFire(-0.1f);
+                FireOnPlayer.AffectFire(-0.01f);
 
                 if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
                 {

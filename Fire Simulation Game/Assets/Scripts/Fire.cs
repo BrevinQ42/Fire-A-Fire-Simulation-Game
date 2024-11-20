@@ -7,7 +7,13 @@ public class Fire : MonoBehaviour
 {
     [SerializeField] private Spawner SmokeSpawner;
 
+    private float initialX;
+    private float initialY;
+    private float initialZ;
+
     public float intensityValue;
+    private Vector3 maxScale;
+    private bool isGrowing;
     [SerializeField] private float growingSpeed;
 
     public string type;
@@ -15,25 +21,44 @@ public class Fire : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        initialX = transform.position.x;
+        initialY = transform.position.y;
+        initialZ = transform.position.z;
+
         if (type == "") type = "Class A";
+
+        maxScale = new Vector3(0.1f, 0.1f, 0.1f);
+        isGrowing = false;
+        Toggle(true);       // to be removed
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (intensityValue < 100.0f) AffectFire(growingSpeed * Time.deltaTime);
-        else intensityValue = 100.0f;
+        if (isGrowing) AffectFire(growingSpeed * Time.deltaTime);
 
-        transform.localScale = new Vector3(2.5f, 2.0f, 2.5f) * Math.Max(intensityValue, 0.0f) / 100.0f;
+        SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x, intensityValue + 1.5f,
+                                                        SmokeSpawner.transform.position.z);
     }
 
-    public void AffectFire (float amt)
+    public void AffectFire(float amt)
     {
+        Vector3 newScale;
+
         if (amt > 0)
         {
-            intensityValue = Math.Min(intensityValue + amt, 100.0f);
+            intensityValue += amt;
             
-            if (intensityValue > 5.0f) SmokeSpawner.Toggle(true);
+            if (intensityValue > 0.5f) SmokeSpawner.Toggle(true);
+
+            if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * amt;
+            else newScale = transform.localScale * intensityValue / (intensityValue - amt);
+
+            if (maxScale.x > 0.0f) newScale.x = Math.Min(newScale.x, maxScale.x);
+            if (maxScale.y > 0.0f) newScale.y = Math.Min(newScale.y, maxScale.y);
+            if (maxScale.z > 0.0f) newScale.z = Math.Min(newScale.z, maxScale.z);
+
+            growingSpeed = Math.Min(growingSpeed + 0.00001f, 0.15f);
         }
         else
         {
@@ -44,16 +69,29 @@ public class Fire : MonoBehaviour
                 SmokeSpawner.Toggle(false);
                 Destroy(gameObject);
             }
+
+            newScale = transform.localScale * intensityValue / (intensityValue - amt);
+            if (newScale.x < 0.0f) newScale.x = 0.0f;
+            if (newScale.y < 0.0f) newScale.y = 0.0f;
+            if (newScale.z < 0.0f) newScale.z = 0.0f;
         }
+
+        transform.localScale = newScale;
     }
 
-    void OnCollisionEnter(Collision collision)
+    public void Toggle(bool mustGrow)
+    {
+        if (mustGrow) isGrowing = true;
+        else isGrowing = false;
+    }
+
+    void OnTriggerEnter(Collider collider)
     {
         if (intensityValue > 0.0f)
         {
-            if (collision.collider.name.Equals("Player"))
+            if (collider.name.Equals("Player"))
             {
-                PlayerController player = collision.collider.GetComponent<PlayerController>();
+                PlayerController player = collider.GetComponent<PlayerController>();
                 Debug.Log("Player is burning!");
 
                 if (!player.FireOnPlayer)
@@ -64,27 +102,20 @@ public class Fire : MonoBehaviour
 
                     player.FireOnPlayer.transform.SetParent(player.transform);
                     player.FireOnPlayer.intensityValue = intensityValue / 2.0f;
-
-                    player.FireOnPlayer.SmokeSpawner = Instantiate(SmokeSpawner,
-                                                        player.transform.position + player.transform.forward * 0.5f + new Vector3(0.0f, 0.5f, 0.0f),
-                                                        Quaternion.identity).GetComponent<Spawner>();
-
-                    player.FireOnPlayer.SmokeSpawner.transform.SetParent(player.FireOnPlayer.transform);
-                    player.FireOnPlayer.SmokeSpawner.Toggle(true);
                 }
                 else player.FireOnPlayer.AffectFire(intensityValue / 2.0f);
             }
 
             else
             {
-                FireFightingObject obj = collision.collider.GetComponent<FireFightingObject>();
+                FireFightingObject obj = collider.GetComponent<FireFightingObject>();
 
                 if (obj)
                 {
                     Water water = obj.GetComponent<Water>();
                     if(water)
                     {
-                        Destroy(collision.collider.gameObject);
+                        Destroy(collider.gameObject);
 
                         if (type.Equals("Electrical"))
                         {
@@ -94,9 +125,15 @@ public class Fire : MonoBehaviour
                         else
                         {
                             if (type.Equals("Grease"))
+                            {
                                 AffectFire(obj.fireFightingValue);
+                                growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, 0.15f);
+                            }
                             else if (type.Equals("Class A"))
+                            {
                                 AffectFire(-obj.fireFightingValue);
+                                growingSpeed = Math.Max(growingSpeed - 0.1f * obj.fireFightingValue, 0.05f);
+                            }
                         }
                     }
                     else AffectFire(-obj.fireFightingValue);
