@@ -379,11 +379,11 @@ PrefabInstance:
       objectReference: {fileID: 1413375690}
     - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: growingSpeed
-      value: 1
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: intensityValue
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9159,6 +9159,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fire (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 580641712304378339, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 835678449782325604, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 25.136
@@ -9209,11 +9213,11 @@ PrefabInstance:
       objectReference: {fileID: 2055667441}
     - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: growingSpeed
-      value: 1
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: intensityValue
-      value: -10
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11554,6 +11558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FireOnPlayer: {fileID: 0}
+  currentState: 
   walkingSpeed: 2.75
   crawlingSpeed: 1.5
   runningSpeed: 5
@@ -11700,6 +11705,11 @@ MonoBehaviour:
   collisionCount: 0
   isLosingOxygen: 0
   oxygenBar: {fileID: 188297736}
+  stamina: 100
+  staminaBar: {fileID: 0}
+  isRunning: 0
+  isWalking: 0
+  isRolling: 0
 --- !u!1 &2138471532
 GameObject:
   m_ObjectHideFlags: 0
