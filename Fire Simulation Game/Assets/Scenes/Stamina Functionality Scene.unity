@@ -11554,6 +11554,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FireOnPlayer: {fileID: 0}
+  currentState: 
   walkingSpeed: 2.75
   crawlingSpeed: 1.5
   runningSpeed: 5
@@ -11700,6 +11701,10 @@ MonoBehaviour:
   collisionCount: 0
   isLosingOxygen: 0
   oxygenBar: {fileID: 188297736}
+  stamina: 100
+  staminaDepletion: 1000
+  staminaBar: {fileID: 384556342}
+  isRunning: 0
 --- !u!1 &2138471532
 GameObject:
   m_ObjectHideFlags: 0
