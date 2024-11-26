@@ -79,13 +79,40 @@ public class PlayerBars : MonoBehaviour
 
     private void HandleStaminaRegeneration()
     {
-        if (playerController.movementVector == Vector3.zero && playerController.currentState != "Rolling")
+        if (playerController.movementVector == Vector3.zero)
         {
-            // Player is not moving
-            ResetMovementStates();
-            if (staminaRegenerationCoroutine == null)
+            if (playerController.currentState == "Rolling")
             {
-                staminaRegenerationCoroutine = StartCoroutine(StaminaRegenerationOverTime());
+                // Special case for rolling
+                if (!isRolling)
+                {
+                    if (staminaRegenerationCoroutine != null)
+                    {
+                        StopCoroutine(staminaRegenerationCoroutine);
+                        staminaRegenerationCoroutine = null;
+                    }
+                    ResetMovementStates();
+                    isRolling = true;
+                    staminaRollDepletionCoroutine = StartCoroutine(StaminaRollDepletionOverTime());
+                }
+            }
+            else if (playerController.currentState == "Crawling")
+            {
+                // Special case for crawling state
+                ResetMovementStates();
+                if (staminaRegenerationCoroutine == null)
+                {
+                    staminaRegenerationCoroutine = StartCoroutine(StaminaCrawlRegenerationOverTime());
+                }
+            }
+            else
+            {
+                // Default case when not moving and not rolling
+                ResetMovementStates();
+                if (staminaRegenerationCoroutine == null)
+                {
+                    staminaRegenerationCoroutine = StartCoroutine(StaminaRegenerationOverTime());
+                }
             }
         }
         else
@@ -100,6 +127,7 @@ public class PlayerBars : MonoBehaviour
             HandleMovementState();
         }
     }
+
 
     private void HandleMovementState()
     {
@@ -247,7 +275,7 @@ public class PlayerBars : MonoBehaviour
     {
         while (stamina > 0)
         {
-            stamina -= 2f;
+            stamina -= 4f;
             ClampStamina();
             yield return new WaitForSeconds(1f);
         }
@@ -262,4 +290,15 @@ public class PlayerBars : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
     }
+
+    IEnumerator StaminaCrawlRegenerationOverTime()
+    {
+        while (stamina < 100)
+        {
+            stamina += 3.0f; 
+            ClampStamina();
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
 }

@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
 
     public Vector3 movementVector;
 
+    private PlayerBars playerBars;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -62,6 +64,8 @@ public class PlayerController : MonoBehaviour
 
         hitTransform = null;
         heldObject = null;
+
+        playerBars = GetComponent<PlayerBars>();
     }
 
     void FixedUpdate()
@@ -93,6 +97,22 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Transitions when stamina is 0
+        // Run to walk
+        if (playerBars.stamina <= 0 && currentState.Equals("Running"))
+        {
+            currentState = "Walking";
+            currentSpeed = walkingSpeed;
+            SetupUprightState();
+        }
+        // Roll to crawl
+        if (playerBars.stamina <= 0 && currentState.Equals("Rolling"))
+        {
+            // switch them to crawling state
+            transform.eulerAngles = previousEulerAngles;
+            ToggleCrawl();
+        }
+
         // basic controls
         Move();
         LookAround();
@@ -122,6 +142,14 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         movementVector = Vector3.zero;
+
+        // Prevent movement while crawling with less than 5 stamina
+        if (currentState == "Crawling" && playerBars.stamina < 4)
+        {
+            rb.velocity = Vector3.zero;
+            return;
+        }
+
         // movement controls
         if (Input.GetKey(KeyCode.W))
         {
