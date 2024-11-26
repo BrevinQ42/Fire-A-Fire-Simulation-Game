@@ -11565,6 +11565,10 @@ MonoBehaviour:
   rollTimePerRotation: 0.0234
   closeProximityValue: 1.75
   throwForce: 350
+  movementVector: {x: 0, y: 0, z: 0}
+  staminaRequiredForCrawling: 0
+  staminaRequiredForRunning: 0
+  staminaRequiredForRolling: 0
 --- !u!54 &2112114420
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11702,9 +11706,11 @@ MonoBehaviour:
   isLosingOxygen: 0
   oxygenBar: {fileID: 188297736}
   stamina: 100
-  staminaDepletion: 1000
   staminaBar: {fileID: 384556342}
   isRunning: 0
+  isWalking: 0
+  isRolling: 0
+  isCrawling: 0
 --- !u!1 &2138471532
 GameObject:
   m_ObjectHideFlags: 0
