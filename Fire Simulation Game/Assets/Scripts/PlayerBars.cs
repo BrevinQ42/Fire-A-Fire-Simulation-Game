@@ -205,13 +205,20 @@ public class PlayerBars : MonoBehaviour
         }
     }
 
+    // Prevent stamina bar from exceeding 100 and reaching below 0
+    private void ClampStamina()
+    {
+        stamina = Mathf.Clamp(stamina, 0f, 100f);
+        staminaBar.value = stamina / 100f;
+    }
+
     // Coroutines to handle stamina over time
     IEnumerator StaminaRunDepletionOverTime()
     {
         while (stamina > 0)
         {
             stamina -= 10f;
-            staminaBar.value = stamina / 100;
+            ClampStamina();
             yield return new WaitForSeconds(1f);
         }
     }
@@ -221,7 +228,7 @@ public class PlayerBars : MonoBehaviour
         while (stamina < 100)
         {
             stamina += 2f;
-            staminaBar.value = stamina / 100;
+            ClampStamina();
             yield return new WaitForSeconds(1f);
         }
     }
@@ -231,7 +238,7 @@ public class PlayerBars : MonoBehaviour
         while (stamina > 0)
         {
             stamina -= 20f;
-            staminaBar.value = stamina / 100;
+            ClampStamina();
             yield return new WaitForSeconds(1f);
         }
     }
@@ -241,7 +248,7 @@ public class PlayerBars : MonoBehaviour
         while (stamina > 0)
         {
             stamina -= 2f;
-            staminaBar.value = stamina / 100;
+            ClampStamina();
             yield return new WaitForSeconds(1f);
         }
     }
@@ -251,7 +258,7 @@ public class PlayerBars : MonoBehaviour
         while (stamina < 100)
         {
             stamina += 10f;
-            staminaBar.value = stamina / 100;
+            ClampStamina();
             yield return new WaitForSeconds(1f);
         }
     }
