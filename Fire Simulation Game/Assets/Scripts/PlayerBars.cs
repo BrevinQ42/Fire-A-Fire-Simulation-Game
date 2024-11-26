@@ -24,12 +24,14 @@ public class PlayerBars : MonoBehaviour
     public bool isRunning;
     public bool isWalking;
     public bool isRolling;
+    public bool isCrawling;
 
     private PlayerController playerController;
     private Coroutine fireDamageCoroutine;
     private Coroutine staminaRunDepletionCoroutine;
     private Coroutine staminaWalkRegenerationCoroutine;
     private Coroutine staminaRollDepletionCoroutine;
+    private Coroutine staminaCrawlDepletionCoroutine;
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +40,7 @@ public class PlayerBars : MonoBehaviour
         isRunning = false;
         isWalking = true;
         isRolling = false;
+        isCrawling = false;
     }
 
     // Update is called once per frame
@@ -78,6 +81,7 @@ public class PlayerBars : MonoBehaviour
                 isRunning = true;
                 isWalking = false;
                 isRolling = false;
+                isCrawling = false;
                 if (staminaWalkRegenerationCoroutine != null)
                 {
                     StopCoroutine(staminaWalkRegenerationCoroutine);
@@ -87,6 +91,11 @@ public class PlayerBars : MonoBehaviour
                 {
                     StopCoroutine(staminaRollDepletionCoroutine);
                     staminaRollDepletionCoroutine = null;
+                }
+                if (staminaCrawlDepletionCoroutine != null)
+                {
+                    StopCoroutine(staminaCrawlDepletionCoroutine);
+                    staminaCrawlDepletionCoroutine = null;
                 }
                 if (staminaRunDepletionCoroutine == null) 
                 {
@@ -117,6 +126,16 @@ public class PlayerBars : MonoBehaviour
                     staminaRollDepletionCoroutine = null;
                 }
             }
+            if (isCrawling)
+            {
+                isCrawling = false;
+                Debug.Log("Player stopped crawling");
+                if (staminaCrawlDepletionCoroutine != null)
+                {
+                    StopCoroutine(staminaCrawlDepletionCoroutine);
+                    staminaCrawlDepletionCoroutine = null;
+                }
+            }
 
             if (isWalking)
             {
@@ -134,6 +153,7 @@ public class PlayerBars : MonoBehaviour
                 isRolling = true;
                 isRunning = false;
                 isWalking = false;
+                isCrawling = false;
                 if (staminaWalkRegenerationCoroutine != null)
                 {
                     StopCoroutine(staminaWalkRegenerationCoroutine);
@@ -143,6 +163,11 @@ public class PlayerBars : MonoBehaviour
                 {
                     StopCoroutine(staminaRunDepletionCoroutine);
                     staminaRunDepletionCoroutine = null;
+                }
+                if (staminaCrawlDepletionCoroutine != null)
+                {
+                    StopCoroutine(staminaCrawlDepletionCoroutine);
+                    staminaCrawlDepletionCoroutine = null;
                 }
                 if (staminaRollDepletionCoroutine == null)
                 {
@@ -155,6 +180,7 @@ public class PlayerBars : MonoBehaviour
             isRolling = false;
             isRunning = false;
             isWalking = false;
+            isCrawling = true;
             if (staminaRunDepletionCoroutine != null)
             {
                 StopCoroutine(staminaRunDepletionCoroutine);
@@ -169,6 +195,10 @@ public class PlayerBars : MonoBehaviour
             {
                 StopCoroutine(staminaRollDepletionCoroutine);
                 staminaRollDepletionCoroutine = null;
+            }
+            if (staminaCrawlDepletionCoroutine == null)
+            {
+                staminaCrawlDepletionCoroutine = StartCoroutine(StaminaCrawlDepletionOverTime());
             }
         }
     }
@@ -256,6 +286,17 @@ public class PlayerBars : MonoBehaviour
         while (stamina > 0)
         {
             stamina -= 20f;
+            staminaBar.value = stamina / 100;
+            //Debug.Log("Stamina: " + stamina);
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
+
+    IEnumerator StaminaCrawlDepletionOverTime()
+    {
+        while (stamina > 0)
+        {
+            stamina -= 2f;
             staminaBar.value = stamina / 100;
             //Debug.Log("Stamina: " + stamina);
             yield return new WaitForSeconds(1.0f);
