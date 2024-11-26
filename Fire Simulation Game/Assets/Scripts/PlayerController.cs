@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 movementVector;
 
     private PlayerBars playerBars;
+    public float staminaRequiredForCrawling;
 
     // Start is called before the first frame update
     void Start()
@@ -112,6 +113,8 @@ public class PlayerController : MonoBehaviour
             transform.eulerAngles = previousEulerAngles;
             ToggleCrawl();
         }
+        //Stamina needed updates
+        staminaRequiredForCrawling = 4f * playerBars.GetCurrentOxygenMultiplier();
 
         // basic controls
         Move();
@@ -143,8 +146,8 @@ public class PlayerController : MonoBehaviour
     {
         movementVector = Vector3.zero;
 
-        // Prevent movement while crawling with less than 5 stamina
-        if (currentState == "Crawling" && playerBars.stamina < 4)
+        // Prevent movement while crawling if player does not have enough stamina
+        if (currentState == "Crawling" && playerBars.stamina < staminaRequiredForCrawling)
         {
             rb.velocity = Vector3.zero;
             return;

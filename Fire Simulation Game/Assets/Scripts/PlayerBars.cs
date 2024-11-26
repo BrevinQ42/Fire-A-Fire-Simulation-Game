@@ -33,6 +33,7 @@ public class PlayerBars : MonoBehaviour
     private Coroutine staminaRollDepletionCoroutine;
     private Coroutine staminaCrawlDepletionCoroutine;
     private Coroutine staminaRegenerationCoroutine;
+    private Coroutine staminaCrawlRegenerationCoroutine;
 
     // Start is called before the first frame update
     void Start()
@@ -100,15 +101,20 @@ public class PlayerBars : MonoBehaviour
             {
                 // Special case for crawling state
                 ResetMovementStates();
-                if (staminaRegenerationCoroutine == null)
+                if (staminaCrawlRegenerationCoroutine == null)
                 {
-                    staminaRegenerationCoroutine = StartCoroutine(StaminaCrawlRegenerationOverTime());
+                    staminaCrawlRegenerationCoroutine = StartCoroutine(StaminaCrawlRegenerationOverTime());
                 }
             }
             else
             {
                 // Default case when not moving and not rolling
                 ResetMovementStates();
+                if (staminaCrawlRegenerationCoroutine != null)
+                {
+                    StopCoroutine(staminaCrawlRegenerationCoroutine);
+                    staminaCrawlRegenerationCoroutine = null;
+                }
                 if (staminaRegenerationCoroutine == null)
                 {
                     staminaRegenerationCoroutine = StartCoroutine(StaminaRegenerationOverTime());
@@ -122,6 +128,11 @@ public class PlayerBars : MonoBehaviour
             {
                 StopCoroutine(staminaRegenerationCoroutine);
                 staminaRegenerationCoroutine = null;
+            }
+            if (staminaCrawlRegenerationCoroutine != null)
+            {
+                StopCoroutine(staminaCrawlRegenerationCoroutine);
+                staminaCrawlRegenerationCoroutine = null;
             }
 
             HandleMovementState();
@@ -239,13 +250,18 @@ public class PlayerBars : MonoBehaviour
         stamina = Mathf.Clamp(stamina, 0f, 100f);
         staminaBar.value = stamina / 100f;
     }
+    public float GetCurrentOxygenMultiplier()
+    {
+        return Mathf.Lerp(1.0f, 2.0f, 1 - (oxygen / 100f));
+    }
 
     // Coroutines to handle stamina over time
     IEnumerator StaminaRunDepletionOverTime()
     {
         while (stamina > 0)
         {
-            stamina -= 10f;
+            float multiplier = GetCurrentOxygenMultiplier();
+            stamina -= 10f * multiplier; 
             ClampStamina();
             yield return new WaitForSeconds(1f);
         }
@@ -265,7 +281,8 @@ public class PlayerBars : MonoBehaviour
     {
         while (stamina > 0)
         {
-            stamina -= 20f;
+            float multiplier = GetCurrentOxygenMultiplier();
+            stamina -= 20f * multiplier; 
             ClampStamina();
             yield return new WaitForSeconds(1f);
         }
@@ -275,7 +292,8 @@ public class PlayerBars : MonoBehaviour
     {
         while (stamina > 0)
         {
-            stamina -= 4f;
+            float multiplier = GetCurrentOxygenMultiplier();
+            stamina -= 4f * multiplier; 
             ClampStamina();
             yield return new WaitForSeconds(1f);
         }
