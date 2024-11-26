@@ -41,6 +41,8 @@ public class PlayerController : MonoBehaviour
 
     private PlayerBars playerBars;
     public float staminaRequiredForCrawling;
+    public float staminaRequiredForRunning;
+    public float staminaRequiredForRolling;
 
     // Start is called before the first frame update
     void Start()
@@ -115,6 +117,8 @@ public class PlayerController : MonoBehaviour
         }
         //Stamina needed updates
         staminaRequiredForCrawling = 4f * playerBars.GetCurrentOxygenMultiplier();
+        staminaRequiredForRunning = 10f * playerBars.GetCurrentOxygenMultiplier();
+        staminaRequiredForRolling = 20f * playerBars.GetCurrentOxygenMultiplier();
 
         // basic controls
         Move();
@@ -126,8 +130,28 @@ public class PlayerController : MonoBehaviour
         {
             // actions
             if (Input.GetKeyDown(KeyCode.C)) ToggleCrawl();
-            else if (Input.GetKeyDown(KeyCode.F)) ToggleRun();
-            else if (Input.GetKeyDown(KeyCode.R)) InitiateRollOver();
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                if (playerBars.stamina > staminaRequiredForRunning)
+                {
+                    ToggleRun();
+                }
+                else
+                {
+                    Debug.Log("Not enough stamina to run"); // Replace later with UI message
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                if (playerBars.stamina > staminaRequiredForRolling)
+                {
+                    InitiateRollOver();
+                }
+                else
+                {
+                    Debug.Log("Not enough stamina to roll"); // Replace later with UI message
+                }
+            }
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
             else if (Input.GetKeyDown(KeyCode.G)) DropObject();
 
@@ -149,7 +173,8 @@ public class PlayerController : MonoBehaviour
         // Prevent movement while crawling if player does not have enough stamina
         if (currentState == "Crawling" && playerBars.stamina < staminaRequiredForCrawling)
         {
-            rb.velocity = Vector3.zero;
+            rb.velocity = Vector3.zero; 
+            // Add UI message showing not enough stamina to move while crawling
             return;
         }
 
