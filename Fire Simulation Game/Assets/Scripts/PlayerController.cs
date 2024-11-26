@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float throwForce;
 
+    public Vector3 movementVector;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -119,8 +121,7 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
-        Vector3 movementVector = Vector3.zero;
-
+        movementVector = Vector3.zero;
         // movement controls
         if (Input.GetKey(KeyCode.W))
         {
