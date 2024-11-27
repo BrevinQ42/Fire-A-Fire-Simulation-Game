@@ -24,40 +24,29 @@ public class PlayerBars : MonoBehaviour
     public bool isRunning;
     public bool isWalking;
     public bool isRolling;
+    public bool isCrawling;
 
     private PlayerController playerController;
     private Coroutine fireDamageCoroutine;
     private Coroutine staminaRunDepletionCoroutine;
     private Coroutine staminaWalkRegenerationCoroutine;
     private Coroutine staminaRollDepletionCoroutine;
+    private Coroutine staminaCrawlDepletionCoroutine;
+    private Coroutine staminaRegenerationCoroutine;
+    private Coroutine staminaCrawlRegenerationCoroutine;
 
     // Start is called before the first frame update
     void Start()
     {
         playerController = GetComponent<PlayerController>();
-        isRunning = false;
-        isWalking = true;
-        isRolling = false;
+        ResetMovementStates();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (playerController.isOnFire)
-        {
-            if (fireDamageCoroutine == null) 
-            {
-                fireDamageCoroutine = StartCoroutine(FireDamageOverTime());
-            }
-        }
-        else
-        {
-            if (fireDamageCoroutine != null) 
-            {
-                StopCoroutine(fireDamageCoroutine);
-                fireDamageCoroutine = null; 
-            }
-        }
+        HandleFireDamage();
+
         if (hydrationLevel <= 0f)
         {
             Debug.Log("Player has burned to death!");
@@ -70,106 +59,141 @@ public class PlayerBars : MonoBehaviour
             // Insert player death code here
         }
 
-        // Stamina Related
-        if (playerController.currentState == "Running")
-        {
-            if (!isRunning) 
-            {
-                isRunning = true;
-                isWalking = false;
-                isRolling = false;
-                if (staminaWalkRegenerationCoroutine != null)
-                {
-                    StopCoroutine(staminaWalkRegenerationCoroutine);
-                    staminaWalkRegenerationCoroutine = null;
-                }
-                if (staminaRollDepletionCoroutine != null)
-                {
-                    StopCoroutine(staminaRollDepletionCoroutine);
-                    staminaRollDepletionCoroutine = null;
-                }
-                if (staminaRunDepletionCoroutine == null) 
-                {
-                    staminaRunDepletionCoroutine = StartCoroutine(StaminaRunDepletionOverTime());
-                }
-            }
-        }
-        else if (playerController.currentState == "Walking")
-        {
-            isWalking = true;
-            if (isRunning)
-            {
-                isRunning = false;
-                Debug.Log("Player stopped running");
-                if (staminaRunDepletionCoroutine != null)
-                {
-                    StopCoroutine(staminaRunDepletionCoroutine);
-                    staminaRunDepletionCoroutine = null;
-                }
-            }
-            if (isRolling)
-            {
-                isRolling = false;
-                Debug.Log("Player stopped rolling");
-                if (staminaRollDepletionCoroutine != null)
-                {
-                    StopCoroutine(staminaRollDepletionCoroutine);
-                    staminaRollDepletionCoroutine = null;
-                }
-            }
+        HandleStaminaRegeneration();
+    }
 
-            if (isWalking)
+    private void HandleFireDamage()
+    {
+        if (playerController.isOnFire)
+        {
+            if (fireDamageCoroutine == null)
             {
-                Debug.Log("Player is walking");
-                if (staminaWalkRegenerationCoroutine == null)
-                {
-                    staminaWalkRegenerationCoroutine = StartCoroutine(WalkRegenerationOverTime());
-                }
+                fireDamageCoroutine = StartCoroutine(FireDamageOverTime());
             }
         }
-        if (playerController.currentState == "Rolling")
+        else if (fireDamageCoroutine != null)
         {
-            if (!isRolling)
+            StopCoroutine(fireDamageCoroutine);
+            fireDamageCoroutine = null;
+        }
+    }
+
+    private void HandleStaminaRegeneration()
+    {
+        if (playerController.movementVector == Vector3.zero)
+        {
+            if (playerController.currentState == "Rolling")
             {
-                isRolling = true;
-                isRunning = false;
-                isWalking = false;
-                if (staminaWalkRegenerationCoroutine != null)
+                // Special case for rolling
+                if (!isRolling)
                 {
-                    StopCoroutine(staminaWalkRegenerationCoroutine);
-                    staminaWalkRegenerationCoroutine = null;
-                }
-                if (staminaRunDepletionCoroutine != null)
-                {
-                    StopCoroutine(staminaRunDepletionCoroutine);
-                    staminaRunDepletionCoroutine = null;
-                }
-                if (staminaRollDepletionCoroutine == null)
-                {
+                    if (staminaRegenerationCoroutine != null)
+                    {
+                        StopCoroutine(staminaRegenerationCoroutine);
+                        staminaRegenerationCoroutine = null;
+                    }
+                    ResetMovementStates();
+                    isRolling = true;
                     staminaRollDepletionCoroutine = StartCoroutine(StaminaRollDepletionOverTime());
                 }
             }
+            else if (playerController.currentState == "Crawling")
+            {
+                // Special case for crawling state
+                ResetMovementStates();
+                if (staminaCrawlRegenerationCoroutine == null)
+                {
+                    staminaCrawlRegenerationCoroutine = StartCoroutine(StaminaCrawlRegenerationOverTime());
+                }
+            }
+            else
+            {
+                // Default case when not moving and not rolling
+                ResetMovementStates();
+                if (staminaCrawlRegenerationCoroutine != null)
+                {
+                    StopCoroutine(staminaCrawlRegenerationCoroutine);
+                    staminaCrawlRegenerationCoroutine = null;
+                }
+                if (staminaRegenerationCoroutine == null)
+                {
+                    staminaRegenerationCoroutine = StartCoroutine(StaminaRegenerationOverTime());
+                }
+            }
         }
-        if (playerController.currentState == "Crawling")
+        else
         {
-            isRolling = false;
-            isRunning = false;
-            isWalking = false;
-            if (staminaRunDepletionCoroutine != null)
+            // Player is moving
+            if (staminaRegenerationCoroutine != null)
             {
-                StopCoroutine(staminaRunDepletionCoroutine);
-                staminaRunDepletionCoroutine = null;
+                StopCoroutine(staminaRegenerationCoroutine);
+                staminaRegenerationCoroutine = null;
             }
-            if (staminaWalkRegenerationCoroutine != null)
+            if (staminaCrawlRegenerationCoroutine != null)
             {
-                StopCoroutine(staminaWalkRegenerationCoroutine);
-                staminaWalkRegenerationCoroutine = null;
+                StopCoroutine(staminaCrawlRegenerationCoroutine);
+                staminaCrawlRegenerationCoroutine = null;
             }
-            if (staminaRollDepletionCoroutine != null)
-            {
-                StopCoroutine(staminaRollDepletionCoroutine);
-                staminaRollDepletionCoroutine = null;
-            }
+
+            HandleMovementState();
+        }
+    }
+
+
+    private void HandleMovementState()
+    {
+        if (playerController.currentState == "Running" && !isRunning)
+        {
+            ResetMovementStates();
+            isRunning = true;
+            staminaRunDepletionCoroutine = StartCoroutine(StaminaRunDepletionOverTime());
+        }
+        else if (playerController.currentState == "Walking" && !isWalking)
+        {
+            ResetMovementStates();
+            isWalking = true;
+            staminaWalkRegenerationCoroutine = StartCoroutine(WalkRegenerationOverTime());
+        }
+        else if (playerController.currentState == "Rolling" && !isRolling)
+        {
+            ResetMovementStates();
+            isRolling = true;
+            staminaRollDepletionCoroutine = StartCoroutine(StaminaRollDepletionOverTime());
+        }
+        else if (playerController.currentState == "Crawling" && !isCrawling)
+        {
+            ResetMovementStates();
+            isCrawling = true;
+            staminaCrawlDepletionCoroutine = StartCoroutine(StaminaCrawlDepletionOverTime());
+        }
+    }
+
+    private void ResetMovementStates()
+    {
+        isRunning = false;
+        isWalking = false;
+        isRolling = false;
+        isCrawling = false;
+
+        if (staminaRunDepletionCoroutine != null)
+        {
+            StopCoroutine(staminaRunDepletionCoroutine);
+            staminaRunDepletionCoroutine = null;
+        }
+        if (staminaWalkRegenerationCoroutine != null)
+        {
+            StopCoroutine(staminaWalkRegenerationCoroutine);
+            staminaWalkRegenerationCoroutine = null;
+        }
+        if (staminaRollDepletionCoroutine != null)
+        {
+            StopCoroutine(staminaRollDepletionCoroutine);
+            staminaRollDepletionCoroutine = null;
+        }
+        if (staminaCrawlDepletionCoroutine != null)
+        {
+            StopCoroutine(staminaCrawlDepletionCoroutine);
+            staminaCrawlDepletionCoroutine = null;
         }
     }
 
@@ -177,18 +201,10 @@ public class PlayerBars : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Smoke"))
         {
-            if (playerController.isCoveringNose)
-            {
-                collisionCount += 0.5f;
-                Debug.Log("Covered nose made contact with a smoke sphere! Current collision count: " + collisionCount);
-            }
-            else
-            {
-                collisionCount++;
-                Debug.Log("Player made contact with a smoke sphere! Current collision count: " + collisionCount);
-            }
+            collisionCount += playerController.isCoveringNose ? 0.5f : 1f;
+            Debug.Log("Player made contact with a smoke sphere! Current collision count: " + collisionCount);
 
-            if (isLosingOxygen == false)
+            if (!isLosingOxygen)
             {
                 StartCoroutine(OxygenDamageOverTime());
             }
@@ -214,6 +230,7 @@ public class PlayerBars : MonoBehaviour
             Debug.Log("Oxygen Level: " + oxygen);
             yield return new WaitForSeconds(1f);
         }
+        isLosingOxygen = false;
     }
 
     // Coroutine to handle fire damage over time
@@ -223,9 +240,19 @@ public class PlayerBars : MonoBehaviour
         {
             hydrationLevel -= hydrationLevelDamage * Time.deltaTime;
             hydrationBar.value = hydrationLevel / 100;
-            //Debug.Log("Hydration Level: " + hydrationLevel);
             yield return new WaitForSeconds(1f);
         }
+    }
+
+    // Prevent stamina bar from exceeding 100 and reaching below 0
+    private void ClampStamina()
+    {
+        stamina = Mathf.Clamp(stamina, 0f, 100f);
+        staminaBar.value = stamina / 100f;
+    }
+    public float GetCurrentOxygenMultiplier()
+    {
+        return Mathf.Lerp(1.0f, 2.0f, 1 - (oxygen / 100f));
     }
 
     // Coroutines to handle stamina over time
@@ -233,10 +260,10 @@ public class PlayerBars : MonoBehaviour
     {
         while (stamina > 0)
         {
-            stamina -= 10f;
-            staminaBar.value = stamina / 100;
-            //Debug.Log("Stamina: " + stamina);
-            yield return new WaitForSeconds(1.0f);
+            float multiplier = GetCurrentOxygenMultiplier();
+            stamina -= 10f * multiplier; 
+            ClampStamina();
+            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -245,9 +272,8 @@ public class PlayerBars : MonoBehaviour
         while (stamina < 100)
         {
             stamina += 2f;
-            staminaBar.value = stamina / 100;
-            //Debug.Log("Stamina: " + stamina);
-            yield return new WaitForSeconds(1.0f);
+            ClampStamina();
+            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -255,10 +281,42 @@ public class PlayerBars : MonoBehaviour
     {
         while (stamina > 0)
         {
-            stamina -= 20f;
-            staminaBar.value = stamina / 100;
-            //Debug.Log("Stamina: " + stamina);
-            yield return new WaitForSeconds(1.0f);
+            float multiplier = GetCurrentOxygenMultiplier();
+            stamina -= 20f * multiplier; 
+            ClampStamina();
+            yield return new WaitForSeconds(1f);
         }
     }
+
+    IEnumerator StaminaCrawlDepletionOverTime()
+    {
+        while (stamina > 0)
+        {
+            float multiplier = GetCurrentOxygenMultiplier();
+            stamina -= 4f * multiplier; 
+            ClampStamina();
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    IEnumerator StaminaRegenerationOverTime()
+    {
+        while (stamina < 100)
+        {
+            stamina += 10f;
+            ClampStamina();
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    IEnumerator StaminaCrawlRegenerationOverTime()
+    {
+        while (stamina < 100)
+        {
+            stamina += 3.0f; 
+            ClampStamina();
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
 }
