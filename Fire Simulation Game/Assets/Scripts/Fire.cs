@@ -7,29 +7,28 @@ public class Fire : MonoBehaviour
 {
     [SerializeField] private Spawner SmokeSpawner;
 
-    private float initialX;
-    private float initialY;
-    private float initialZ;
-
     public float intensityValue;
     private Vector3 maxScale;
     private bool isGrowing;
     [SerializeField] private float growingSpeed;
+    private float maxGrowingSpeed;
 
     public string type;
 
     // Start is called before the first frame update
     void Start()
     {
-        initialX = transform.position.x;
-        initialY = transform.position.y;
-        initialZ = transform.position.z;
+        intensityValue = 0.0f;
+        growingSpeed = 0.05f;
+        maxGrowingSpeed = 0.25f;
 
         if (type == "") type = "Class A";
 
-        maxScale = new Vector3(0.0f, 1.1f, 0.0f);
+        maxScale = new Vector3(35.0f, 1.1f, 35.0f);
         isGrowing = false;
         Toggle(true);       // to be removed
+
+        transform.localScale = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -64,7 +63,7 @@ public class Fire : MonoBehaviour
             if (maxScale.y > 0.0f) newScale.y = Math.Min(newScale.y, maxScale.y);
             if (maxScale.z > 0.0f) newScale.z = Math.Min(newScale.z, maxScale.z);
 
-            growingSpeed = Math.Min(growingSpeed + 0.00001f, 0.15f);
+            growingSpeed = Math.Min(growingSpeed + 0.00001f, maxGrowingSpeed);
         }
         else
         {
@@ -126,15 +125,16 @@ public class Fire : MonoBehaviour
 
                         if (type.Equals("Electrical"))
                         {
-                            Debug.Log("Explosion happens");
-                            // proceed to game over screen
+                            AffectFire(obj.fireFightingValue);
+                            maxGrowingSpeed = 0.5f;
+                            growingSpeed = Math.Min(growingSpeed * 2, maxGrowingSpeed);
                         }
                         else
                         {
                             if (type.Equals("Grease"))
                             {
                                 AffectFire(obj.fireFightingValue);
-                                growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, 0.15f);
+                                growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
                             }
                             else if (type.Equals("Class A"))
                             {
@@ -143,7 +143,8 @@ public class Fire : MonoBehaviour
                             }
                         }
                     }
-                    else AffectFire(-obj.fireFightingValue);
+                    else if (obj.GetComponent<Rigidbody>().velocity != Vector3.zero)
+                        AffectFire(-obj.fireFightingValue);
                 }
             }
         }
