@@ -27,7 +27,7 @@ public class Fire : MonoBehaviour
 
         if (type == "") type = "Class A";
 
-        maxScale = new Vector3(0.1f, 0.1f, 0.1f);
+        maxScale = new Vector3(0.0f, 1.1f, 0.0f);
         isGrowing = false;
         Toggle(true);       // to be removed
     }
@@ -35,10 +35,16 @@ public class Fire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isGrowing) AffectFire(growingSpeed * Time.deltaTime);
+        if (isGrowing)
+        {
+            AffectFire(growingSpeed * Time.deltaTime);
 
-        SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x, intensityValue + 1.5f,
+            SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x, intensityValue + 1.5f,
                                                         SmokeSpawner.transform.position.z);
+        }
+
+        if (transform.localScale == maxScale) isGrowing = false;
+        else isGrowing = true;
     }
 
     public void AffectFire(float amt)
