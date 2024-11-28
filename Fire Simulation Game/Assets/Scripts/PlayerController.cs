@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    // Notification system reference
+    public NotificationTriggerEvent notificationSystem;
+
     public Fire FireOnPlayer;
 
     private Rigidbody rb;
@@ -138,7 +141,10 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Not enough stamina to run"); // Replace later with UI message
+                    notificationSystem.notificationMessage = "Not enough stamina to run!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
                 }
             }
             else if (Input.GetKeyDown(KeyCode.R))
@@ -149,7 +155,10 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Not enough stamina to roll"); // Replace later with UI message
+                    notificationSystem.notificationMessage = "Not enough stamina to roll!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
                 }
             }
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
@@ -173,8 +182,11 @@ public class PlayerController : MonoBehaviour
         // Prevent movement while crawling if player does not have enough stamina
         if (currentState == "Crawling" && playerBars.stamina < staminaRequiredForCrawling)
         {
-            rb.velocity = Vector3.zero; 
-            // Add UI message showing not enough stamina to move while crawling
+            rb.velocity = Vector3.zero;
+            notificationSystem.notificationMessage = "Not enough stamina to crawl!";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 3.0f;
+            notificationSystem.displayNotification();
             return;
         }
 
@@ -335,6 +347,11 @@ public class PlayerController : MonoBehaviour
                 Pail pail = hitTransform.GetComponent<Pail>();
                 if (pail)
                 {
+                    notificationSystem.notificationMessage = "Use the faucet to fill the bucket with water and then throw it at the fire!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
+
                     pail.closeProximityValue = closeProximityValue;
                     pail.playerCamera = transform.GetChild(0);
                     hitTransform.SetPositionAndRotation(

@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
+    // Notification system reference
+    public NotificationTriggerEvent notificationSystem;
+    public bool notificationDisplayed;
+    public PlayerController playerCheck;
+
     [SerializeField] private Spawner SmokeSpawner;
 
     public float intensityValue;
@@ -29,13 +34,28 @@ public class Fire : MonoBehaviour
         Toggle(true);       // to be removed
 
         transform.localScale = Vector3.zero;
+
+        notificationDisplayed = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (playerCheck.isOnFire == true) // needed to prevent the fire emerging notification from popping up when the player catches fire
+        {
+            notificationDisplayed = true;
+        }
+
         if (isGrowing)
         {
+            if (notificationDisplayed == false)
+            {
+                notificationDisplayed = true;
+                notificationSystem.notificationMessage = "A fire has emerged!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 3.0f;
+                notificationSystem.displayNotification();
+            }
             AffectFire(growingSpeed * Time.deltaTime);
 
             SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x, intensityValue + 1.5f,
