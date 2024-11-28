@@ -2237,6 +2237,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6607809, y: 3.658938, z: 0.94340324}
   m_Center: {x: -0.034554005, y: 1.7520704, z: 0.05294323}
+--- !u!114 &198191358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 198191354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a23861d78c12d346ac4849c36c5f7f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isHeld: 0
+  fireFightingValue: 3
 --- !u!43 &198594061
 Mesh:
   m_ObjectHideFlags: 0
@@ -12185,6 +12199,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8848726528062845620, guid: 3ababef4b90c5a74e8c6a3e7b12195b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 198191356}
+    - targetCorrespondingSourceObject: {fileID: 8848726528062845620, guid: 3ababef4b90c5a74e8c6a3e7b12195b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 198191358}
   m_SourcePrefab: {fileID: 100100000, guid: 3ababef4b90c5a74e8c6a3e7b12195b1, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
