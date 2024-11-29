@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     public bool coverNoseMessageDisplayed;
     public bool stoppedCoveringNoseMessageDisplayed;
 
+    public NoseNotification noseNotificationSystem;
+
     public Fire FireOnPlayer;
 
     private Rigidbody rb;
@@ -176,11 +178,15 @@ public class PlayerController : MonoBehaviour
 
             if (!heldObject)
             {
-                if (Input.GetMouseButton(0)) CoverNose();
+                if (Input.GetMouseButton(0))
+                {
+                    noseNotificationSystem.EnableNotification();
+                    CoverNose();
+                }
                 else
                 {
                     isCoveringNose = false;
-
+                    noseNotificationSystem.RemoveNotification();
                     if (coverNoseMessageDisplayed == true && stoppedCoveringNoseMessageDisplayed == false)
                     {
                         stoppedCoveringNoseMessageDisplayed = true;
