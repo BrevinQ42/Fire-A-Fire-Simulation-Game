@@ -72,6 +72,11 @@ public class PlayerController : MonoBehaviour
         heldObject = null;
 
         playerBars = GetComponent<PlayerBars>();
+
+        notificationSystem.notificationMessage = "There are ways to prevent fires from happening, one way is to avoid octopus wiring. Look for an extension cord that is plugged into another and plug it into an outlet instead.";
+        notificationSystem.disableAfterTimer = true;
+        notificationSystem.disableTimer = 5.0f;
+        notificationSystem.displayNotification();
     }
 
     void FixedUpdate()
@@ -345,6 +350,7 @@ public class PlayerController : MonoBehaviour
                 hitTransform.SetParent(transform);
 
                 Pail pail = hitTransform.GetComponent<Pail>();
+                NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
                 if (pail)
                 {
                     notificationSystem.notificationMessage = "Use the faucet to fill the bucket with water and then throw it at the fire!";
@@ -357,6 +363,14 @@ public class PlayerController : MonoBehaviour
                     hitTransform.SetPositionAndRotation(
                         transform.position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
                         transform.rotation);
+                }
+                if (nonFlammable)
+                {
+                    notificationSystem.notificationMessage = "You can throw this directly at a fire to put it out!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
+                    hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
                 }
                 else
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);

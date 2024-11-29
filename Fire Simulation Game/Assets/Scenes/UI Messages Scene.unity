@@ -333,6 +333,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fire
       objectReference: {fileID: 0}
+    - target: {fileID: 580641712304378339, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 835678449782325604, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30
