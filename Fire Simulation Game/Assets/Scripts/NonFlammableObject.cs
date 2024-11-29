@@ -6,7 +6,6 @@ public class NonFlammableObject : FireFightingObject
 {
     public bool lookedAt;
     public GameObject textName;
-    public PlayerController player;
 
     void Start()
     {
@@ -20,7 +19,7 @@ public class NonFlammableObject : FireFightingObject
         {
             textName.SetActive(false);
         }
-        if (lookedAt == true && isHeld == false)
+        if (lookedAt == true)
         {
             textName.SetActive(true);
         }

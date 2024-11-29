@@ -112,6 +112,15 @@ public class PlayerController : MonoBehaviour
                             fireResistant.lookedAt = true;
                         }
                     }
+                    if (hitTransform.name == "bibb_faucet")
+                    {
+                        Debug.Log("Faucet Object is Hit");  
+                        Faucet faucet = hitTransform.GetComponent<Faucet>();
+                        if (faucet != null)
+                        {
+                            faucet.lookedAt = true;
+                        }
+                    }
                 }
             }
             else
@@ -121,6 +130,12 @@ public class PlayerController : MonoBehaviour
                 {
                     obj.lookedAt = false;
                 }
+                // Reset lookedAt for all Faucets
+                foreach (var obj in FindObjectsOfType<Faucet>())
+                {
+                    obj.lookedAt = false;
+                }
+
 
                 Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
                 Debug.Log("Did not Hit");
@@ -151,6 +166,12 @@ public class PlayerController : MonoBehaviour
         staminaRequiredForCrawling = 4f * playerBars.GetCurrentOxygenMultiplier();
         staminaRequiredForRunning = 10f * playerBars.GetCurrentOxygenMultiplier();
         staminaRequiredForRolling = 20f * playerBars.GetCurrentOxygenMultiplier();
+
+        // If they are on fire
+        if (FireOnPlayer == null)
+        {
+            isOnFire = false;
+        }
 
         // basic controls
         Move();
@@ -355,7 +376,6 @@ public class PlayerController : MonoBehaviour
                 if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
                 {
                     FireOnPlayer = null;
-                    isOnFire = false;
                     Debug.Log("IsOnFire: " + isOnFire);
                     Destroy(transform.GetChild(1).gameObject);
                 }

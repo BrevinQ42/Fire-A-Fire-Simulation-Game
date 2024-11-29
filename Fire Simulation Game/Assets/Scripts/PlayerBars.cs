@@ -79,8 +79,8 @@ public class PlayerBars : MonoBehaviour
             if (fireDamageCoroutine != null)
             {
                 StopCoroutine(fireDamageCoroutine);
-                fireDamageCoroutine = null;
             }
+            fireDamageCoroutine = null;
         }
     }
 
