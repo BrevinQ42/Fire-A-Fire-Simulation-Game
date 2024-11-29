@@ -74,10 +74,13 @@ public class PlayerBars : MonoBehaviour
                 fireDamageCoroutine = StartCoroutine(FireDamageOverTime());
             }
         }
-        else if (fireDamageCoroutine != null)
+        else if (playerController.isOnFire == false)
         {
-            StopCoroutine(fireDamageCoroutine);
-            fireDamageCoroutine = null;
+            if (fireDamageCoroutine != null)
+            {
+                StopCoroutine(fireDamageCoroutine);
+                fireDamageCoroutine = null;
+            }
         }
     }
 
