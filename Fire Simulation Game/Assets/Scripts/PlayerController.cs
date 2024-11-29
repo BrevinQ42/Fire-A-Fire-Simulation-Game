@@ -115,10 +115,19 @@ public class PlayerController : MonoBehaviour
                     if (hitTransform.name == "bibb_faucet")
                     {
                         Debug.Log("Faucet Object is Hit");  
-                        Faucet faucet = hitTransform.GetComponent<Faucet>();
+                        ObjectNamePopUp faucet = hitTransform.GetComponent<ObjectNamePopUp>();
                         if (faucet != null)
                         {
                             faucet.lookedAt = true;
+                        }
+                    }
+                    if (hitTransform.name == "Bucket")
+                    {
+                        Debug.Log("Bucket Object is Hit");
+                        Pail bucket = hitTransform.GetComponent<Pail>();
+                        if (bucket != null )
+                        {
+                            bucket.lookedAt = true;
                         }
                     }
                 }
@@ -131,7 +140,12 @@ public class PlayerController : MonoBehaviour
                     obj.lookedAt = false;
                 }
                 // Reset lookedAt for all Faucets
-                foreach (var obj in FindObjectsOfType<Faucet>())
+                foreach (var obj in FindObjectsOfType<ObjectNamePopUp>())
+                {
+                    obj.lookedAt = false;
+                }
+                // Reset lookedAt for all Buckets
+                foreach (var obj in FindObjectsOfType<Pail>())
                 {
                     obj.lookedAt = false;
                 }

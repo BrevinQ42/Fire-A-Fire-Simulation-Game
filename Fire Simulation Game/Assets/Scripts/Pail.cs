@@ -14,6 +14,9 @@ public class Pail : FireFightingObject
     public float closeProximityValue;
     public Transform playerCamera;
 
+    public bool lookedAt;
+    public GameObject textName;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +26,25 @@ public class Pail : FireFightingObject
         UpdateWaterInPail();
 
         closeProximityValue = 0.0f;
+
+        lookedAt = false;
+        textName = transform.Find("FloatingText").gameObject;
+    }
+
+    private void Update()
+    {
+        if (lookedAt == false)
+        {
+            textName.SetActive(false);
+        }
+        if (lookedAt == true)
+        {
+            textName.SetActive(true);
+        }
+        if (isHeld == true)
+        {
+            textName.SetActive(false);
+        }
     }
 
     public override void Use(float throwForce, out bool isStillHeld)

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Faucet : MonoBehaviour
+public class ObjectNamePopUp : MonoBehaviour
 {
     public bool lookedAt;
     public GameObject textName;
