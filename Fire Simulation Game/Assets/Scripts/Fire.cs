@@ -148,6 +148,11 @@ public class Fire : MonoBehaviour
                             AffectFire(obj.fireFightingValue);
                             maxGrowingSpeed = 0.5f;
                             growingSpeed = Math.Min(growingSpeed * 2, maxGrowingSpeed);
+
+                            notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that fire is an electrical fire.";
+                            notificationSystem.disableAfterTimer = true;
+                            notificationSystem.disableTimer = 4.0f;
+                            notificationSystem.displayNotification();
                         }
                         else
                         {
@@ -155,6 +160,11 @@ public class Fire : MonoBehaviour
                             {
                                 AffectFire(obj.fireFightingValue);
                                 growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
+
+                                notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that fire is a grease fire.";
+                                notificationSystem.disableAfterTimer = true;
+                                notificationSystem.disableTimer = 4.0f;
+                                notificationSystem.displayNotification();
                             }
                             else if (type.Equals("Class A"))
                             {

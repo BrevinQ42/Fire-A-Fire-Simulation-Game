@@ -335,7 +335,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 580641712304378339, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 835678449782325604, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9426,7 +9426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 580641712304378339, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 835678449782325604, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9473,6 +9473,10 @@ PrefabInstance:
       value: Grease
       objectReference: {fileID: 0}
     - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: playerCheck
+      value: 
+      objectReference: {fileID: 2112114419}
+    - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: SmokeSpawner
       value: 
       objectReference: {fileID: 2055667441}
@@ -9484,6 +9488,10 @@ PrefabInstance:
       propertyPath: intensityValue
       value: -10
       objectReference: {fileID: 0}
+    - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: notificationSystem
+      value: 
+      objectReference: {fileID: 1147690821}
     - target: {fileID: 7662110345231062344, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: m_IsTrigger
       value: 1
