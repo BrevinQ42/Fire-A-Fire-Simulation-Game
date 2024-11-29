@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     // Notification system reference
     public NotificationTriggerEvent notificationSystem;
+    public bool coverNoseMessageDisplayed;
+    public bool stoppedCoveringNoseMessageDisplayed;
 
     public Fire FireOnPlayer;
 
@@ -77,6 +79,9 @@ public class PlayerController : MonoBehaviour
         notificationSystem.disableAfterTimer = true;
         notificationSystem.disableTimer = 5.0f;
         notificationSystem.displayNotification();
+
+        coverNoseMessageDisplayed = false;
+        stoppedCoveringNoseMessageDisplayed = false;
     }
 
     void FixedUpdate()
@@ -172,7 +177,19 @@ public class PlayerController : MonoBehaviour
             if (!heldObject)
             {
                 if (Input.GetMouseButton(0)) CoverNose();
-                else isCoveringNose = false;
+                else
+                {
+                    isCoveringNose = false;
+
+                    if (coverNoseMessageDisplayed == true && stoppedCoveringNoseMessageDisplayed == false)
+                    {
+                        stoppedCoveringNoseMessageDisplayed = true;
+                        notificationSystem.notificationMessage = "Stopped Covering nose!";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 3.0f;
+                        notificationSystem.displayNotification();
+                    }
+                }
             }
             else if (heldObject && Input.GetMouseButtonDown(0)) UseObject();
         }
@@ -405,7 +422,16 @@ public class PlayerController : MonoBehaviour
 
     void CoverNose()
     {
-        Debug.Log("Covering nose");
+        if (coverNoseMessageDisplayed == false)
+        {
+            notificationSystem.notificationMessage = "Covering nose!";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 3.0f;
+            notificationSystem.displayNotification();
+                
+            coverNoseMessageDisplayed = true;
+        }
+
         isCoveringNose = true;
     }
 
