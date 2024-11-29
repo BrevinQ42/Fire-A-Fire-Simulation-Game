@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -10,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public bool coverNoseMessageDisplayed;
     public bool stoppedCoveringNoseMessageDisplayed;
 
+    // Nose Notification system
     public NoseNotification noseNotificationSystem;
 
     public Fire FireOnPlayer;
@@ -40,7 +42,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
     private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
-    private FireFightingObject heldObject;
+    public FireFightingObject heldObject;
 
     [SerializeField] private float throwForce;
 
@@ -101,10 +103,25 @@ public class PlayerController : MonoBehaviour
                     Debug.Log(hit.transform.name + ": " + hit.distance);
 
                     hitTransform = hit.transform;
+                    if (hitTransform.name == "FireResistant")    
+                    {
+                        Debug.Log("FireResistant Object is Hit");
+                        NonFlammableObject fireResistant = hitTransform.GetComponent<NonFlammableObject>();
+                        if (fireResistant != null)
+                        {
+                            fireResistant.lookedAt = true;
+                        }
+                    }
                 }
             }
             else
             {
+                // Reset lookedAt for all NonFlammableObjects
+                foreach (var obj in FindObjectsOfType<NonFlammableObject>())
+                {
+                    obj.lookedAt = false;
+                }
+
                 Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
                 Debug.Log("Did not Hit");
                 hitTransform = null;
@@ -180,7 +197,6 @@ public class PlayerController : MonoBehaviour
             {
                 if (Input.GetMouseButton(0))
                 {
-                    noseNotificationSystem.EnableNotification();
                     CoverNose();
                 }
                 else
@@ -439,6 +455,7 @@ public class PlayerController : MonoBehaviour
         }
 
         isCoveringNose = true;
+        noseNotificationSystem.EnableNotification();
     }
 
     void SetupUprightState()
