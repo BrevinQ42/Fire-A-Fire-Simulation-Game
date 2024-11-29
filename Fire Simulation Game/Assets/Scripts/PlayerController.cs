@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
     private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
-    private FireFightingObject heldObject;
+    private GrabbableObject heldObject;
 
     [SerializeField] private float throwForce;
 
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (heldObject || currentState.Equals("Crawling") || currentState.Equals("Rolling")) hitTransform = null;
+        if ((heldObject && !heldObject.GetComponent<ElectricPlug>()) || currentState.Equals("Rolling")) hitTransform = null;
         else
         {
             RaycastHit hit;
@@ -344,8 +344,11 @@ public class PlayerController : MonoBehaviour
                 else
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
 
-                heldObject = hitTransform.GetComponent<FireFightingObject>();
+                heldObject = hitTransform.GetComponent<GrabbableObject>();
                 heldObject.isHeld = true;
+
+                ElectricPlug plug = heldObject.GetComponent<ElectricPlug>();
+                if (plug) plug.pluggedInto = "none";
             }
             else if (hitTransform.CompareTag("WaterSource"))
             {
@@ -366,10 +369,21 @@ public class PlayerController : MonoBehaviour
 
     void UseObject()
     {
-        bool isStillHeld;
-        heldObject.Use(throwForce, out isStillHeld);
+        FireFightingObject obj = heldObject.GetComponent<FireFightingObject>();
 
-        if (!isStillHeld) heldObject = null;
+        if (obj)
+        {
+            bool isStillHeld;
+            obj.Use(throwForce, out isStillHeld);
+
+            if (!isStillHeld) heldObject = null;
+        }
+        else if (hitTransform && hitTransform.CompareTag("Outlet"))
+        {
+            heldObject.Use(hitTransform);
+            
+            if (!heldObject.isHeld) heldObject = null;
+        }
     }
 
     void CoverNose()

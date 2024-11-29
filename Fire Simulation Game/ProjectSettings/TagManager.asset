@@ -7,6 +7,10 @@ TagManager:
   - Smoke
   - WaterDroplet
   - Floor
+  - Grabbable
+  - WaterSource
+  - Fire
+  - Outlet
   layers:
   - Default
   - TransparentFX

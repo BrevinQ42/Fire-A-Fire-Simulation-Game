@@ -42,8 +42,8 @@ public class Fire : MonoBehaviour
                                                         SmokeSpawner.transform.position.z);
         }
 
-        if (transform.localScale == maxScale) isGrowing = false;
-        else isGrowing = true;
+        if (transform.localScale == maxScale) Toggle(false);
+        else Toggle(true);
     }
 
     public void AffectFire(float amt)
