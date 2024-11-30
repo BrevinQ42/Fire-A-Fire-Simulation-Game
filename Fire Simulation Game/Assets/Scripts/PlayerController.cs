@@ -1,10 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    // Notification system reference
+    public NotificationTriggerEvent notificationSystem;
+    public bool coverNoseMessageDisplayed;
+    public bool stoppedCoveringNoseMessageDisplayed;
+
+    // Nose Notification system
+    public NoseNotification noseNotificationSystem;
+
     public Fire FireOnPlayer;
     [SerializeField] private FireManager fireManager;
 
@@ -34,7 +43,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
     private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
-    private GrabbableObject heldObject;
+    [SerializeField] private GrabbableObject heldObject;
 
     [SerializeField] private float throwForce;
 
@@ -70,6 +79,14 @@ public class PlayerController : MonoBehaviour
         heldObject = null;
 
         playerBars = GetComponent<PlayerBars>();
+
+        notificationSystem.notificationMessage = "There are ways to prevent fires from happening, one way is to avoid octopus wiring. Look for an extension cord that is plugged into another and plug it into an outlet instead.";
+        notificationSystem.disableAfterTimer = true;
+        notificationSystem.disableTimer = 5.0f;
+        notificationSystem.displayNotification();
+
+        coverNoseMessageDisplayed = false;
+        stoppedCoveringNoseMessageDisplayed = false;
     }
 
     void FixedUpdate()
@@ -87,10 +104,54 @@ public class PlayerController : MonoBehaviour
                     Debug.Log(hit.transform.name + ": " + hit.distance);
 
                     hitTransform = hit.transform;
+                    if (hitTransform.name == "FireResistant")    
+                    {
+                        Debug.Log("FireResistant Object is Hit");
+                        NonFlammableObject fireResistant = hitTransform.GetComponent<NonFlammableObject>();
+                        if (fireResistant != null)
+                        {
+                            fireResistant.lookedAt = true;
+                        }
+                    }
+                    if (hitTransform.name == "bibb_faucet")
+                    {
+                        Debug.Log("Faucet Object is Hit");  
+                        ObjectNamePopUp faucet = hitTransform.GetComponent<ObjectNamePopUp>();
+                        if (faucet != null)
+                        {
+                            faucet.lookedAt = true;
+                        }
+                    }
+                    if (hitTransform.name == "Bucket")
+                    {
+                        Debug.Log("Bucket Object is Hit");
+                        Pail bucket = hitTransform.GetComponent<Pail>();
+                        if (bucket != null )
+                        {
+                            bucket.lookedAt = true;
+                        }
+                    }
                 }
             }
             else
             {
+                // Reset lookedAt for all NonFlammableObjects
+                foreach (var obj in FindObjectsOfType<NonFlammableObject>())
+                {
+                    obj.lookedAt = false;
+                }
+                // Reset lookedAt for all Faucets
+                foreach (var obj in FindObjectsOfType<ObjectNamePopUp>())
+                {
+                    obj.lookedAt = false;
+                }
+                // Reset lookedAt for all Buckets
+                foreach (var obj in FindObjectsOfType<Pail>())
+                {
+                    obj.lookedAt = false;
+                }
+
+
                 Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
                 Debug.Log("Did not Hit");
                 hitTransform = null;
@@ -121,6 +182,12 @@ public class PlayerController : MonoBehaviour
         staminaRequiredForRunning = 10f * playerBars.GetCurrentOxygenMultiplier();
         staminaRequiredForRolling = 20f * playerBars.GetCurrentOxygenMultiplier();
 
+        // If they are on fire
+        if (FireOnPlayer == null)
+        {
+            isOnFire = false;
+        }
+
         // basic controls
         Move();
         LookAround();
@@ -139,7 +206,10 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Not enough stamina to run"); // Replace later with UI message
+                    notificationSystem.notificationMessage = "Not enough stamina to run!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
                 }
             }
             else if (Input.GetKeyDown(KeyCode.R))
@@ -150,7 +220,10 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Not enough stamina to roll"); // Replace later with UI message
+                    notificationSystem.notificationMessage = "Not enough stamina to roll!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
                 }
             }
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
@@ -158,8 +231,23 @@ public class PlayerController : MonoBehaviour
 
             if (!heldObject)
             {
-                if (Input.GetMouseButton(0)) CoverNose();
-                else isCoveringNose = false;
+                if (Input.GetMouseButton(0))
+                {
+                    CoverNose();
+                }
+                else
+                {
+                    isCoveringNose = false;
+                    noseNotificationSystem.RemoveNotification();
+                    if (coverNoseMessageDisplayed == true && stoppedCoveringNoseMessageDisplayed == false)
+                    {
+                        stoppedCoveringNoseMessageDisplayed = true;
+                        notificationSystem.notificationMessage = "Stopped Covering nose!";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 3.0f;
+                        notificationSystem.displayNotification();
+                    }
+                }
             }
             else if (heldObject && Input.GetMouseButtonDown(0)) UseObject();
         }
@@ -174,8 +262,11 @@ public class PlayerController : MonoBehaviour
         // Prevent movement while crawling if player does not have enough stamina
         if (currentState == "Crawling" && playerBars.stamina < staminaRequiredForCrawling)
         {
-            rb.velocity = Vector3.zero; 
-            // Add UI message showing not enough stamina to move while crawling
+            rb.velocity = Vector3.zero;
+            notificationSystem.notificationMessage = "Not enough stamina to crawl!";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 3.0f;
+            notificationSystem.displayNotification();
             return;
         }
 
@@ -300,7 +391,6 @@ public class PlayerController : MonoBehaviour
                 if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
                 {
                     FireOnPlayer = null;
-                    isOnFire = false;
                     Debug.Log("IsOnFire: " + isOnFire);
                     Destroy(transform.GetChild(1).gameObject);
                 }
@@ -334,13 +424,27 @@ public class PlayerController : MonoBehaviour
                 hitTransform.SetParent(transform);
 
                 Pail pail = hitTransform.GetComponent<Pail>();
+                NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
                 if (pail)
                 {
+                    notificationSystem.notificationMessage = "Use the faucet to fill the bucket with water and then throw it at the fire!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
+
                     pail.closeProximityValue = closeProximityValue;
                     pail.playerCamera = transform.GetChild(0);
                     hitTransform.SetPositionAndRotation(
                         transform.position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
                         transform.rotation);
+                }
+                if (nonFlammable)
+                {
+                    notificationSystem.notificationMessage = "You can throw this directly at a fire to put it out!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
+                    hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
                 }
                 else
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
@@ -393,8 +497,18 @@ public class PlayerController : MonoBehaviour
 
     void CoverNose()
     {
-        Debug.Log("Covering nose");
+        if (coverNoseMessageDisplayed == false)
+        {
+            notificationSystem.notificationMessage = "Covering nose!";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 3.0f;
+            notificationSystem.displayNotification();
+                
+            coverNoseMessageDisplayed = true;
+        }
+
         isCoveringNose = true;
+        noseNotificationSystem.EnableNotification();
     }
 
     void SetupUprightState()

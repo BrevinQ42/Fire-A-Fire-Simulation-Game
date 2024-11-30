@@ -4,6 +4,31 @@ using UnityEngine;
 
 public class NonFlammableObject : FireFightingObject
 {
+    public bool lookedAt;
+    public GameObject textName;
+
+    void Start()
+    {
+        lookedAt = false;
+        textName = transform.Find("FloatingText").gameObject;
+    }
+
+    void Update()
+    { 
+        if (lookedAt == false)
+        {
+            textName.SetActive(false);
+        }
+        if (lookedAt == true)
+        {
+            textName.SetActive(true);
+        }
+        if (isHeld == true)
+        {
+            textName.SetActive(false);
+        }
+    }
+
     public override void Use(float throwForce, out bool isStillHeld)
     {
         Throw(throwForce);

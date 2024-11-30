@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
+    // Notification system reference
+    public NotificationTriggerEvent notificationSystem;
+    public bool notificationDisplayed;
+    public PlayerController playerCheck;
+
     [SerializeField] private Spawner SmokeSpawner;
 
     public float intensityValue;
@@ -31,13 +36,28 @@ public class Fire : MonoBehaviour
         isGrowing = false;
 
         transform.localScale = Vector3.zero;
+
+        notificationDisplayed = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (playerCheck.isOnFire == true) // needed to prevent the fire emerging notification from popping up when the player catches fire
+        {
+            notificationDisplayed = true;
+        }
+
         if (isGrowing)
         {
+            if (notificationDisplayed == false)
+            {
+                notificationDisplayed = true;
+                notificationSystem.notificationMessage = "A fire has emerged!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 3.0f;
+                notificationSystem.displayNotification();
+            }
             AffectFire(growingSpeed * Time.deltaTime);
 
             SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x, intensityValue + 1.5f,
@@ -130,6 +150,11 @@ public class Fire : MonoBehaviour
                             AffectFire(obj.fireFightingValue);
                             maxGrowingSpeed = 0.5f;
                             growingSpeed = Math.Min(growingSpeed * 2, maxGrowingSpeed);
+
+                            notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that fire is an electrical fire.";
+                            notificationSystem.disableAfterTimer = true;
+                            notificationSystem.disableTimer = 4.0f;
+                            notificationSystem.displayNotification();
                         }
                         else
                         {
@@ -137,6 +162,11 @@ public class Fire : MonoBehaviour
                             {
                                 AffectFire(obj.fireFightingValue);
                                 growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
+
+                                notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that fire is a grease fire.";
+                                notificationSystem.disableAfterTimer = true;
+                                notificationSystem.disableTimer = 4.0f;
+                                notificationSystem.displayNotification();
                             }
                             else if (type.Equals("Class A"))
                             {

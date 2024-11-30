@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerBars : MonoBehaviour
 {
+    // Notification system reference
+    public NotificationTriggerEvent notificationSystem;
+
     // Hydration Level
     public float hydrationLevel = 100f;
     public float hydrationLevelDamage = 1000f;
@@ -71,9 +74,12 @@ public class PlayerBars : MonoBehaviour
                 fireDamageCoroutine = StartCoroutine(FireDamageOverTime());
             }
         }
-        else if (fireDamageCoroutine != null)
+        else if (playerController.isOnFire == false)
         {
-            StopCoroutine(fireDamageCoroutine);
+            if (fireDamageCoroutine != null)
+            {
+                StopCoroutine(fireDamageCoroutine);
+            }
             fireDamageCoroutine = null;
         }
     }
@@ -249,7 +255,17 @@ public class PlayerBars : MonoBehaviour
     {
         stamina = Mathf.Clamp(stamina, 0f, 100f);
         staminaBar.value = stamina / 100f;
+
+        // Display Stamina Notification
+        if (stamina == 0)
+        {
+            notificationSystem.notificationMessage = "Stamina Depleted!";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 3.0f;
+            notificationSystem.displayNotification();
+        }
     }
+
     public float GetCurrentOxygenMultiplier()
     {
         return Mathf.Lerp(1.0f, 2.0f, 1 - (oxygen / 100f));
