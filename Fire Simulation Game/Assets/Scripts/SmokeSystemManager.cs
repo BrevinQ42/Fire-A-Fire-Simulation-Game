@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SmokeSystemManager : MonoBehaviour
 {
+    // Notification system reference
+    public NotificationTriggerEvent notificationSystem;
+
     private int spawnersActive = 0; // updated in spawner script
 
     public GameObject smokeLayer1;      
@@ -32,7 +35,12 @@ public class SmokeSystemManager : MonoBehaviour
             {
                 DeleteSmokeSpheres();     
                 ActivateSmokeLayer1();      
-                isSmokeLayer1Activated = true; 
+                isSmokeLayer1Activated = true;
+
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 3.0f;
+                notificationSystem.displayNotification();
             }
 
             // After 6 minutes, activate layer 1
@@ -41,6 +49,11 @@ public class SmokeSystemManager : MonoBehaviour
                 DeleteSmokeSpheres();
                 ActivateSmokeLayer2();
                 isSmokeLayer2Activated = true;
+
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 3.0f;
+                notificationSystem.displayNotification();
             }
         }
     }

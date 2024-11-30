@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
+    // Notification system reference
+    public NotificationTriggerEvent notificationSystem;
+    public bool notificationDisplayed;
+    public PlayerController playerCheck;
+
     [SerializeField] private Spawner SmokeSpawner;
 
     public float intensityValue;
@@ -18,6 +23,9 @@ public class Fire : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SmokeSpawner = GetComponentInChildren<Spawner>();
+        SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
+
         intensityValue = 0.0f;
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
@@ -26,24 +34,38 @@ public class Fire : MonoBehaviour
 
         maxScale = new Vector3(35.0f, 1.1f, 35.0f);
         isGrowing = false;
-        Toggle(true);       // to be removed
 
         transform.localScale = Vector3.zero;
+
+        notificationDisplayed = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (playerCheck.isOnFire == true) // needed to prevent the fire emerging notification from popping up when the player catches fire
+        {
+            notificationDisplayed = true;
+        }
+
         if (isGrowing)
         {
+            if (notificationDisplayed == false)
+            {
+                notificationDisplayed = true;
+                notificationSystem.notificationMessage = "A fire has emerged!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 3.0f;
+                notificationSystem.displayNotification();
+            }
             AffectFire(growingSpeed * Time.deltaTime);
 
             SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x, intensityValue + 1.5f,
                                                         SmokeSpawner.transform.position.z);
         }
 
-        if (transform.localScale == maxScale) isGrowing = false;
-        else isGrowing = true;
+        if (transform.localScale == maxScale) Toggle(false);
+        else Toggle(true);
     }
 
     public void AffectFire(float amt)
@@ -106,10 +128,10 @@ public class Fire : MonoBehaviour
                                                         Quaternion.identity).GetComponent<Fire>();
 
                     player.FireOnPlayer.transform.SetParent(player.transform);
-                    player.FireOnPlayer.intensityValue = intensityValue / 2.0f;
+                    player.FireOnPlayer.intensityValue = intensityValue / 1.2f;
                     player.isOnFire = true;
                 }
-                else player.FireOnPlayer.AffectFire(intensityValue / 2.0f);
+                else player.FireOnPlayer.AffectFire(intensityValue / 1.2f);
             }
 
             else
@@ -128,6 +150,11 @@ public class Fire : MonoBehaviour
                             AffectFire(obj.fireFightingValue);
                             maxGrowingSpeed = 0.5f;
                             growingSpeed = Math.Min(growingSpeed * 2, maxGrowingSpeed);
+
+                            notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that fire is an electrical fire.";
+                            notificationSystem.disableAfterTimer = true;
+                            notificationSystem.disableTimer = 4.0f;
+                            notificationSystem.displayNotification();
                         }
                         else
                         {
@@ -135,6 +162,11 @@ public class Fire : MonoBehaviour
                             {
                                 AffectFire(obj.fireFightingValue);
                                 growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
+
+                                notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that fire is a grease fire.";
+                                notificationSystem.disableAfterTimer = true;
+                                notificationSystem.disableTimer = 4.0f;
+                                notificationSystem.displayNotification();
                             }
                             else if (type.Equals("Class A"))
                             {
