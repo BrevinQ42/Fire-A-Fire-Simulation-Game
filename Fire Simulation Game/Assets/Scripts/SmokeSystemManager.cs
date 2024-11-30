@@ -37,7 +37,7 @@ public class SmokeSystemManager : MonoBehaviour
                 ActivateSmokeLayer1();      
                 isSmokeLayer1Activated = true;
 
-                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!";
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!\n[C] to crawl / stand back up";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 3.0f;
                 notificationSystem.displayNotification();
@@ -50,7 +50,7 @@ public class SmokeSystemManager : MonoBehaviour
                 ActivateSmokeLayer2();
                 isSmokeLayer2Activated = true;
 
-                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!";
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!\n[C] to crawl / stand back up";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 3.0f;
                 notificationSystem.displayNotification();

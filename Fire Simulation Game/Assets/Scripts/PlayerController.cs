@@ -11,6 +11,10 @@ public class PlayerController : MonoBehaviour
     public bool coverNoseMessageDisplayed;
     public bool stoppedCoveringNoseMessageDisplayed;
 
+    private bool isExtensionsResolved;
+
+    [SerializeField] private Collider collidedWith;
+
     // Nose Notification system
     public NoseNotification noseNotificationSystem;
 
@@ -57,6 +61,10 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        isExtensionsResolved = false;
+
+        collidedWith = null;
+
         rb = GetComponent<Rigidbody>();
         cameraTransform = transform.GetChild(0);
 
@@ -80,9 +88,9 @@ public class PlayerController : MonoBehaviour
 
         playerBars = GetComponent<PlayerBars>();
 
-        notificationSystem.notificationMessage = "There are ways to prevent fires from happening, one way is to avoid octopus wiring. Look for an extension cord that is plugged into another and plug it into an outlet instead.";
+        notificationSystem.notificationMessage = "There are ways to prevent fires from happening, one way is to avoid octopus wiring. Look for an extension cord that is plugged into another and plug it into an outlet instead.\n*Maybe it's behind you*";
         notificationSystem.disableAfterTimer = true;
-        notificationSystem.disableTimer = 5.0f;
+        notificationSystem.disableTimer = 7.5f;
         notificationSystem.displayNotification();
 
         coverNoseMessageDisplayed = false;
@@ -100,7 +108,6 @@ public class PlayerController : MonoBehaviour
                 if (hit.transform.CompareTag("Floor") || hit.transform.CompareTag("Fire")) hitTransform = null;
                 else
                 {
-                    Debug.DrawRay(cameraTransform.position, cameraTransform.forward * hit.distance, Color.yellow);
                     Debug.Log(hit.transform.name + ": " + hit.distance);
 
                     hitTransform = hit.transform;
@@ -455,6 +462,17 @@ public class PlayerController : MonoBehaviour
                 ElectricPlug plug = heldObject.GetComponent<ElectricPlug>();
                 if (plug)
                 {
+                    if(!isExtensionsResolved &&
+                        plug.owner.name.Equals("ExtensionCord") && plug.pluggedInto.name.Equals("ExtensionCord"))
+                    {
+                        notificationSystem.notificationMessage = "Unplug unused appliances as well!\n*Take note that fire may come from other houses despite doing this";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 7.0f;
+                        notificationSystem.displayNotification();
+
+                        isExtensionsResolved = true;
+                    }
+
                     plug.pluggedInto = null;
                     fireManager.RemoveSpawnPoint(plug.transform);
                 }
@@ -527,6 +545,55 @@ public class PlayerController : MonoBehaviour
         isHorizontalTiltEnabled = true;
         transform.eulerAngles = new Vector3(75, transform.eulerAngles.y, transform.eulerAngles.z);
         cameraTransform.eulerAngles = new Vector3(30, transform.eulerAngles.y, transform.eulerAngles.z);
+    }
+
+    void EndGame()
+    {
+        if (collidedWith)
+        {
+            if (collidedWith.name.Equals("Outside Floor"))
+            {
+                notificationSystem.notificationMessage = "You successfully fought the fire!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 10.0f;
+                notificationSystem.displayNotification();
+                
+                Debug.Log("You Won");
+            }
+            else if (collidedWith.name.Equals("Court"))
+            {
+                notificationSystem.notificationMessage = "You successfully escaped the fire!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 10.0f;
+                notificationSystem.displayNotification();
+            
+                Debug.Log("You Escaped");
+            }
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (fireManager.isPlayerSuccessful)
+        {    
+            if (collision.collider.name.Equals("Outside Floor"))
+            {
+                collidedWith = collision.collider;
+
+                EndGame();
+            }
+        }
+        else if (collision.collider.name.Equals("Court"))
+        {
+            collidedWith = collision.collider;
+
+            notificationSystem.notificationMessage = "Press Enter to End the Game!";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 5.0f;
+            notificationSystem.displayNotification();
+
+            EndGame();
+        }
     }
 
     void TestFunction()

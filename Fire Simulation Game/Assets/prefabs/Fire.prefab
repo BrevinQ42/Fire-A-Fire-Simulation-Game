@@ -54,7 +54,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -72,8 +72,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c5fd343b0ec46d4d871db8963252892, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  notificationSystem: {fileID: 0}
+  notificationDisplayed: 0
+  playerCheck: {fileID: 0}
   SmokeSpawner: {fileID: 0}
   intensityValue: 0
+  maxScale: {x: 35, y: 1.1, z: 35}
   growingSpeed: 0.05
   type: 
 --- !u!1 &1675037213436034017

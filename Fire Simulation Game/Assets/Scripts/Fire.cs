@@ -35,7 +35,7 @@ public class Fire : MonoBehaviour
 
         if (type == "") type = "Class A";
 
-        maxScale = new Vector3(35.0f, 1.1f, 35.0f);
+        maxScale = new Vector3(0.0f, 1.1f, 0.0f);
         isGrowing = false;
 
         transform.localScale = Vector3.zero;
@@ -63,7 +63,8 @@ public class Fire : MonoBehaviour
             }
             AffectFire(growingSpeed * Time.deltaTime);
 
-            SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x, intensityValue + 1.5f,
+            SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x,
+                                                        Math.Min(intensityValue + 1.5f, 2.5f),
                                                         SmokeSpawner.transform.position.z);
         }
 
@@ -122,7 +123,11 @@ public class Fire : MonoBehaviour
             if (collider.name.Equals("Player"))
             {
                 PlayerController player = collider.GetComponent<PlayerController>();
-                Debug.Log("Player is burning!");
+                
+                notificationSystem.notificationMessage = "You are burning!\n[R] to roll from side to side to put it out!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 4.0f;
+                notificationSystem.displayNotification();
 
                 if (!player.FireOnPlayer)
                 {
@@ -181,6 +186,9 @@ public class Fire : MonoBehaviour
                     else if (obj.GetComponent<Rigidbody>().velocity != Vector3.zero)
                         AffectFire(-obj.fireFightingValue);
                 }
+                
+                else if (collider.CompareTag("Outlet") && !type.Equals("Electrical"))
+                    type = "Electrical";
             }
         }
     }

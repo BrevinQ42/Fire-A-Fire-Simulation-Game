@@ -11,6 +11,7 @@ public class ElectricPlug : GrabbableObject
 
     void Start()
     {
+        if (transform.parent && !transform.parent.name.Equals("Main House")) pluggedInto = transform.parent;
         InitializeFireManager();
     }
 

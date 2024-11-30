@@ -4,17 +4,22 @@ using UnityEngine;
 
 public class FireManager : MonoBehaviour
 {
+	// Notification system reference
+    public NotificationTriggerEvent notificationSystem;
+
 	[SerializeField] private Fire firePrefab;
 	[SerializeField] private List<Transform> FireSpawnPoints;
 
 	[SerializeField] private float timeBeforeFire;
 	private bool isFireOngoing;
 	private Fire ongoingFire;
+	public bool isPlayerSuccessful;
 
 	void Start()
 	{
 		isFireOngoing = false;
 		ongoingFire = null;
+		isPlayerSuccessful = false;
 	}
 
 	void Update()
@@ -70,15 +75,20 @@ public class FireManager : MonoBehaviour
 			ongoingFire = Instantiate(firePrefab, spawnPoint, Quaternion.identity).GetComponent<Fire>();
 
 			if (spawnTransform.GetComponent<ElectricPlug>()) ongoingFire.type = "Electrical";
-			else if (spawnTransform.name.Equals("FryingPan")) ongoingFire.type = "Grease";
+			else if (spawnTransform.name.Equals("Pan")) ongoingFire.type = "Grease";
 			else ongoingFire.type = "Class A";
 
 			ongoingFire.Toggle(true);
 			isFireOngoing = true;
 		}
-		else if (ongoingFire == null)
+		else if (ongoingFire == null && !isPlayerSuccessful)
 		{
-			Debug.Log("Fire has been extinguished\nYou should now leave to help your neighbors who may need it");
+			notificationSystem.notificationMessage = "You have extinguished the fire!\nHelp your neighbors who might still need it!";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 4.0f;
+            notificationSystem.displayNotification();
+
+			isPlayerSuccessful = true;
 		}
 	}
 
