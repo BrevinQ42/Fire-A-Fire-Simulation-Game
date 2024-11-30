@@ -18,6 +18,9 @@ public class Fire : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SmokeSpawner = GetComponentInChildren<Spawner>();
+        SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
+
         intensityValue = 0.0f;
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
@@ -26,7 +29,6 @@ public class Fire : MonoBehaviour
 
         maxScale = new Vector3(35.0f, 1.1f, 35.0f);
         isGrowing = false;
-        Toggle(true);       // to be removed
 
         transform.localScale = Vector3.zero;
     }

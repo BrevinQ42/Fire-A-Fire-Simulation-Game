@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Fire FireOnPlayer;
+    [SerializeField] private FireManager fireManager;
 
     private Rigidbody rb;
     private Transform cameraTransform;
@@ -348,7 +349,11 @@ public class PlayerController : MonoBehaviour
                 heldObject.isHeld = true;
 
                 ElectricPlug plug = heldObject.GetComponent<ElectricPlug>();
-                if (plug) plug.pluggedInto = "none";
+                if (plug)
+                {
+                    plug.pluggedInto = null;
+                    fireManager.RemoveSpawnPoint(plug.transform);
+                }
             }
             else if (hitTransform.CompareTag("WaterSource"))
             {
