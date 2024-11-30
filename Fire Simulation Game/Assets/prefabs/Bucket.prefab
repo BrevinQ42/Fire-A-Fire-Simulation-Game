@@ -234,13 +234,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isHeld: 0
-  fireFightingValue: 30
+  fireFightingValue: 1.5
   WaterObject: {fileID: 8066359131496540432, guid: ea6bb195fb9611043a2a2a83c70d69a5, type: 3}
   WaterInPail: {fileID: 3437832890249341886}
   fractionFilled: 0
   closeProximityValue: 0
   playerCamera: {fileID: 0}
-  throwHeightOffset: {x: 0, y: 0, z: 0}
+  lookedAt: 0
+  textName: {fileID: 0}
 --- !u!1 &3437832890249341886
 GameObject:
   m_ObjectHideFlags: 0

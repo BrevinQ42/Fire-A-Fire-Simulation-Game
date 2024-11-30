@@ -6502,6 +6502,10 @@ PrefabInstance:
       propertyPath: tempTime
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 5860125778019982601, guid: 36d3d125778d3ef44bc0942c4fa9ddf0, type: 3}
+      propertyPath: fireFightingValue
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -12048,7 +12052,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isHeld: 0
-  fireFightingValue: 10
+  fireFightingValue: 0.5
   lookedAt: 0
   textName: {fileID: 0}
 --- !u!54 &2076285416
@@ -12275,6 +12279,7 @@ MonoBehaviour:
   stoppedCoveringNoseMessageDisplayed: 0
   noseNotificationSystem: {fileID: 845590908}
   FireOnPlayer: {fileID: 0}
+  fireManager: {fileID: 0}
   currentState: 
   walkingSpeed: 2.75
   crawlingSpeed: 1.5

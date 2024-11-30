@@ -128,10 +128,10 @@ public class Fire : MonoBehaviour
                                                         Quaternion.identity).GetComponent<Fire>();
 
                     player.FireOnPlayer.transform.SetParent(player.transform);
-                    player.FireOnPlayer.intensityValue = intensityValue / 2.0f;
+                    player.FireOnPlayer.intensityValue = intensityValue / 1.2f;
                     player.isOnFire = true;
                 }
-                else player.FireOnPlayer.AffectFire(intensityValue / 2.0f);
+                else player.FireOnPlayer.AffectFire(intensityValue / 1.2f);
             }
 
             else
