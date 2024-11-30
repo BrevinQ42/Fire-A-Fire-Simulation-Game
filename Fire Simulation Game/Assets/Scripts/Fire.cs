@@ -23,6 +23,9 @@ public class Fire : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        notificationSystem = FindAnyObjectByType<NotificationTriggerEvent>();
+        playerCheck = FindAnyObjectByType<PlayerController>();
+
         SmokeSpawner = GetComponentInChildren<Spawner>();
         SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
 
