@@ -7,8 +7,6 @@ public class Fire : MonoBehaviour
 {
     // Notification system reference
     public NotificationTriggerEvent notificationSystem;
-    public bool notificationDisplayed;
-    public PlayerController playerCheck;
 
     [SerializeField] private Spawner SmokeSpawner;
 
@@ -46,21 +44,8 @@ public class Fire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerCheck.isOnFire == true) // needed to prevent the fire emerging notification from popping up when the player catches fire
-        {
-            notificationDisplayed = true;
-        }
-
         if (isGrowing)
         {
-            if (notificationDisplayed == false)
-            {
-                notificationDisplayed = true;
-                notificationSystem.notificationMessage = "A fire has emerged! Identify the cause of the fire and act accordingly!";
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 5.0f;
-                notificationSystem.displayNotification();
-            }
             AffectFire(growingSpeed * Time.deltaTime);
 
             SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x,

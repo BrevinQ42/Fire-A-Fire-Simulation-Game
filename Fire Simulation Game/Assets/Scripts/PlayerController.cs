@@ -434,9 +434,9 @@ public class PlayerController : MonoBehaviour
                 NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
                 if (pail)
                 {
-                    notificationSystem.notificationMessage = "Use the faucet to fill the bucket with water and then throw it at the fire!";
+                    notificationSystem.notificationMessage = "Use the faucet to fill the bucket with water and then [Left Click] to throw it at the fire!\n[G] to Drop Bucket";
                     notificationSystem.disableAfterTimer = true;
-                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.disableTimer = 6.0f;
                     notificationSystem.displayNotification();
 
                     pail.closeProximityValue = closeProximityValue;
@@ -447,9 +447,9 @@ public class PlayerController : MonoBehaviour
                 }
                 if (nonFlammable)
                 {
-                    notificationSystem.notificationMessage = "You can throw this directly at a fire to put it out!";
+                    notificationSystem.notificationMessage = "You can [Left Click] to throw this directly at a fire to put it out!\n[G] to Drop Fire-Resistant Object";
                     notificationSystem.disableAfterTimer = true;
-                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.disableTimer = 6.0f;
                     notificationSystem.displayNotification();
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
                 }
@@ -465,12 +465,19 @@ public class PlayerController : MonoBehaviour
                     if(!isExtensionsResolved &&
                         plug.owner.name.Equals("ExtensionCord") && plug.pluggedInto.name.Equals("ExtensionCord"))
                     {
-                        notificationSystem.notificationMessage = "Unplug unused appliances as well!\n*Take note that fire may come from other houses despite doing this";
+                        notificationSystem.notificationMessage = "Unplug unused appliances as well!\n*Take note that fire may come from other houses despite doing this*";
                         notificationSystem.disableAfterTimer = true;
                         notificationSystem.disableTimer = 7.0f;
                         notificationSystem.displayNotification();
 
                         isExtensionsResolved = true;
+                    }
+                    else
+                    {
+                        notificationSystem.notificationMessage = "[Left Click] to plug it back in!\n[G] to Drop Plug";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 7.0f;
+                        notificationSystem.displayNotification();
                     }
 
                     plug.pluggedInto = null;
