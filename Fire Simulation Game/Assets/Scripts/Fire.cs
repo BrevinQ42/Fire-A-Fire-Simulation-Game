@@ -22,7 +22,6 @@ public class Fire : MonoBehaviour
     void Start()
     {
         notificationSystem = FindAnyObjectByType<NotificationTriggerEvent>();
-        playerCheck = FindAnyObjectByType<PlayerController>();
 
         SmokeSpawner = GetComponentInChildren<Spawner>();
         SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
@@ -37,8 +36,6 @@ public class Fire : MonoBehaviour
         isGrowing = false;
 
         transform.localScale = Vector3.zero;
-
-        notificationDisplayed = false;
     }
 
     // Update is called once per frame
