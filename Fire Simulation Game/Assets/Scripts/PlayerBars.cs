@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerBars : MonoBehaviour
 {
@@ -52,12 +53,14 @@ public class PlayerBars : MonoBehaviour
 
         if (hydrationLevel <= 0f)
         {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             Debug.Log("Player has burned to death!");
             // Insert player death code here
         }
 
         if (oxygen <= 0f)
         {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             Debug.Log("Player has run out of oxygen!");
             // Insert player death code here
         }
