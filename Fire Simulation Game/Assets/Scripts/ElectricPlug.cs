@@ -9,10 +9,32 @@ public class ElectricPlug : GrabbableObject
     public Transform owner;
     public Transform pluggedInto;
 
+    public bool lookedAt;
+    public GameObject textName;
+
     void Start()
     {
+        lookedAt = false;
+        textName = transform.Find("FloatingText").gameObject;
+
         if (transform.parent && !transform.parent.name.Equals("Main House")) pluggedInto = transform.parent;
         InitializeFireManager();
+    }
+
+    private void Update()
+    {
+        if (lookedAt == false)
+        {
+            textName.SetActive(false);
+        }
+        if (lookedAt == true)
+        {
+            textName.SetActive(true);
+        }
+        if (isHeld == true)
+        {
+            textName.SetActive(false);
+        }
     }
 
     void InitializeFireManager()

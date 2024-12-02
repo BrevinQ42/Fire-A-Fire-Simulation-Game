@@ -138,6 +138,15 @@ public class PlayerController : MonoBehaviour
                             bucket.lookedAt = true;
                         }
                     }
+                    if (hitTransform.GetComponent<ElectricPlug>() != null)
+                    {
+                        Debug.Log("Plug is Hit");
+                        ElectricPlug electricPlug = hitTransform.GetComponent<ElectricPlug>();
+                        if (electricPlug != null)
+                        {
+                            electricPlug.lookedAt = true;
+                        }
+                    }
                 }
             }
             else
@@ -154,6 +163,11 @@ public class PlayerController : MonoBehaviour
                 }
                 // Reset lookedAt for all Buckets
                 foreach (var obj in FindObjectsOfType<Pail>())
+                {
+                    obj.lookedAt = false;
+                }
+                // Reset lookedAt for all Plugs
+                foreach (var obj in FindObjectsOfType<ElectricPlug>())
                 {
                     obj.lookedAt = false;
                 }
