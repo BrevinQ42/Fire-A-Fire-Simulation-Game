@@ -553,7 +553,7 @@ public class PlayerController : MonoBehaviour
         {
             if (collidedWith.name.Equals("Outside Floor"))
             {
-                notificationSystem.notificationMessage = "You successfully fought the fire!";
+                notificationSystem.notificationMessage = "YOU WON!\nYou successfully fought the fire!";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 10.0f;
                 notificationSystem.displayNotification();
@@ -562,7 +562,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (collidedWith.name.Equals("Court"))
             {
-                notificationSystem.notificationMessage = "You successfully escaped the fire!";
+                notificationSystem.notificationMessage = "YOU WON!\nYou successfully escaped the fire!";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 10.0f;
                 notificationSystem.displayNotification();

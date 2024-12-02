@@ -56,9 +56,9 @@ public class Fire : MonoBehaviour
             if (notificationDisplayed == false)
             {
                 notificationDisplayed = true;
-                notificationSystem.notificationMessage = "A fire has emerged!";
+                notificationSystem.notificationMessage = "A fire has emerged! Identify the type of fire and act accordingly!";
                 notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 3.0f;
+                notificationSystem.disableTimer = 5.0f;
                 notificationSystem.displayNotification();
             }
             AffectFire(growingSpeed * Time.deltaTime);
@@ -159,9 +159,9 @@ public class Fire : MonoBehaviour
                             maxGrowingSpeed = 0.5f;
                             growingSpeed = Math.Min(growingSpeed * 2, maxGrowingSpeed);
 
-                            notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that fire is an electrical fire.";
+                            notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that is an electrical fire.\nA fire extinguisher would have been effective, but that is unavailable in these areas.\nAttempt to evacuate to an open area like the Basketball Court immediately!";
                             notificationSystem.disableAfterTimer = true;
-                            notificationSystem.disableTimer = 4.0f;
+                            notificationSystem.disableTimer = 8.0f;
                             notificationSystem.displayNotification();
                         }
                         else
@@ -171,9 +171,9 @@ public class Fire : MonoBehaviour
                                 AffectFire(obj.fireFightingValue);
                                 growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
 
-                                notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that fire is a grease fire.";
+                                notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that is a grease fire.\nA fire extinguisher would have been effective, but that is unavailable in these areas.\nAttempt to evacuate to an open area like the Basketball Court immediately!";
                                 notificationSystem.disableAfterTimer = true;
-                                notificationSystem.disableTimer = 4.0f;
+                                notificationSystem.disableTimer = 8.0f;
                                 notificationSystem.displayNotification();
                             }
                             else if (type.Equals("Class A"))

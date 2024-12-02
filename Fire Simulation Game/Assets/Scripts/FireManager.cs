@@ -10,6 +10,8 @@ public class FireManager : MonoBehaviour
 	[SerializeField] private Fire firePrefab;
 	[SerializeField] private List<Transform> FireSpawnPoints;
 
+	private List<string> FireTypes;
+
 	[SerializeField] private float timeBeforeFire;
 	private bool isFireOngoing;
 	private Fire ongoingFire;
@@ -17,6 +19,8 @@ public class FireManager : MonoBehaviour
 
 	void Start()
 	{
+		FireTypes = new List<string>{"Electrical", "Grease", "Class A"};
+
 		isFireOngoing = false;
 		ongoingFire = null;
 		isPlayerSuccessful = false;
@@ -76,7 +80,15 @@ public class FireManager : MonoBehaviour
 
 			if (spawnTransform.GetComponent<ElectricPlug>()) ongoingFire.type = "Electrical";
 			else if (spawnTransform.name.Equals("Pan")) ongoingFire.type = "Grease";
-			else ongoingFire.type = "Class A";
+			else
+			{
+				if (index >= FireSpawnPoints.Count - 3)
+				{
+					int typeIndex = Random.Range(0, FireTypes.Count);
+					ongoingFire.type = FireTypes[typeIndex];
+				}
+				else ongoingFire.type = "Class A";
+			}
 
 			ongoingFire.Toggle(true);
 			isFireOngoing = true;
