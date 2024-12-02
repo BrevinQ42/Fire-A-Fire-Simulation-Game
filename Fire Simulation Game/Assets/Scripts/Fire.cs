@@ -61,7 +61,7 @@ public class Fire : MonoBehaviour
         if (amt > 0)
         {
             intensityValue += amt;
-            
+
             if (intensityValue > 0.5f) SmokeSpawner.Toggle(true);
 
             if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * amt;
@@ -105,7 +105,7 @@ public class Fire : MonoBehaviour
             if (collider.name.Equals("Player"))
             {
                 PlayerController player = collider.GetComponent<PlayerController>();
-                
+
                 notificationSystem.notificationMessage = "You are burning!\n[R] to roll from side to side to put it out!";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 4.0f;
@@ -131,9 +131,11 @@ public class Fire : MonoBehaviour
                 if (obj)
                 {
                     Water water = obj.GetComponent<Water>();
-                    if(water)
+                    if (water)
                     {
                         Destroy(collider.gameObject);
+
+                        bool isEligibleForNotif = !water.CompareTag("WaterDroplet") && water.GetComponent<Rigidbody>().velocity != Vector3.zero;
 
                         if (type.Equals("Electrical"))
                         {
@@ -141,10 +143,13 @@ public class Fire : MonoBehaviour
                             maxGrowingSpeed = 0.5f;
                             growingSpeed = Math.Min(growingSpeed * 2, maxGrowingSpeed);
 
-                            notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that is an electrical fire.\nA fire extinguisher would have been effective, but that is unavailable in these areas.\nAttempt to evacuate to an open area like the Basketball Court immediately!";
-                            notificationSystem.disableAfterTimer = true;
-                            notificationSystem.disableTimer = 8.0f;
-                            notificationSystem.displayNotification();
+                            if (isEligibleForNotif)
+                            {
+                                notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that is an electrical fire.\nA fire extinguisher would have been effective, but is unavailable in these areas.\nAttempt to evacuate to an open area like the Basketball Court immediately!";
+                                notificationSystem.disableAfterTimer = true;
+                                notificationSystem.disableTimer = 8.0f;
+                                notificationSystem.displayNotification();
+                            }
                         }
                         else
                         {
@@ -153,10 +158,13 @@ public class Fire : MonoBehaviour
                                 AffectFire(obj.fireFightingValue);
                                 growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
 
-                                notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that is a grease fire.\nA fire extinguisher would have been effective, but that is unavailable in these areas.\nAttempt to evacuate to an open area like the Basketball Court immediately!";
-                                notificationSystem.disableAfterTimer = true;
-                                notificationSystem.disableTimer = 8.0f;
-                                notificationSystem.displayNotification();
+                                if (isEligibleForNotif)
+                                {
+                                    notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that is a grease fire.\nA fire extinguisher would have been effective, but is unavailable in these areas.\nAttempt to evacuate to an open area like the Basketball Court immediately!";
+                                    notificationSystem.disableAfterTimer = true;
+                                    notificationSystem.disableTimer = 8.0f;
+                                    notificationSystem.displayNotification();
+                                }
                             }
                             else if (type.Equals("Class A"))
                             {
@@ -168,7 +176,7 @@ public class Fire : MonoBehaviour
                     else if (obj.GetComponent<Rigidbody>().velocity != Vector3.zero)
                         AffectFire(-obj.fireFightingValue);
                 }
-                
+
                 else if (collider.CompareTag("Outlet") && !type.Equals("Electrical"))
                     type = "Electrical";
             }
