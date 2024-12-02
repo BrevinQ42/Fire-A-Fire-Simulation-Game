@@ -56,7 +56,7 @@ public class Fire : MonoBehaviour
             if (notificationDisplayed == false)
             {
                 notificationDisplayed = true;
-                notificationSystem.notificationMessage = "A fire has emerged! Identify the type of fire and act accordingly!";
+                notificationSystem.notificationMessage = "A fire has emerged! Identify the cause of the fire and act accordingly!";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 5.0f;
                 notificationSystem.displayNotification();

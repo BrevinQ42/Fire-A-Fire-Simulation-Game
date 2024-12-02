@@ -19,7 +19,7 @@ public class FireManager : MonoBehaviour
 
 	void Start()
 	{
-		FireTypes = new List<string>{"Electrical", "Grease", "Class A"};
+		FireTypes = new List<string>{"Electrical", "Grease", "Class A", "Class A"};
 
 		isFireOngoing = false;
 		ongoingFire = null;
