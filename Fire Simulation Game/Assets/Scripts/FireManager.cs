@@ -96,24 +96,18 @@ public class FireManager : MonoBehaviour
 			if (index < FireSpawnPoints.Count - 3)
 			{
                 notificationSystem.notificationMessage = "A fire has emerged! Identify the cause of the fire and put it out accordingly!";
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 5.0f;
-                notificationSystem.displayNotification();
+                notificationSystem.displayNotification(true, 5.0f);
 			}
 			else
 			{
 				notificationSystem.notificationMessage = "A fire has emerged from your neighbors! Be careful trying to extinguish it since you're uncertain of the cause of fire!";
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 5.0f;
-                notificationSystem.displayNotification();
+                notificationSystem.displayNotification(true, 5.0f);
 			}
 		}
 		else if (ongoingFire == null && !isPlayerSuccessful)
 		{
 			notificationSystem.notificationMessage = "You have extinguished the fire!\nHelp your neighbors who might still need it!";
-            notificationSystem.disableAfterTimer = true;
-            notificationSystem.disableTimer = 4.0f;
-            notificationSystem.displayNotification();
+            notificationSystem.displayNotification(true, 4.0f);
 
 			isPlayerSuccessful = true;
 		}

@@ -11,7 +11,6 @@ public class Fire : MonoBehaviour
     [SerializeField] private Spawner SmokeSpawner;
 
     public float intensityValue;
-    private Vector3 maxScale;
     private bool isGrowing;
     [SerializeField] private float growingSpeed;
     private float maxGrowingSpeed;
@@ -32,7 +31,6 @@ public class Fire : MonoBehaviour
 
         if (type == "") type = "Class A";
 
-        maxScale = new Vector3(0.0f, 1.1f, 0.0f);
         isGrowing = false;
 
         transform.localScale = Vector3.zero;
@@ -49,9 +47,6 @@ public class Fire : MonoBehaviour
                                                         Math.Min(intensityValue + 1.5f, 2.5f),
                                                         SmokeSpawner.transform.position.z);
         }
-
-        if (transform.localScale == maxScale) Toggle(false);
-        else Toggle(true);
     }
 
     public void AffectFire(float amt)
@@ -66,10 +61,6 @@ public class Fire : MonoBehaviour
 
             if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * amt;
             else newScale = transform.localScale * intensityValue / (intensityValue - amt);
-
-            if (maxScale.x > 0.0f) newScale.x = Math.Min(newScale.x, maxScale.x);
-            if (maxScale.y > 0.0f) newScale.y = Math.Min(newScale.y, maxScale.y);
-            if (maxScale.z > 0.0f) newScale.z = Math.Min(newScale.z, maxScale.z);
 
             growingSpeed = Math.Min(growingSpeed + 0.00001f, maxGrowingSpeed);
         }
@@ -106,10 +97,8 @@ public class Fire : MonoBehaviour
             {
                 PlayerController player = collider.GetComponent<PlayerController>();
 
-                notificationSystem.notificationMessage = "You are burning!\n[R] to roll from side to side to put it out!";
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 4.0f;
-                notificationSystem.displayNotification();
+                notificationSystem.notificationMessage = "You are burning!\n[R] to roll side to side to put it out!";
+                notificationSystem.displayNotification(true, 4.0f);
 
                 if (!player.FireOnPlayer)
                 {
@@ -145,10 +134,8 @@ public class Fire : MonoBehaviour
 
                             if (isEligibleForNotif)
                             {
-                                notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that is an electrical fire.\nA fire extinguisher would have been effective, but is unavailable in these areas.\nAttempt to evacuate to an open area like the Basketball Court immediately!";
-                                notificationSystem.disableAfterTimer = true;
-                                notificationSystem.disableTimer = 8.0f;
-                                notificationSystem.displayNotification();
+                                notificationSystem.notificationMessage = "The fire grew! Water is ineffective because that is an electrical fire.\nThere might be something else more effective";
+                                notificationSystem.displayNotification(true, 8.0f);
                             }
                         }
                         else
@@ -160,10 +147,8 @@ public class Fire : MonoBehaviour
 
                                 if (isEligibleForNotif)
                                 {
-                                    notificationSystem.notificationMessage = "See how much the fire grew? Water is ineffective because that is a grease fire.\nA fire extinguisher would have been effective, but is unavailable in these areas.\nAttempt to evacuate to an open area like the Basketball Court immediately!";
-                                    notificationSystem.disableAfterTimer = true;
-                                    notificationSystem.disableTimer = 8.0f;
-                                    notificationSystem.displayNotification();
+                                    notificationSystem.notificationMessage = "The fire grew! Water is ineffective because that is a grease fire.\nThere might be something else more effective";
+                                    notificationSystem.displayNotification(true, 8.0f);
                                 }
                             }
                             else if (type.Equals("Class A"))

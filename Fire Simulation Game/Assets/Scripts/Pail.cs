@@ -93,4 +93,9 @@ public class Pail : FireFightingObject
             transform.position + playerCamera.right * 0.7f - playerCamera.up * 0.15f,
             transform.rotation);
     }
+
+    public bool hasWaterInside()
+    {
+        return fractionFilled > 0.0f;
+    }
 }
