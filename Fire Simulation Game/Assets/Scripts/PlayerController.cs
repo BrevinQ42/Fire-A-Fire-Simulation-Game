@@ -264,7 +264,9 @@ public class PlayerController : MonoBehaviour
                     {
                         stoppedCoveringNoseMessageDisplayed = true;
                         notificationSystem.notificationMessage = "Stopped Covering nose!";
-                        notificationSystem.displayNotification(true, 3.0f);
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 3.0f;
+                        notificationSystem.displayNotification();
                     }
                 }
             }
