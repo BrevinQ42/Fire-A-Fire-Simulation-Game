@@ -263,7 +263,9 @@ public class PlayerBars : MonoBehaviour
         if (stamina == 0)
         {
             notificationSystem.notificationMessage = "Stamina Depleted!";
-            notificationSystem.displayNotification(true, 3.0f);
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 3.0f;
+            notificationSystem.displayNotification();
         }
     }
 

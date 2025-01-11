@@ -38,7 +38,9 @@ public class SmokeSystemManager : MonoBehaviour
                 isSmokeLayer1Activated = true;
 
                 notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!\n[C] to crawl / stand back up";
-                notificationSystem.displayNotification(true, 5.0f);
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.displayNotification();
             }
 
             // After 6 minutes, activate layer 1
@@ -49,7 +51,9 @@ public class SmokeSystemManager : MonoBehaviour
                 isSmokeLayer2Activated = true;
 
                 notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!\n[C] to crawl / stand back up";
-                notificationSystem.displayNotification(true, 5.0f);
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.displayNotification();
             }
         }
     }

@@ -89,7 +89,9 @@ public class PlayerController : MonoBehaviour
         playerBars = GetComponent<PlayerBars>();
 
         notificationSystem.notificationMessage = "Try to prevent fires!\nOne way is to avoid plugging extension cords on others";
-        notificationSystem.displayNotification(true, 7.5f);
+        notificationSystem.disableAfterTimer = true;
+        notificationSystem.disableTimer = 7.5f;
+        notificationSystem.displayNotification();
 
         coverNoseMessageDisplayed = false;
         stoppedCoveringNoseMessageDisplayed = false;
@@ -226,7 +228,9 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     notificationSystem.notificationMessage = "Not enough stamina to run!";
-                    notificationSystem.displayNotification(true, 3.0f);
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
                 }
             }
             else if (Input.GetKeyDown(KeyCode.R))
@@ -238,7 +242,9 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     notificationSystem.notificationMessage = "Not enough stamina to roll!";
-                    notificationSystem.displayNotification(true, 3.0f);
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
                 }
             }
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
@@ -277,7 +283,9 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = Vector3.zero;
             notificationSystem.notificationMessage = "Not enough stamina to crawl!";
-            notificationSystem.displayNotification(true, 3.0f);
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 3.0f;
+            notificationSystem.displayNotification();
             return;
         }
 
@@ -443,7 +451,9 @@ public class PlayerController : MonoBehaviour
                     else
                         notificationSystem.notificationMessage = "[Left Click] to open the faucet to fill the bucket with water\n[G] to Drop Bucket";
                     
-                    notificationSystem.displayNotification(true, 6.0f);
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 6.0f;
+                    notificationSystem.displayNotification();
 
                     pail.closeProximityValue = closeProximityValue;
                     pail.playerCamera = transform.GetChild(0);
@@ -454,7 +464,9 @@ public class PlayerController : MonoBehaviour
                 if (nonFlammable)
                 {
                     notificationSystem.notificationMessage = "You can [Left Click] to throw this directly at a fire to put it out!\n[G] to Drop Object";
-                    notificationSystem.displayNotification(true, 6.0f);
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 6.0f;
+                    notificationSystem.displayNotification();
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
                 }
                 else
@@ -470,14 +482,18 @@ public class PlayerController : MonoBehaviour
                         plug.owner.name.Equals("ExtensionCord") && plug.pluggedInto.name.Equals("ExtensionCord"))
                     {
                         notificationSystem.notificationMessage = "Unplug unused appliances as well!\n*Take note that fire may come from other houses despite doing this*";
-                        notificationSystem.displayNotification(true, 7.0f);
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 7.0f;
+                        notificationSystem.displayNotification();
 
                         isExtensionsResolved = true;
                     }
                     else
                     {
                         notificationSystem.notificationMessage = "[Left Click] to plug it in!\n[G] to Drop Plug";
-                        notificationSystem.displayNotification(true, 7.0f);
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 7.0f;
+                        notificationSystem.displayNotification();
                     }
 
                     plug.pluggedInto = null;
@@ -525,7 +541,9 @@ public class PlayerController : MonoBehaviour
         if (coverNoseMessageDisplayed == false)
         {
             notificationSystem.notificationMessage = "Covering nose!";
-            notificationSystem.displayNotification(true, 3.0f);
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 3.0f;
+            notificationSystem.displayNotification();
                 
             coverNoseMessageDisplayed = true;
         }
@@ -559,14 +577,18 @@ public class PlayerController : MonoBehaviour
             if (collidedWith.name.Equals("Outside Floor"))
             {
                 notificationSystem.notificationMessage = "YOU WON!\nYou successfully fought the fire!";
-                notificationSystem.displayNotification(true, 10.0f);
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 10.0f;
+                notificationSystem.displayNotification();
                 
                 Debug.Log("You Won");
             }
             else if (collidedWith.name.Equals("Court"))
             {
                 notificationSystem.notificationMessage = "YOU WON!\nYou successfully escaped the fire!";
-                notificationSystem.displayNotification(true, 10.0f);
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 10.0f;
+                notificationSystem.displayNotification();
             
                 Debug.Log("You Escaped");
             }
@@ -589,7 +611,9 @@ public class PlayerController : MonoBehaviour
             collidedWith = collision.collider;
 
             notificationSystem.notificationMessage = "Press Enter to End the Game!";
-            notificationSystem.displayNotification(true, 5.0f);
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 5.0f;
+            notificationSystem.displayNotification();
 
             EndGame();
         }

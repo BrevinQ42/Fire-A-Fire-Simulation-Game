@@ -98,7 +98,9 @@ public class Fire : MonoBehaviour
                 PlayerController player = collider.GetComponent<PlayerController>();
 
                 notificationSystem.notificationMessage = "You are burning!\n[R] to roll side to side to put it out!";
-                notificationSystem.displayNotification(true, 4.0f);
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 4.0f;
+                notificationSystem.displayNotification();
 
                 if (!player.FireOnPlayer)
                 {
@@ -135,7 +137,9 @@ public class Fire : MonoBehaviour
                             if (isEligibleForNotif)
                             {
                                 notificationSystem.notificationMessage = "The fire grew! Water is ineffective because that is an electrical fire.\nThere might be something else more effective";
-                                notificationSystem.displayNotification(true, 8.0f);
+                                notificationSystem.disableAfterTimer = true;
+                                notificationSystem.disableTimer = 8.0f;
+                                notificationSystem.displayNotification();
                             }
                         }
                         else
@@ -148,7 +152,9 @@ public class Fire : MonoBehaviour
                                 if (isEligibleForNotif)
                                 {
                                     notificationSystem.notificationMessage = "The fire grew! Water is ineffective because that is a grease fire.\nThere might be something else more effective";
-                                    notificationSystem.displayNotification(true, 8.0f);
+                                    notificationSystem.disableAfterTimer = true;
+                                    notificationSystem.disableTimer = 8.0f;
+                                    notificationSystem.displayNotification();
                                 }
                             }
                             else if (type.Equals("Class A"))
