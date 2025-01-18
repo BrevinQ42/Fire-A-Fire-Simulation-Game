@@ -22,7 +22,7 @@ public class Pail : FireFightingObject
     {
         maxFireFightingValue = fireFightingValue;
 
-        fractionFilled = 0.0f;
+        if(fractionFilled != 1.0f) fractionFilled = 0.0f;
         UpdateWaterInPail();
 
         closeProximityValue = 0.0f;
@@ -97,5 +97,11 @@ public class Pail : FireFightingObject
     public bool hasWaterInside()
     {
         return fractionFilled > 0.0f;
+    }
+
+    public void setFractionFilled(float fraction)
+    {
+        fractionFilled = fraction;
+        UpdateWaterInPail();
     }
 }

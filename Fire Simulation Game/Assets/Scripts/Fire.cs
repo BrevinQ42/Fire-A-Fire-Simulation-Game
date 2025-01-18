@@ -25,15 +25,15 @@ public class Fire : MonoBehaviour
         SmokeSpawner = GetComponentInChildren<Spawner>();
         SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
 
-        intensityValue = 0.0f;
+        transform.localScale = Vector3.zero;
+
+        if(intensityValue != 0.49f) AffectFire(-intensityValue);
+        else AffectFire(0.01f);
+
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
 
-        if (type == "") type = "Class A";
-
         isGrowing = false;
-
-        transform.localScale = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -59,7 +59,7 @@ public class Fire : MonoBehaviour
 
             if (intensityValue > 0.5f) SmokeSpawner.Toggle(true);
 
-            if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * amt;
+            if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * intensityValue;
             else newScale = transform.localScale * intensityValue / (intensityValue - amt);
 
             growingSpeed = Math.Min(growingSpeed + 0.00001f, maxGrowingSpeed);
@@ -85,8 +85,7 @@ public class Fire : MonoBehaviour
 
     public void Toggle(bool mustGrow)
     {
-        if (mustGrow) isGrowing = true;
-        else isGrowing = false;
+        isGrowing = mustGrow;
     }
 
     void OnTriggerEnter(Collider collider)

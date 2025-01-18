@@ -6,57 +6,61 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    // Notification system reference
+    [Header("Notification System")]
     public NotificationTriggerEvent notificationSystem;
     public bool coverNoseMessageDisplayed;
     public bool stoppedCoveringNoseMessageDisplayed;
 
-    private bool isExtensionsResolved;
-
-    [SerializeField] private Collider collidedWith;
-
     // Nose Notification system
     public NoseNotification noseNotificationSystem;
 
+    [Header("Fire Related")]
     public Fire FireOnPlayer;
     [SerializeField] private FireManager fireManager;
 
+    [Header("Player Components")]
     private Rigidbody rb;
     private Transform cameraTransform;
 
+    [Header("Player Info")]
     public string currentState;
-
     [SerializeField] private float walkingSpeed;
     [SerializeField] private float crawlingSpeed;
     [SerializeField] private float runningSpeed;
     [SerializeField] private float currentSpeed;
+    public Vector3 movementVector;
 
+    [Header("Player Bools")]
+    public bool isCoveringNose;
+    public bool isOnFire;
+
+    [Header("Player Look Around")]
     private Vector2 cameraRotation;
     [SerializeField] private float mouseSensitivity;
     private bool isVerticalTiltEnabled;
     private bool isHorizontalTiltEnabled;
 
-    public bool isCoveringNose;
-    public bool isOnFire;
+    [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
+    private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
+    [SerializeField] private GrabbableObject heldObject;
 
+    [Header("Player Roll")]
     private Vector3 previousEulerAngles;
     private float rollingTimeLeft;
     private int rotationCount;
     private float rollRotation;
     [SerializeField] private float rollTimePerRotation;
 
-    [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
-    private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
-    [SerializeField] private GrabbableObject heldObject;
-
-    [SerializeField] private float throwForce;
-
-    public Vector3 movementVector;
-
+    [Header("Player Stamina")]
     private PlayerBars playerBars;
     public float staminaRequiredForCrawling;
     public float staminaRequiredForRunning;
     public float staminaRequiredForRolling;
+
+    [Header("Misc.")]
+    private bool isExtensionsResolved;
+    public Collider collidedWith;
+    [SerializeField] private float throwForce;
 
     // Start is called before the first frame update
     void Start()
@@ -499,7 +503,8 @@ public class PlayerController : MonoBehaviour
                     }
 
                     plug.pluggedInto = null;
-                    fireManager.RemoveSpawnPoint(plug.transform);
+
+                    if(fireManager) fireManager.RemoveSpawnPoint(plug.transform);
                 }
             }
             else if (hitTransform.CompareTag("WaterSource"))
@@ -599,7 +604,7 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (fireManager.isPlayerSuccessful)
+        if (fireManager && fireManager.isPlayerSuccessful)
         {    
             if (collision.collider.name.Equals("Outside Floor"))
             {
@@ -617,7 +622,7 @@ public class PlayerController : MonoBehaviour
             notificationSystem.disableTimer = 5.0f;
             notificationSystem.displayNotification();
 
-            EndGame();
+            if(fireManager) EndGame();
         }
     }
 
