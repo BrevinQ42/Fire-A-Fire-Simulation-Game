@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    // Win Screen
+    public WinScreen winScreen;
+
     // Notification system reference
     public NotificationTriggerEvent notificationSystem;
     public bool coverNoseMessageDisplayed;
@@ -584,6 +587,7 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.displayNotification();
                 
                 Debug.Log("You Won");
+                winScreen.Setup(200);
             }
             else if (collidedWith.name.Equals("Court"))
             {
@@ -593,6 +597,7 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.displayNotification();
             
                 Debug.Log("You Escaped");
+                winScreen.Setup(200);
             }
         }
     }
