@@ -32,8 +32,6 @@ public class Fire : MonoBehaviour
 
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
-
-        isGrowing = false;
     }
 
     // Update is called once per frame
