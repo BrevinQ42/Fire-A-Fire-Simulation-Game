@@ -29,10 +29,6 @@ public class Fire : MonoBehaviour
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
 
-        if (type == "") type = "Class A";
-
-        isGrowing = false;
-
         transform.localScale = Vector3.zero;
     }
 
@@ -85,8 +81,7 @@ public class Fire : MonoBehaviour
 
     public void Toggle(bool mustGrow)
     {
-        if (mustGrow) isGrowing = true;
-        else isGrowing = false;
+        isGrowing = mustGrow;
     }
 
     void OnTriggerEnter(Collider collider)
