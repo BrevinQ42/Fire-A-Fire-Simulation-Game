@@ -585,21 +585,13 @@ public class PlayerController : MonoBehaviour
         if (collidedWith)
         {
             if (collidedWith.name.Equals("Outside Floor"))
-            {
-                notificationSystem.notificationMessage = "YOU WON!\nYou successfully fought the fire!";
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 10.0f;
-                notificationSystem.displayNotification();
-                
+            {            
                 Debug.Log("You Won");
                 winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
+                Cursor.lockState = CursorLockMode.None;
             }
             else if (collidedWith.name.Equals("Court"))
             {
-                notificationSystem.notificationMessage = "YOU WON!\nYou successfully escaped the fire!";
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 10.0f;
-                notificationSystem.displayNotification();
             
                 Debug.Log("You Escaped");
                 winScreen.oneStar.color = new Color(255f, 255f, 255f);
@@ -612,6 +604,7 @@ public class PlayerController : MonoBehaviour
                     winScreen.threeStar.color = new Color(255f, 255f, 255f);
                 }
                 winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
+                Cursor.lockState = CursorLockMode.None;
             }
         }
     }
@@ -630,11 +623,6 @@ public class PlayerController : MonoBehaviour
         else if (collision.collider.name.Equals("Court"))
         {
             collidedWith = collision.collider;
-
-            notificationSystem.notificationMessage = "Press Enter to End the Game!";
-            notificationSystem.disableAfterTimer = true;
-            notificationSystem.disableTimer = 5.0f;
-            notificationSystem.displayNotification();
 
             EndGame();
         }
