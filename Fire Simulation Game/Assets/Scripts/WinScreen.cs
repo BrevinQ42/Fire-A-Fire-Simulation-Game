@@ -5,10 +5,15 @@ using UnityEngine.UI;
 
 public class WinScreen : MonoBehaviour
 {
-    public Text pointsText;
-    public void Setup(int score)
+    public Text healthPointsText;
+    public Text timePointsText;
+    public Image oneStar;
+    public Image twoStar;
+    public Image threeStar;
+    public void Setup(float hpText, float tpText)
     {
         gameObject.SetActive(true);
-        pointsText.text = score.ToString() + " POINTS";
+        healthPointsText.text = "Health Remaining: " + hpText.ToString();
+        timePointsText.text = "Time Completed: " + tpText.ToString() + " Seconds";
     }
 }

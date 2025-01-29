@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     // Win Screen
     public WinScreen winScreen;
+    public float timeElapsed;
 
     // Notification system reference
     public NotificationTriggerEvent notificationSystem;
@@ -98,6 +99,8 @@ public class PlayerController : MonoBehaviour
 
         coverNoseMessageDisplayed = false;
         stoppedCoveringNoseMessageDisplayed = false;
+
+        timeElapsed = 0;
     }
 
     void FixedUpdate()
@@ -211,6 +214,8 @@ public class PlayerController : MonoBehaviour
         {
             isOnFire = false;
         }
+
+        timeElapsed += Time.deltaTime;
 
         // basic controls
         Move();
@@ -587,7 +592,7 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.displayNotification();
                 
                 Debug.Log("You Won");
-                winScreen.Setup(200);
+                winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
             }
             else if (collidedWith.name.Equals("Court"))
             {
@@ -597,7 +602,16 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.displayNotification();
             
                 Debug.Log("You Escaped");
-                winScreen.Setup(200);
+                winScreen.oneStar.color = new Color(255f, 255f, 255f);
+                if (playerBars.hydrationLevel > 50 && timeElapsed < 540)
+                {
+                    winScreen.twoStar.color = new Color(255f, 255f, 255f);
+                }
+                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 420)
+                {
+                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
+                }
+                winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
             }
         }
     }
