@@ -9,6 +9,9 @@ public class PlayerBars : MonoBehaviour
     // Notification system reference
     public NotificationTriggerEvent notificationSystem;
 
+    // Lose Screen
+    public LoseScreen loseScreen;
+
     // Hydration Level
     public float hydrationLevel = 100f;
     public float hydrationLevelDamage = 1000f;
@@ -53,14 +56,16 @@ public class PlayerBars : MonoBehaviour
 
         if (hydrationLevel <= 0f)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            loseScreen.DisplayGameOver();
+            Cursor.lockState = CursorLockMode.None;
             Debug.Log("Player has burned to death!");
             // Insert player death code here
         }
 
         if (oxygen <= 0f)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            loseScreen.DisplayGameOver();
+            Cursor.lockState = CursorLockMode.None;
             Debug.Log("Player has run out of oxygen!");
             // Insert player death code here
         }
