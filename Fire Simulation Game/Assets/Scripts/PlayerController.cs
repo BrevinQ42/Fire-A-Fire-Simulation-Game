@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool isGrounded;
+
     // Notification system reference
     public NotificationTriggerEvent notificationSystem;
     public bool coverNoseMessageDisplayed;
@@ -183,6 +185,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Check if the player is grounded
+        isGrounded = CheckIfGrounded();
+        if (!isGrounded)
+        {
+            rb.AddForce(new Vector3(0, -20, 0));
+            Debug.Log("I am floating");
+        }
+
         // Transitions when stamina is 0
         // Run to walk
         if (playerBars.stamina <= 0 && currentState.Equals("Running"))
@@ -274,6 +284,17 @@ public class PlayerController : MonoBehaviour
         }
 
         TestFunction(); // for debugging (i.e. Debug.Log)
+    }
+
+    bool CheckIfGrounded()
+    {
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.5f))
+        {
+            return true; 
+        }
+        return false; 
     }
 
     void Move()
