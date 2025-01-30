@@ -17,6 +17,9 @@ public class Fire : MonoBehaviour
 
     public string type;
 
+    public AudioSource audioSource;
+    public AudioClip fireClip;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +33,11 @@ public class Fire : MonoBehaviour
         maxGrowingSpeed = 0.25f;
 
         transform.localScale = Vector3.zero;
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = fireClip;
+        audioSource.loop = true;
+        audioSource.Play();
     }
 
     // Update is called once per frame
@@ -42,6 +50,10 @@ public class Fire : MonoBehaviour
             SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x,
                                                         Math.Min(intensityValue + 1.5f, 2.5f),
                                                         SmokeSpawner.transform.position.z);
+        }
+        if (intensityValue < 6)
+        {
+            audioSource.volume = intensityValue / 10;
         }
     }
 
