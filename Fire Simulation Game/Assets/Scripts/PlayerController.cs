@@ -67,6 +67,9 @@ public class PlayerController : MonoBehaviour
     public AudioClip walkingClip;
     public AudioClip runningClip;
     public AudioClip breathingClip;
+    public AudioClip rollingClip;
+    public AudioClip crawlingClip;
+    public AudioClip burningClip;
 
     // Start is called before the first frame update
     void Start()
@@ -198,27 +201,54 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // Sound Effects
-        if (playerBars.isRunning) // Running audio
+        if (playerBars.isRunning && !isOnFire) // Running audio
         {
-            if (audioSource.clip != runningClip || !audioSource.isPlaying) // Restart if stopped
+            if (audioSource.clip != runningClip || !audioSource.isPlaying) 
             {
                 audioSource.clip = runningClip;
                 audioSource.loop = true;
                 audioSource.Play();
             }
         }
-        else if (playerBars.isWalking) // Walking audio
+        else if (playerBars.isWalking && !isOnFire) // Walking audio
         {
-            if (audioSource.clip != walkingClip || !audioSource.isPlaying) // Restart if stopped
+            if (audioSource.clip != walkingClip || !audioSource.isPlaying)
             {
                 audioSource.clip = walkingClip;
                 audioSource.loop = true;
                 audioSource.Play();
             }
         }
+        else if (playerBars.isRolling) // Rolling audio
+        {
+            if (audioSource.clip != rollingClip || !audioSource.isPlaying) 
+            {
+                audioSource.clip = rollingClip;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+        else if (playerBars.isCrawling && !isOnFire) // Crawling audio
+        {
+            if (audioSource.clip != crawlingClip || !audioSource.isPlaying)
+            {
+                audioSource.clip = crawlingClip;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+        else if (isOnFire) // On fire
+        {
+            if (audioSource.clip != burningClip || !audioSource.isPlaying && !playerBars.isRolling)
+            {
+                audioSource.clip = burningClip;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
         else // Heavy breathing audio when standing still
         {
-            if (audioSource.clip != breathingClip || !audioSource.isPlaying) 
+            if (audioSource.clip != breathingClip || !audioSource.isPlaying && !isOnFire) 
             {
                 audioSource.clip = breathingClip;
                 audioSource.loop = true;
