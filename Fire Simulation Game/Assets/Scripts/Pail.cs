@@ -17,6 +17,10 @@ public class Pail : FireFightingObject
     public bool lookedAt;
     public GameObject textName;
 
+    //sound effect
+    public AudioSource audioSource;
+    public AudioClip waterThrowClip;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +33,8 @@ public class Pail : FireFightingObject
 
         lookedAt = false;
         textName = transform.Find("FloatingText").gameObject;
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -83,7 +89,9 @@ public class Pail : FireFightingObject
         water.fireFightingValue = maxFireFightingValue * fractionFilled;
         water.Deattach();
         ThrownWater.GetComponent<Rigidbody>().AddForce(playerCamera.forward * throwForce);
-        
+        audioSource.clip = waterThrowClip;
+        audioSource.Play();
+
         fractionFilled = 0.0f;
         UpdateWaterInPail();
 
