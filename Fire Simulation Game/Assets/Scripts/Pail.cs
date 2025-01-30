@@ -8,7 +8,7 @@ public class Pail : FireFightingObject
     [SerializeField] private GameObject WaterObject;
     [SerializeField] private GameObject WaterInPail;
 
-    [SerializeField] private float fractionFilled;
+    private float fractionFilled;
     private float maxFireFightingValue;
 
     public float closeProximityValue;
@@ -26,15 +26,15 @@ public class Pail : FireFightingObject
     {
         maxFireFightingValue = fireFightingValue;
 
-        fractionFilled = 0.0f;
+        if(fractionFilled != 1.0f) fractionFilled = 0.0f;
         UpdateWaterInPail();
 
         closeProximityValue = 0.0f;
 
         lookedAt = false;
-        textName = transform.Find("FloatingText").gameObject;
 
         audioSource = GetComponent<AudioSource>();
+        textName = GetComponentInChildren<TextMesh>().gameObject;
     }
 
     private void Update()
@@ -105,5 +105,11 @@ public class Pail : FireFightingObject
     public bool hasWaterInside()
     {
         return fractionFilled > 0.0f;
+    }
+
+    public void setFractionFilled(float fraction)
+    {
+        fractionFilled = Math.Min(1.0f, fraction);
+        UpdateWaterInPail();
     }
 }

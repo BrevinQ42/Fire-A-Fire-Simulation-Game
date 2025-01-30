@@ -15,7 +15,7 @@ public class ElectricPlug : GrabbableObject
     void Start()
     {
         lookedAt = false;
-        textName = transform.Find("FloatingText").gameObject;
+        textName = GetComponentInChildren<TextMesh>().gameObject;
 
         if (transform.parent && !transform.parent.name.Equals("Main House")) pluggedInto = transform.parent;
         InitializeFireManager();
@@ -39,7 +39,9 @@ public class ElectricPlug : GrabbableObject
 
     void InitializeFireManager()
     {
-        fireManager = GameObject.Find("FireManager").GetComponent<FireManager>();
+        GameObject fm = GameObject.Find("FireManager");
+        
+        if (fm) fireManager = fm.GetComponent<FireManager>();
     }
 
     public override void Use(Transform target)
@@ -62,12 +64,16 @@ public class ElectricPlug : GrabbableObject
         isHeld = false;
 
         if(!fireManager) InitializeFireManager();
-        fireManager.AddSpawnPoint(transform);
 
-        if (owner.name.Equals("ExtensionCord") && pluggedInto.name.Equals("ExtensionCord"))
+        if(fireManager)
         {
-            // additional chance of being set on fire
-            fireManager.AddSpawnPoint(pluggedInto.GetComponentInChildren<ElectricPlug>().transform);
+            fireManager.AddSpawnPoint(transform);
+
+            if (owner.name.Equals("ExtensionCord") && pluggedInto.name.Equals("ExtensionCord"))
+            {
+                // additional chance of being set on fire
+                fireManager.AddSpawnPoint(pluggedInto.GetComponentInChildren<ElectricPlug>().transform);
+            }
         }
     }
 }

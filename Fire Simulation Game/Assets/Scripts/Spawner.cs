@@ -14,7 +14,9 @@ public class Spawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        smokeManager = GameObject.Find("SmokeSystemManager").GetComponent<SmokeSystemManager>();
+        GameObject ssm = GameObject.Find("SmokeSystemManager");
+
+        if (ssm) smokeManager = ssm.GetComponent<SmokeSystemManager>();
 
         StartCoroutine(Spawn());
     }
@@ -40,29 +42,24 @@ public class Spawner : MonoBehaviour
         isRunning = !isRunning;
 
         if (smokeManager == null)
-                smokeManager = GameObject.Find("SmokeSystemManager").GetComponent<SmokeSystemManager>();
-
-        if (isRunning)
         {
-            StartCoroutine(Spawn());
-            smokeManager.IncrementCounter();
+            GameObject ssm = GameObject.Find("SmokeSystemManager");
+            if(ssm) smokeManager = ssm.GetComponent<SmokeSystemManager>();
         }
-        else smokeManager.DecrementCounter();
+
+        if (smokeManager != null)
+        {
+            if (isRunning) smokeManager.IncrementCounter();
+            else smokeManager.DecrementCounter();
+        }
+
+        if (isRunning) StartCoroutine(Spawn());
     }
 
     public void Toggle(bool hasPermissionToRun)
     {
         bool mustToggle = (isRunning && !hasPermissionToRun) || (!isRunning && hasPermissionToRun);
 
-        if (mustToggle)
-        {
-            Toggle();
-
-            if (smokeManager == null)
-                smokeManager = GameObject.Find("SmokeSystemManager").GetComponent<SmokeSystemManager>();
-
-            if (isRunning) smokeManager.IncrementCounter();
-            else smokeManager.DecrementCounter();
-        }
+        if (mustToggle) Toggle();
     }
 }

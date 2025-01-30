@@ -21,24 +21,30 @@ public class Fire : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip fireClip;
 
+    private Dictionary<string, string> EffectivityTable;
+
     // Start is called before the first frame update
     void Start()
     {
-        notificationSystem = FindAnyObjectByType<NotificationTriggerEvent>();
+        notificationSystem = GameObject.Find("MainPanel").GetComponent<NotificationTriggerEvent>();
 
         SmokeSpawner = GetComponentInChildren<Spawner>();
         SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
 
-        intensityValue = 0.0f;
+        transform.localScale = Vector3.zero;
+
+        if(intensityValue != 0.49f && transform.parent == null) AffectFire(-intensityValue);
+        else AffectFire(0.01f);
+
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
-
-        transform.localScale = Vector3.zero;
 
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = fireClip;
         audioSource.loop = true;
         audioSource.Play();
+
+        PopulateEffectivityTable();
     }
 
     // Update is called once per frame
@@ -58,6 +64,15 @@ public class Fire : MonoBehaviour
         }
     }
 
+    void PopulateEffectivityTable()
+    {
+        EffectivityTable = new Dictionary<string, string>();
+
+        EffectivityTable["Class A"] = "Class A";
+        EffectivityTable["Electrical"] = "Class C";
+        EffectivityTable["Grease"] = "Class K";
+    }
+
     public void AffectFire(float amt)
     {
         Vector3 newScale;
@@ -68,7 +83,7 @@ public class Fire : MonoBehaviour
 
             if (intensityValue > 0.5f) SmokeSpawner.Toggle(true);
 
-            if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * amt;
+            if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * intensityValue;
             else newScale = transform.localScale * intensityValue / (intensityValue - amt);
 
             growingSpeed = Math.Min(growingSpeed + 0.00001f, maxGrowingSpeed);
@@ -101,7 +116,7 @@ public class Fire : MonoBehaviour
     {
         if (intensityValue > 0.0f)
         {
-            if (collider.name.Equals("Player"))
+            if (collider.GetComponent<PlayerController>())
             {
                 PlayerController player = collider.GetComponent<PlayerController>();
 
@@ -130,6 +145,7 @@ public class Fire : MonoBehaviour
                 if (obj)
                 {
                     Water water = obj.GetComponent<Water>();
+                    Foam foam = obj.GetComponent<Foam>();
                     if (water)
                     {
                         Destroy(collider.gameObject);
@@ -172,6 +188,27 @@ public class Fire : MonoBehaviour
                             }
                         }
                     }
+                    else if (foam)
+                    {
+                        if (EffectivityTable[type].Equals(foam.type))
+                        {
+                            AffectFire(-obj.fireFightingValue);
+                            growingSpeed = Math.Max(growingSpeed - 0.1f * obj.fireFightingValue, 0.05f);        
+                        }
+                        else
+                        {
+                            AffectFire(obj.fireFightingValue);
+                            growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
+
+                            string message = "The fire grew! That is because that is a ";
+                            message += type;
+                            message += " fire.\nCheck the type of extinguisher you are using.";
+                            notificationSystem.disableAfterTimer = true;
+                            notificationSystem.disableTimer = 8.0f;
+                            notificationSystem.displayNotification();
+                        }
+                    }
+
                     else if (obj.GetComponent<Rigidbody>().velocity != Vector3.zero)
                         AffectFire(-obj.fireFightingValue);
                 }
