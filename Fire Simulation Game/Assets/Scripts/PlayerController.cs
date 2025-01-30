@@ -62,6 +62,12 @@ public class PlayerController : MonoBehaviour
     public float staminaRequiredForRunning;
     public float staminaRequiredForRolling;
 
+    // Sound Effects
+    public AudioSource audioSource;
+    public AudioClip walkingClip;
+    public AudioClip runningClip;
+    public AudioClip breathingClip;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -101,6 +107,8 @@ public class PlayerController : MonoBehaviour
         stoppedCoveringNoseMessageDisplayed = false;
 
         timeElapsed = 0;
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     void FixedUpdate()
@@ -189,6 +197,35 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Sound Effects
+        if (playerBars.isRunning) // Running audio
+        {
+            if (audioSource.clip != runningClip || !audioSource.isPlaying) // Restart if stopped
+            {
+                audioSource.clip = runningClip;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+        else if (playerBars.isWalking) // Walking audio
+        {
+            if (audioSource.clip != walkingClip || !audioSource.isPlaying) // Restart if stopped
+            {
+                audioSource.clip = walkingClip;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+        else // Heavy breathing audio when standing still
+        {
+            if (audioSource.clip != breathingClip || !audioSource.isPlaying) 
+            {
+                audioSource.clip = breathingClip;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+
         // Transitions when stamina is 0
         // Run to walk
         if (playerBars.stamina <= 0 && currentState.Equals("Running"))
