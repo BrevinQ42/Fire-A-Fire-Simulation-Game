@@ -241,7 +241,7 @@ public class PlayerController : MonoBehaviour
         // Sound Effects
         if (playerBars.isRunning && !isOnFire) // Running audio
         {
-            if (audioSource.clip != runningClip || !audioSource.isPlaying) 
+            if (audioSource.clip != runningClip || !audioSource.isPlaying)
             {
                 audioSource.clip = runningClip;
                 audioSource.loop = true;
@@ -259,7 +259,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (playerBars.isRolling) // Rolling audio
         {
-            if (audioSource.clip != rollingClip || !audioSource.isPlaying) 
+            if (audioSource.clip != rollingClip || !audioSource.isPlaying)
             {
                 audioSource.clip = rollingClip;
                 audioSource.loop = true;
@@ -286,12 +286,14 @@ public class PlayerController : MonoBehaviour
         }
         else // Heavy breathing audio when standing still
         {
-            if (audioSource.clip != breathingClip || !audioSource.isPlaying && !isOnFire) 
+            if (audioSource.clip != breathingClip || !audioSource.isPlaying && !isOnFire)
             {
                 audioSource.clip = breathingClip;
                 audioSource.loop = true;
                 audioSource.Play();
             }
+        }
+
         // Check if the player is grounded
         isGrounded = CheckIfGrounded();
         if (!isGrounded)
