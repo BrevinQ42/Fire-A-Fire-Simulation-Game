@@ -17,14 +17,20 @@ public class FireManager : MonoBehaviour
 	private Fire ongoingFire;
 	public bool isPlayerSuccessful;
 
-	void Start()
+    //sound effect
+    public AudioSource audioSource;
+    public AudioClip helpAFireClip;
+
+    void Start()
 	{
 		FireTypes = new List<string>{"Electrical", "Grease", "Class A", "Class A"};
 
 		isFireOngoing = false;
 		ongoingFire = null;
 		isPlayerSuccessful = false;
-	}
+
+        audioSource = GetComponent<AudioSource>();
+    }
 
 	void Update()
 	{
@@ -102,7 +108,10 @@ public class FireManager : MonoBehaviour
 			}
 			else
 			{
-				notificationSystem.notificationMessage = "A fire has emerged from your neighbors! Be careful trying to extinguish it since you're uncertain of the cause of fire!";
+                audioSource.clip = helpAFireClip;
+                audioSource.Play();
+
+                notificationSystem.notificationMessage = "A fire has emerged from your neighbors! Be careful trying to extinguish it since you're uncertain of the cause of fire!";
                 notificationSystem.disableAfterTimer = true;
 	            notificationSystem.disableTimer = 5.0f;
 	            notificationSystem.displayNotification();
