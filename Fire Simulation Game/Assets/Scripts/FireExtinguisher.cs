@@ -27,6 +27,8 @@ public class FireExtinguisher : FireFightingObject
 		foam = GetComponentInChildren<Foam>();
 		foam.fireFightingValue = fireFightingValue;
 
+		notificationSystem = GameObject.Find("MainPanel").GetComponent<NotificationTriggerEvent>();
+
 		isPinPulled = false;
 		isBeingSqueezed = false;
 

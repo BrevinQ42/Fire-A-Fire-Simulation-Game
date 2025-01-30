@@ -17,6 +17,7 @@ public class TutorialManager : MonoBehaviour
 	[SerializeField] private Fire firePrefab;
 	[SerializeField] private Vector3 fireLocation;
 	[SerializeField] private Fire ongoingFire;
+	[SerializeField] private string fireType;
 	private bool isNextFireComing;
 
 	void Start()
@@ -26,34 +27,15 @@ public class TutorialManager : MonoBehaviour
 		PopulateObjsVsFire();
 
 		ongoingFire = Instantiate(firePrefab, fireLocation, Quaternion.identity).GetComponent<Fire>();
-		ongoingFire.type = "Grease";
 		ongoingFire.Toggle(false);
 
 		isNextFireComing = false;
 
-		string message = "This is a " + ongoingFire.type + " fire.\nPut it out with the items in front of you.";
-		tutorialNotifSystem.notificationMessage = message;
-		tutorialNotifSystem.disableAfterTimer = false;
-		tutorialNotifSystem.displayNotification();
 
-		if (ObjsVsFire.ContainsKey(ongoingFire.type))
+		if (fireType != "")
 		{
-			foreach (string name in ObjsVsFire[ongoingFire.type])
-			{
-				if (name.Equals("Water"))
-				{
-					Pail newBucket = Instantiate(Bucket, new Vector3(25.5f, 1f, -18.5f), Quaternion.identity);
-					newBucket.setFractionFilled(1.0f);
-				}
-				else
-				{
-					FireExtinguisher extinguisher = Instantiate(FireExtinguisher, new Vector3(28.5f, 1f, -18.5f), Quaternion.identity);
-					extinguisher.SetType(name);
-				}
-			}
+			SetupFireType(fireType);
 		}
-		else
-			Debug.Log(ongoingFire.type + " [key] not in dict");
 	}
 
 	void Update()
@@ -109,5 +91,37 @@ public class TutorialManager : MonoBehaviour
 
 		tutorialNotifSystem.notificationMessage = "There is a growing, unstoppable fire!\nGo to an open area like the basketball court outside";
 		tutorialNotifSystem.displayNotification();
+	}
+
+	public void SetupFireType(string type)
+	{
+		fireType = type;
+		ongoingFire.type = fireType;
+
+		string message = "This is a " + ongoingFire.type + " fire.\nPut it out with the items in front of you.";
+		tutorialNotifSystem.notificationMessage = message;
+		tutorialNotifSystem.disableAfterTimer = false;
+		tutorialNotifSystem.displayNotification();
+
+		if (ObjsVsFire.ContainsKey(ongoingFire.type))
+		{
+			foreach (string name in ObjsVsFire[ongoingFire.type])
+			{
+				if (name.Equals("Water"))
+				{
+					Pail newBucket = Instantiate(Bucket, new Vector3(25.5f, 1f, -18.5f), Quaternion.identity);
+					newBucket.setFractionFilled(1.0f);
+				}
+				else
+				{
+					FireExtinguisher extinguisher = Instantiate(FireExtinguisher, new Vector3(28.5f, 1f, -18.5f), Quaternion.identity);
+					extinguisher.SetType(name);
+				}
+			}
+		}
+		else
+			Debug.Log(ongoingFire.type + " [key] not in dict");
+
+		Cursor.lockState = CursorLockMode.Locked;
 	}
 }

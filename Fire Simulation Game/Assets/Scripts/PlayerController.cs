@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         currentSpeed = walkingSpeed;
 
         cameraRotation = Vector2.zero;
-        Cursor.lockState = CursorLockMode.Locked;
+        if (fireManager) Cursor.lockState = CursorLockMode.Locked;
 
         isCoveringNose = false;
         isOnFire = false;
