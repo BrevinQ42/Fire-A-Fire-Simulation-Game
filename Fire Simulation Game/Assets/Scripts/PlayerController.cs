@@ -64,12 +64,14 @@ public class PlayerController : MonoBehaviour
 
     // Sound Effects
     public AudioSource audioSource;
+    public AudioSource audioSource2;
     public AudioClip walkingClip;
     public AudioClip runningClip;
     public AudioClip breathingClip;
     public AudioClip rollingClip;
     public AudioClip crawlingClip;
     public AudioClip burningClip;
+    public AudioClip pickUpClip;
 
     // Start is called before the first frame update
     void Start()
@@ -111,7 +113,13 @@ public class PlayerController : MonoBehaviour
 
         timeElapsed = 0;
 
-        audioSource = GetComponent<AudioSource>();
+        AudioSource[] audioSources = GetComponents<AudioSource>(); 
+
+        if (audioSources.Length > 1)
+        {
+            audioSource = audioSources[0];  
+            audioSource2 = audioSources[1]; 
+        }
     }
 
     void FixedUpdate()
@@ -551,6 +559,9 @@ public class PlayerController : MonoBehaviour
 
                 heldObject = hitTransform.GetComponent<GrabbableObject>();
                 heldObject.isHeld = true;
+
+                audioSource2.clip = pickUpClip;
+                audioSource2.Play();
 
                 ElectricPlug plug = heldObject.GetComponent<ElectricPlug>();
                 if (plug)
