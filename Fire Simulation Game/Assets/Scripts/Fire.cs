@@ -17,6 +17,7 @@ public class Fire : MonoBehaviour
 
     public string type;
 
+    // Sound effect
     public AudioSource audioSource;
     public AudioClip fireClip;
 
