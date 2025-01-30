@@ -10,7 +10,7 @@ public class TutorialManager : MonoBehaviour
 
 	[Header("Fire Fighting Objects")]
 	[SerializeField] private Pail Bucket;
-	[SerializeField] private FireFightingObject FireExtinguisher;
+	[SerializeField] private FireExtinguisher FireExtinguisher;
 	private Dictionary<string, List<string>> ObjsVsFire;
 
 	[Header("Fire")]
@@ -26,7 +26,7 @@ public class TutorialManager : MonoBehaviour
 		PopulateObjsVsFire();
 
 		ongoingFire = Instantiate(firePrefab, fireLocation, Quaternion.identity).GetComponent<Fire>();
-		// set type of fire here (from PlayerPrefs)
+		ongoingFire.type = "Grease";
 		ongoingFire.Toggle(false);
 
 		isNextFireComing = false;
@@ -43,12 +43,12 @@ public class TutorialManager : MonoBehaviour
 				if (name.Equals("Water"))
 				{
 					Pail newBucket = Instantiate(Bucket, new Vector3(25.5f, 1f, -18.5f), Quaternion.identity);
+					newBucket.setFractionFilled(1.0f);
 				}
 				else
 				{
-					// fireExtinguisher fe =
-					Instantiate(FireExtinguisher, new Vector3(28.5f, 1f, -18.5f), Quaternion.identity);
-					// set type of extinguisher accordingly
+					FireExtinguisher extinguisher = Instantiate(FireExtinguisher, new Vector3(28.5f, 1f, -18.5f), Quaternion.identity);
+					extinguisher.SetType(name);
 				}
 			}
 		}
@@ -67,11 +67,6 @@ public class TutorialManager : MonoBehaviour
 
 			// after 5 seconds,
 			StartCoroutine(PromptForEvacuation());
-
-			// mention press esc to select another type of fire for tutorial
-			// - do this when they step on basketball court (might need to implement this in playercontroller)
-			//		- else if collider is court (under the OnCollisionEnter function)
-			// - needs a screen for type of fire selection
 		}
 		else if (ongoingFire.intensityValue > 0.5f && player.collidedWith && player.collidedWith.name.Equals("Court"))
 		{
@@ -82,9 +77,8 @@ public class TutorialManager : MonoBehaviour
 			{
         		Cursor.lockState = CursorLockMode.None;
 				
-				// go back to screen where they select fire type
-				// **for now back to starting menu
-				SceneManager.LoadScene("Start Menu");
+				// reload scene
+				SceneManager.LoadScene("Tutorial Scene");
 			}
 		}
 	}
@@ -94,12 +88,13 @@ public class TutorialManager : MonoBehaviour
 		ObjsVsFire = new Dictionary<string, List<string>>();
 
 		// electrical
-		
+		ObjsVsFire["Electrical"] = new List<string>{"Class C"};
 
 		// grease
+		ObjsVsFire["Grease"] = new List<string>{"Class K"};
 
 		// class A
-		ObjsVsFire["Class A"] = new List<string>{"Water"};
+		ObjsVsFire["Class A"] = new List<string>{"Water", "Class A"};
 	}
 
 	IEnumerator PromptForEvacuation()

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Search;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -176,6 +177,21 @@ public class PlayerController : MonoBehaviour
                         Transform textName = electricPlug.textName.transform;
                         textName.SetPositionAndRotation(textName.position, transform.rotation);
                     }
+                    else if (hitTransform.GetComponent<FireExtinguisher>())
+                    {
+                        Debug.Log("Extinguisher is hit");
+                        FireExtinguisher fireExtinguisher = hitTransform.GetComponent<FireExtinguisher>();
+                        fireExtinguisher.lookedAt = true;
+
+                        if(objectLookedAt != fireExtinguisher.gameObject)
+                        {
+                            ResetLastObjLookedAt();
+                            objectLookedAt = fireExtinguisher.gameObject;
+                        }
+
+                        Transform textName = fireExtinguisher.textName.transform;
+                        textName.SetPositionAndRotation(textName.position, transform.rotation);
+                    }
                     else ResetLastObjLookedAt();
                 }
             }
@@ -260,6 +276,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
             else if (Input.GetKeyDown(KeyCode.G)) DropObject();
+            else if (Input.GetKeyDown(KeyCode.Return)) EndGame();
 
             if (!heldObject)
             {
@@ -456,6 +473,7 @@ public class PlayerController : MonoBehaviour
                 hitTransform.SetParent(transform);
 
                 Pail pail = hitTransform.GetComponent<Pail>();
+                FireExtinguisher extinguisher = hitTransform.GetComponent<FireExtinguisher>();
                 NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
                 if (pail)
                 {
@@ -474,7 +492,27 @@ public class PlayerController : MonoBehaviour
                         transform.position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
                         transform.rotation);
                 }
-                if (nonFlammable)
+                else if (extinguisher)
+                {
+                    if (extinguisher.isPinPulled)
+                    {
+                        notificationSystem.notificationMessage = "[Left Click] to PULL the Pin";
+                        notificationSystem.disableTimer = 3.0f;
+                    }
+                    else
+                    {
+                        notificationSystem.notificationMessage = "AIM at fire, & Hold [Left Click] to SQUEEZE the handle and use extinguisher";
+                        notificationSystem.disableTimer = 6.0f;
+                    }
+
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.displayNotification();
+
+                    hitTransform.SetPositionAndRotation(
+                        transform.position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
+                        transform.rotation);
+                }
+                else if (nonFlammable)
                 {
                     notificationSystem.notificationMessage = "You can [Left Click] to throw this directly at a fire to put it out!\n[G] to Drop Object";
                     notificationSystem.disableAfterTimer = true;
@@ -597,7 +635,7 @@ public class PlayerController : MonoBehaviour
                 
                 Debug.Log("You Won");
             }
-            else if (collidedWith.name.Equals("Court"))
+            else if (collidedWith.name.Equals("Court") && fireManager)
             {
                 notificationSystem.notificationMessage = "YOU WON!\nYou successfully escaped the fire! Call the Fire Department!";
                 notificationSystem.disableAfterTimer = true;
@@ -629,6 +667,9 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.displayNotification();
             }
         }
+
+        else if (collision.collider.name.Equals("Court"))
+            collidedWith = collision.collider;
     }
 
     void ResetLastObjLookedAt()
@@ -643,6 +684,8 @@ public class PlayerController : MonoBehaviour
                 objectLookedAt.GetComponent<Pail>().lookedAt = false;
             else if (objectLookedAt.GetComponent<ElectricPlug>())
                 objectLookedAt.GetComponent<ElectricPlug>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<FireExtinguisher>())
+                objectLookedAt.GetComponent<FireExtinguisher>().lookedAt = false;
             
             objectLookedAt = null;
         }
@@ -653,7 +696,7 @@ public class PlayerController : MonoBehaviour
         // key press for testing
         if (Input.GetKeyDown(KeyCode.T))
         {
-            Debug.Log(previousEulerAngles);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }

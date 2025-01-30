@@ -8,7 +8,7 @@ public class Pail : FireFightingObject
     [SerializeField] private GameObject WaterObject;
     [SerializeField] private GameObject WaterInPail;
 
-    [SerializeField] private float fractionFilled;
+    private float fractionFilled;
     private float maxFireFightingValue;
 
     public float closeProximityValue;
@@ -101,7 +101,7 @@ public class Pail : FireFightingObject
 
     public void setFractionFilled(float fraction)
     {
-        fractionFilled = fraction;
+        fractionFilled = Math.Min(1.0f, fraction);
         UpdateWaterInPail();
     }
 }

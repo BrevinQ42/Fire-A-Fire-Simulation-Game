@@ -10,6 +10,9 @@ public class FireManager : MonoBehaviour
 	[SerializeField] private Fire firePrefab;
 	[SerializeField] private List<Transform> FireSpawnPoints;
 
+	private int plugsCount;
+	[SerializeField] private int minPlugsCountForFire;
+
 	private List<string> FireTypes;
 
 	[SerializeField] private float timeBeforeFire;
@@ -19,6 +22,13 @@ public class FireManager : MonoBehaviour
 
 	void Start()
 	{
+		plugsCount = 0;
+
+		foreach (Transform spawnPoint in FireSpawnPoints)
+		{
+			if (spawnPoint.GetComponent<ElectricPlug>()) plugsCount++;
+		}
+
 		FireTypes = new List<string>{"Electrical", "Grease", "Class A", "Class A"};
 
 		isFireOngoing = false;
@@ -71,12 +81,8 @@ public class FireManager : MonoBehaviour
 					if (!isPowered) RemoveSpawnPoint(spawnTransform);
 					else
 					{
-						if(plug.owner.name.Equals("ExtensionCord")) break;
-						else
-						{
-							// if plugs in place are > a certain number, break
-							// else RemoveSpawnPoint(spawnTransform);
-						}
+						if (plug.owner.name.Equals("ExtensionCord") || plugsCount >= minPlugsCountForFire) break;
+						else RemoveSpawnPoint(spawnTransform);
 					}
 				}
 				else break;
@@ -129,7 +135,12 @@ public class FireManager : MonoBehaviour
 
 	public void AddSpawnPoint(Transform spawnPoint)
 	{
-		if (!isFireOngoing) FireSpawnPoints.Add(spawnPoint);
+		if (!isFireOngoing)
+		{
+			FireSpawnPoints.Add(spawnPoint);
+
+			if (spawnPoint.GetComponent<ElectricPlug>()) plugsCount++;
+		}
 	}
 
 	public void RemoveSpawnPoint(Transform spawnPoint)
@@ -137,6 +148,8 @@ public class FireManager : MonoBehaviour
 		if (!isFireOngoing)
 		{
 			bool isRemoved = true;
+
+			if (spawnPoint.GetComponent<ElectricPlug>()) plugsCount--;
 
 			while(isRemoved)
 			{
