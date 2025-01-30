@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     // Win Screen
     public WinScreen winScreen;
     public float timeElapsed;
+    public bool isGrounded;
 
     // Notification system reference
     [Header("Notification System")]
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player Info")]
     public string currentState;
+    
     [SerializeField] private float walkingSpeed;
     [SerializeField] private float crawlingSpeed;
     [SerializeField] private float runningSpeed;
@@ -290,6 +292,12 @@ public class PlayerController : MonoBehaviour
                 audioSource.loop = true;
                 audioSource.Play();
             }
+        // Check if the player is grounded
+        isGrounded = CheckIfGrounded();
+        if (!isGrounded)
+        {
+            rb.AddForce(new Vector3(0, -20, 0));
+            Debug.Log("I am floating");
         }
 
         // Transitions when stamina is 0
@@ -386,6 +394,17 @@ public class PlayerController : MonoBehaviour
         }
 
         TestFunction(); // for debugging (i.e. Debug.Log)
+    }
+
+    bool CheckIfGrounded()
+    {
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.5f))
+        {
+            return true; 
+        }
+        return false; 
     }
 
     void Move()

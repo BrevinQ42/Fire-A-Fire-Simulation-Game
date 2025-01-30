@@ -11,6 +11,7 @@ TagManager:
   - WaterSource
   - Fire
   - Outlet
+  - Stairs
   layers:
   - Default
   - TransparentFX
