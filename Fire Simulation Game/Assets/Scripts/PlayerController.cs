@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
     private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
     [SerializeField] private GrabbableObject heldObject;
+    private GameObject objectLookedAt;
 
     [Header("Player Roll")]
     private Vector3 previousEulerAngles;
@@ -115,67 +116,73 @@ public class PlayerController : MonoBehaviour
                     Debug.Log(hit.transform.name + ": " + hit.distance);
 
                     hitTransform = hit.transform;
-                    if (hitTransform.name == "FireResistant")    
+                    if (hitTransform.GetComponent<NonFlammableObject>())    
                     {
                         Debug.Log("FireResistant Object is Hit");
                         NonFlammableObject fireResistant = hitTransform.GetComponent<NonFlammableObject>();
-                        if (fireResistant != null)
+                        fireResistant.lookedAt = true;
+                        
+                        if(objectLookedAt != fireResistant.gameObject)
                         {
-                            fireResistant.lookedAt = true;
+                            ResetLastObjLookedAt();
+                            objectLookedAt = fireResistant.gameObject;
                         }
+
+                        Transform textName = fireResistant.textName.transform;
+                        textName.SetPositionAndRotation(textName.position, transform.rotation);
                     }
-                    if (hitTransform.name == "bibb_faucet")
+                    else if (hitTransform.GetComponent<ObjectNamePopUp>())
                     {
                         Debug.Log("Faucet Object is Hit");  
                         ObjectNamePopUp faucet = hitTransform.GetComponent<ObjectNamePopUp>();
-                        if (faucet != null)
+                        faucet.lookedAt = true;
+                        
+                        if(objectLookedAt != faucet.gameObject)
                         {
-                            faucet.lookedAt = true;
+                            ResetLastObjLookedAt();
+                            objectLookedAt = faucet.gameObject;
                         }
+
+                        Transform textName = faucet.textName.transform;
+                        textName.SetPositionAndRotation(textName.position, transform.rotation);
                     }
-                    if (hitTransform.name == "Bucket")
+                    else if (hitTransform.GetComponent<Pail>())
                     {
                         Debug.Log("Bucket Object is Hit");
                         Pail bucket = hitTransform.GetComponent<Pail>();
-                        if (bucket != null )
-                        {
-                            bucket.lookedAt = true;
+                        bucket.lookedAt = true;
+                        
+                        if(objectLookedAt != bucket.gameObject)
+                        {    
+                            ResetLastObjLookedAt();
+                            objectLookedAt = bucket.gameObject;
                         }
+
+                        Transform textName = bucket.textName.transform;
+                        textName.SetPositionAndRotation(textName.position, transform.rotation);
                     }
-                    if (hitTransform.GetComponent<ElectricPlug>() != null)
+                    else if (hitTransform.GetComponent<ElectricPlug>())
                     {
                         Debug.Log("Plug is Hit");
                         ElectricPlug electricPlug = hitTransform.GetComponent<ElectricPlug>();
-                        if (electricPlug != null)
+                        electricPlug.lookedAt = true;
+                        
+                        if(objectLookedAt != electricPlug.gameObject)
                         {
-                            electricPlug.lookedAt = true;
+                            ResetLastObjLookedAt();
+                            objectLookedAt = electricPlug.gameObject;
                         }
+
+                        Transform textName = electricPlug.textName.transform;
+                        textName.SetPositionAndRotation(textName.position, transform.rotation);
                     }
+                    else ResetLastObjLookedAt();
                 }
             }
             else
             {
-                // Reset lookedAt for all NonFlammableObjects
-                foreach (var obj in FindObjectsOfType<NonFlammableObject>())
-                {
-                    obj.lookedAt = false;
-                }
-                // Reset lookedAt for all Faucets
-                foreach (var obj in FindObjectsOfType<ObjectNamePopUp>())
-                {
-                    obj.lookedAt = false;
-                }
-                // Reset lookedAt for all Buckets
-                foreach (var obj in FindObjectsOfType<Pail>())
-                {
-                    obj.lookedAt = false;
-                }
-                // Reset lookedAt for all Plugs
-                foreach (var obj in FindObjectsOfType<ElectricPlug>())
-                {
-                    obj.lookedAt = false;
-                }
-
+                // reset looked at of last object to false
+                ResetLastObjLookedAt();
 
                 Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
                 Debug.Log("Did not Hit");
@@ -592,7 +599,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (collidedWith.name.Equals("Court"))
             {
-                notificationSystem.notificationMessage = "YOU WON!\nYou successfully escaped the fire!";
+                notificationSystem.notificationMessage = "YOU WON!\nYou successfully escaped the fire! Call the Fire Department!";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 10.0f;
                 notificationSystem.displayNotification();
@@ -604,25 +611,40 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (fireManager && fireManager.isPlayerSuccessful)
-        {    
-            if (collision.collider.name.Equals("Outside Floor"))
+        if (fireManager)
+        {
+            if (fireManager.isPlayerSuccessful && collision.collider.name.Equals("Outside Floor"))
             {
                 collidedWith = collision.collider;
 
                 EndGame();
             }
+            else if (fireManager.isFireOngoing && collision.collider.name.Equals("Court"))
+            {
+                collidedWith = collision.collider;
+
+                notificationSystem.notificationMessage = "Press [Enter] to End the Game!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.displayNotification();
+            }
         }
-        else if (collision.collider.name.Equals("Court"))
+    }
+
+    void ResetLastObjLookedAt()
+    {
+        if(objectLookedAt)
         {
-            collidedWith = collision.collider;
-
-            notificationSystem.notificationMessage = "Press Enter to End the Game!";
-            notificationSystem.disableAfterTimer = true;
-            notificationSystem.disableTimer = 5.0f;
-            notificationSystem.displayNotification();
-
-            if(fireManager) EndGame();
+            if (objectLookedAt.GetComponent<NonFlammableObject>())
+                objectLookedAt.GetComponent<NonFlammableObject>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<ObjectNamePopUp>())
+                objectLookedAt.GetComponent<ObjectNamePopUp>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<Pail>())
+                objectLookedAt.GetComponent<Pail>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<ElectricPlug>())
+                objectLookedAt.GetComponent<ElectricPlug>().lookedAt = false;
+            
+            objectLookedAt = null;
         }
     }
 

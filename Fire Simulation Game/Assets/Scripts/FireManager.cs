@@ -13,7 +13,7 @@ public class FireManager : MonoBehaviour
 	private List<string> FireTypes;
 
 	[SerializeField] private float timeBeforeFire;
-	private bool isFireOngoing;
+	public bool isFireOngoing;
 	private Fire ongoingFire;
 	public bool isPlayerSuccessful;
 
@@ -69,7 +69,15 @@ public class FireManager : MonoBehaviour
 					}
 
 					if (!isPowered) RemoveSpawnPoint(spawnTransform);
-					else break;
+					else
+					{
+						if(plug.owner.name.Equals("ExtensionCord")) break;
+						else
+						{
+							// if plugs in place are > a certain number, break
+							// else RemoveSpawnPoint(spawnTransform);
+						}
+					}
 				}
 				else break;
 			}

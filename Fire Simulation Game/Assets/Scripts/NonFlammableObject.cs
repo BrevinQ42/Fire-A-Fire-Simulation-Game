@@ -10,7 +10,7 @@ public class NonFlammableObject : FireFightingObject
     void Start()
     {
         lookedAt = false;
-        textName = transform.Find("FloatingText").gameObject;
+        textName = GetComponentInChildren<TextMesh>().gameObject;
     }
 
     void Update()

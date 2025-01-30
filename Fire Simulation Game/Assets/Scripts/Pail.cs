@@ -28,7 +28,7 @@ public class Pail : FireFightingObject
         closeProximityValue = 0.0f;
 
         lookedAt = false;
-        textName = transform.Find("FloatingText").gameObject;
+        textName = GetComponentInChildren<TextMesh>().gameObject;
     }
 
     private void Update()

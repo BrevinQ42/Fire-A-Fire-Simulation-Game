@@ -11,7 +11,7 @@ public class ObjectNamePopUp : MonoBehaviour
     void Start()
     {
         lookedAt = false;
-        textName = transform.Find("FloatingText").gameObject;
+        textName = GetComponentInChildren<TextMesh>().gameObject;
     }
 
     // Update is called once per frame

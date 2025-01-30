@@ -42,12 +42,12 @@ public class TutorialManager : MonoBehaviour
 			{
 				if (name.Equals("Water"))
 				{
-					Pail newBucket = Instantiate(Bucket, new Vector3(25.5f, 1f, -19f), Quaternion.identity);
+					Pail newBucket = Instantiate(Bucket, new Vector3(25.5f, 1f, -18.5f), Quaternion.identity);
 				}
 				else
 				{
 					// fireExtinguisher fe =
-					Instantiate(FireExtinguisher, new Vector3(28.5f, 1f, -19f), Quaternion.identity);
+					Instantiate(FireExtinguisher, new Vector3(28.5f, 1f, -18.5f), Quaternion.identity);
 					// set type of extinguisher accordingly
 				}
 			}
@@ -75,7 +75,7 @@ public class TutorialManager : MonoBehaviour
 		}
 		else if (ongoingFire.intensityValue > 0.5f && player.collidedWith && player.collidedWith.name.Equals("Court"))
 		{
-			tutorialNotifSystem.notificationMessage = "You successfully escaped!\nPress [Esc] to Leave Tutorial";
+			tutorialNotifSystem.notificationMessage = "You successfully escaped!\nPress [Esc] to Call the Fire Department and Leave Tutorial";
 			tutorialNotifSystem.displayNotification();
 
 			if(Input.GetKeyDown(KeyCode.Escape))

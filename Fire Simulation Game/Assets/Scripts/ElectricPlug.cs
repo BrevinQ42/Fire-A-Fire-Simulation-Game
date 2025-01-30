@@ -15,7 +15,7 @@ public class ElectricPlug : GrabbableObject
     void Start()
     {
         lookedAt = false;
-        textName = transform.Find("FloatingText").gameObject;
+        textName = GetComponentInChildren<TextMesh>().gameObject;
 
         if (transform.parent && !transform.parent.name.Equals("Main House")) pluggedInto = transform.parent;
         InitializeFireManager();
