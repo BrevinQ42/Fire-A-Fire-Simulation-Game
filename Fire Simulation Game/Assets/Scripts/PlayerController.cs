@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public WinScreen winScreen;
     public float timeElapsed;
     public bool isGrounded;
+    public bool isOnStairs;
 
     // Notification system reference
     [Header("Notification System")]
@@ -296,7 +297,7 @@ public class PlayerController : MonoBehaviour
 
         // Check if the player is grounded
         isGrounded = CheckIfGrounded();
-        if (!isGrounded)
+        if (!isGrounded && !isOnStairs)
         {
             rb.AddForce(new Vector3(0, -20, 0));
             Debug.Log("I am floating");
@@ -402,7 +403,7 @@ public class PlayerController : MonoBehaviour
     {
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.5f))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.0f))
         {
             return true; 
         }
@@ -778,9 +779,21 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.displayNotification();
             }
         }
+        if (collision.gameObject.tag == "Stairs")
+        {
+            isOnStairs = true;
+        }
 
         else if (collision.collider.name.Equals("Court"))
             collidedWith = collision.collider;
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag == "Stairs")
+        {
+            isOnStairs = false;
+        }
     }
 
     void ResetLastObjLookedAt()
