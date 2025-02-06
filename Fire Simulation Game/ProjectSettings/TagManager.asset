@@ -12,6 +12,7 @@ TagManager:
   - Fire
   - Outlet
   - Stairs
+  - SmokeLayer
   layers:
   - Default
   - TransparentFX
