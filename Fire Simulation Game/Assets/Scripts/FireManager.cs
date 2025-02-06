@@ -10,7 +10,7 @@ public class FireManager : MonoBehaviour
 	[SerializeField] private Fire firePrefab;
 	[SerializeField] private List<Transform> FireSpawnPoints;
 
-	private int plugsCount;
+	[SerializeField] private int plugsCount;
 	[SerializeField] private int minPlugsCountForFire;
 
 	private List<string> FireTypes;
@@ -58,37 +58,46 @@ public class FireManager : MonoBehaviour
 				ElectricPlug plug = spawnTransform.GetComponent<ElectricPlug>();
 				if (plug)
 				{
-					bool isPowered = false;
-
-					while(true)
+					if (plugsCount >= minPlugsCountForFire)
 					{
-						if (!plug.pluggedInto) break;
+						bool isPowered = false;
 
-						if (plug.pluggedInto.name.Equals("WallOutlet"))
+						while(true)
 						{
-							isPowered = true;
-							break;
-						}
-						else
-						{
-							Transform plugOwner = plug.pluggedInto;
+							if (!plug.pluggedInto) break;
 
-							foreach(ElectricPlug electricPlug in FindObjectsByType<ElectricPlug>(FindObjectsSortMode.None))
+							if (plug.pluggedInto.name.Equals("WallOutlet"))
 							{
-								if (electricPlug.owner == plugOwner)
+								isPowered = true;
+								break;
+							}
+							else
+							{
+								Transform plugOwner = plug.pluggedInto;
+
+								foreach(ElectricPlug electricPlug in FindObjectsByType<ElectricPlug>(FindObjectsSortMode.None))
 								{
-									plug = electricPlug;
-									break;
+									if (electricPlug.owner == plugOwner)
+									{
+										plug = electricPlug;
+										break;
+									}
 								}
 							}
 						}
-					}
 
-					if (!isPowered) RemoveSpawnPoint(spawnTransform);
+						if (!isPowered) RemoveSpawnPoint(spawnTransform);
+						else
+						{
+							if (plug.owner.name.Equals("ExtensionCord")) break;
+							else RemoveSpawnPoint(spawnTransform);
+						}
+					}
 					else
 					{
-						if (plug.owner.name.Equals("ExtensionCord") || plugsCount >= minPlugsCountForFire) break;
-						else RemoveSpawnPoint(spawnTransform);
+						Debug.Log("No electrical fires possible");
+						spawnTransform = null;
+						break;
 					}
 				}
 				else
@@ -104,7 +113,16 @@ public class FireManager : MonoBehaviour
 				}
 			}
 
-			Vector3 spawnPoint = spawnTransform.position;
+			Vector3 spawnPoint;
+
+			if (spawnTransform)
+				spawnPoint = spawnTransform.position;
+			else
+			{
+				Debug.Log("No generated fire\nPlacing a random one now");
+				spawnTransform = FireSpawnPoints[0];
+				spawnPoint = spawnTransform.position + Vector3.one * 2.0f;
+			}
 
 			if (!ongoingFire)
 			{
