@@ -19,7 +19,7 @@ public class FireExtinguisher : FireFightingObject
 	public bool lookedAt;
     public TextMesh textName;
 
-	void Start()
+    void Start()
 	{
 		isHeld = false;
 		fireFightingValue = 0.1f;
