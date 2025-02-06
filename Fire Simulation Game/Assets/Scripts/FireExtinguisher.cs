@@ -45,23 +45,16 @@ public class FireExtinguisher : FireFightingObject
 		if (isHeld)
 		{
 			if (Input.GetMouseButtonDown(0) && !isPinPulled)
-			{
-				notificationSystem.notificationMessage = "AIM at fire, & Hold [Left Click] to SQUEEZE the handle and use extinguisher";
-	            notificationSystem.disableAfterTimer = true;
-	            notificationSystem.disableTimer = 6.0f;
-	            notificationSystem.displayNotification();
-
-	            isPinPulled = true;
-			}
+				isPinPulled = true;
 			else if (Input.GetMouseButton(0) && isPinPulled)
 			{
 				foam.transform.localScale = Vector3.one * foamScale;
 
 				if (!isBeingSqueezed)
 				{
-					notificationSystem.notificationMessage = "SWEEP the nozzle from side to side";
+					notificationSystem.notificationMessage = "AIM at the fire, & Hold [Left Click] to SQUEEZE the handle.\n SWEEP the nozzle side to side";
 					notificationSystem.disableAfterTimer = true;
-					notificationSystem.disableTimer = 3.0f;
+					notificationSystem.disableTimer = 8.0f;
 					notificationSystem.displayNotification();
 				}
 

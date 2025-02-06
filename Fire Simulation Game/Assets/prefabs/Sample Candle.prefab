@@ -274,6 +274,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: type
+      value: Class A
+      objectReference: {fileID: 0}
+    - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: intensityValue
       value: 0
       objectReference: {fileID: 0}

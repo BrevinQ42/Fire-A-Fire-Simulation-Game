@@ -617,8 +617,8 @@ public class PlayerController : MonoBehaviour
                     }
                     else
                     {
-                        notificationSystem.notificationMessage = "AIM at fire, & Hold [Left Click] to SQUEEZE the handle and use extinguisher";
-                        notificationSystem.disableTimer = 6.0f;
+                        notificationSystem.notificationMessage = "AIM at the fire, & Hold [Left Click] to SQUEEZE the handle.\n SWEEP the nozzle side to side";
+                        notificationSystem.disableTimer = 8.0f;
                     }
 
                     notificationSystem.disableAfterTimer = true;
