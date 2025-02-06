@@ -17,7 +17,7 @@ public class FireExtinguisher : FireFightingObject
 
 	[Header("FloatingText")]
 	public bool lookedAt;
-    public GameObject textName;
+    public TextMesh textName;
 
 	void Start()
 	{
@@ -33,10 +33,11 @@ public class FireExtinguisher : FireFightingObject
 		isBeingSqueezed = false;
 
 		lookedAt = false;
-        textName = GetComponentInChildren<TextMesh>().gameObject;
+        textName = GetComponentInChildren<TextMesh>();
         string text = "[E] to Pick Up ";
         text += type;
         text += " Fire Extinguisher";
+        textName.text = text;
 	}
 
 	void Update()
@@ -76,15 +77,15 @@ public class FireExtinguisher : FireFightingObject
 
 		if (lookedAt == false)
         {
-            textName.SetActive(false);
+            textName.gameObject.SetActive(false);
         }
         if (lookedAt == true)
         {
-            textName.SetActive(true);
+            textName.gameObject.SetActive(true);
         }
         if (isHeld == true)
         {
-            textName.SetActive(false);
+            textName.gameObject.SetActive(false);
         }
 	}
 
