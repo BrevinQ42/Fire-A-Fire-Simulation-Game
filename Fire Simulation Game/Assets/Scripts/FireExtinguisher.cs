@@ -69,12 +69,21 @@ public class FireExtinguisher : FireFightingObject
 				}
 
 				isBeingSqueezed = true;
-			}
+                if (audioSource.clip != sweepingClip || !audioSource.isPlaying)
+                {
+                    audioSource.clip = sweepingClip;
+                    audioSource.Play();
+                }
+            }
 			else
 			{
 				isBeingSqueezed = false;
 				foam.transform.localScale = Vector3.zero;
-			}
+                if (audioSource.clip == sweepingClip || audioSource.isPlaying)
+                {
+					audioSource.Stop();
+                }
+            }
 		}
 		else foam.transform.localScale = Vector3.zero;
 

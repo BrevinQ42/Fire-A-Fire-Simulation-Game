@@ -376,7 +376,7 @@ MonoBehaviour:
   textName: {fileID: 0}
   audioSource: {fileID: 0}
   pullingClip: {fileID: 8300000, guid: 50d43fae91cd9a1408377f2f5f392868, type: 3}
-  sweepingClip: {fileID: 0}
+  sweepingClip: {fileID: 8300000, guid: 0a315d4aeb10b04478acde86fe2e162d, type: 3}
 --- !u!82 &3889997650361859739
 AudioSource:
   m_ObjectHideFlags: 0
