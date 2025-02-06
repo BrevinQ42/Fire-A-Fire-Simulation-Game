@@ -91,29 +91,42 @@ public class FireManager : MonoBehaviour
 						else RemoveSpawnPoint(spawnTransform);
 					}
 				}
-				else break;
+				else
+				{
+					Fire fire = spawnTransform.GetComponent<Fire>();
+					if (fire)
+					{
+						ongoingFire = fire;
+						ongoingFire.AffectFire(0.35f);
+					}
+					
+					break;
+				}
 			}
 
 			Vector3 spawnPoint = spawnTransform.position;
 
-			ongoingFire = Instantiate(firePrefab, spawnPoint, Quaternion.identity).GetComponent<Fire>();
-
-			if (spawnTransform.GetComponent<ElectricPlug>()) ongoingFire.type = "Electrical";
-			else if (spawnTransform.name.Equals("Pan")) ongoingFire.type = "Grease";
-			else
+			if (!ongoingFire)
 			{
-				if (index >= FireSpawnPoints.Count - 3)
+				ongoingFire = Instantiate(firePrefab, spawnPoint, Quaternion.identity).GetComponent<Fire>();
+
+				if (spawnTransform.GetComponent<ElectricPlug>()) ongoingFire.type = "Electrical";
+				else if (spawnTransform.name.Equals("Pan")) ongoingFire.type = "Grease";
+				else
 				{
-					int typeIndex = Random.Range(0, FireTypes.Count);
-					ongoingFire.type = FireTypes[typeIndex];
+					if (index < 5)
+					{
+						int typeIndex = Random.Range(0, FireTypes.Count);
+						ongoingFire.type = FireTypes[typeIndex];
+					}
+					else ongoingFire.type = "Class A";
 				}
-				else ongoingFire.type = "Class A";
 			}
 
 			ongoingFire.Toggle(true);
 			isFireOngoing = true;
 
-			if (index < FireSpawnPoints.Count - 3)
+			if (index >= 5)
 			{
                 notificationSystem.notificationMessage = "A fire has emerged! Identify the cause of the fire and put it out accordingly!";
                 notificationSystem.disableAfterTimer = true;

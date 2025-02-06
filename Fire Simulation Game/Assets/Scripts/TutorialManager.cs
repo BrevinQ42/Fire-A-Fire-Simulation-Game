@@ -18,7 +18,6 @@ public class TutorialManager : MonoBehaviour
 	[SerializeField] private Vector3 fireLocation;
 	[SerializeField] private Fire ongoingFire;
 	[SerializeField] private string fireType;
-	private string previousType;
 	private bool isNextFireComing;
 
 	void Start()
@@ -85,18 +84,9 @@ public class TutorialManager : MonoBehaviour
 		yield return new WaitForSeconds(3.5f);
 
 		ongoingFire = Instantiate(firePrefab, fireLocation + new Vector3(0f,0f,1.5f), Quaternion.identity).GetComponent<Fire>();
+		ongoingFire.type = "Electrical";
 
-		if (previousType.Equals("Electrical"))
-		{
-			ongoingFire.type = "Grease";
-			yield return new WaitUntil(() => ongoingFire.type.Equals("Grease"));
-		}
-		else
-		{
-			ongoingFire.type = "Electrical";
-			yield return new WaitUntil(() => ongoingFire.type.Equals("Electrical"));
-		}
-		
+		yield return new WaitUntil(() => ongoingFire.type.Equals("Electrical"));
 		ongoingFire.Toggle(true);
 
 		tutorialNotifSystem.notificationMessage = "There is a growing, unstoppable fire!\nGo to an open area like the basketball court outside";
@@ -106,7 +96,6 @@ public class TutorialManager : MonoBehaviour
 	public void SetupFireType(string type)
 	{
 		fireType = type;
-		previousType = fireType;
 		ongoingFire.type = fireType;
 
 		string message = "This is a " + ongoingFire.type + " fire.\nPut it out with the items in front of you.";

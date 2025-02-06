@@ -220,6 +220,21 @@ public class PlayerController : MonoBehaviour
                         Transform textName = fireExtinguisher.textName.transform;
                         textName.SetPositionAndRotation(textName.position, transform.rotation);
                     }
+                    else if (hitTransform.GetComponent<Candle>())
+                    {
+                        Debug.Log("Candle is hit");
+                        Candle candle = hitTransform.GetComponent<Candle>();
+                        candle.lookedAt = true;
+
+                        if(objectLookedAt != candle.gameObject)
+                        {
+                            ResetLastObjLookedAt();
+                            objectLookedAt = candle.gameObject;
+                        }
+
+                        Transform textName = candle.textName.transform;
+                        textName.SetPositionAndRotation(textName.position, transform.rotation);
+                    }
                     else ResetLastObjLookedAt();
                 }
             }
@@ -661,6 +676,32 @@ public class PlayerController : MonoBehaviour
                 Spawner ws = hitTransform.GetChild(0).GetComponent<Spawner>();
                 ws.Toggle();
             }
+            else if (hitTransform.GetComponent<Candle>())
+            {
+                Candle candle = hitTransform.GetComponent<Candle>();
+                if (candle.transform.childCount > 1)
+                {
+                    Fire FireOnCandle = candle.transform.GetChild(0).GetComponent<Fire>();
+                    if (FireOnCandle.intensityValue > 0.15f)
+                    {
+                        FireOnCandle.AffectFire(0.01f);
+
+                        notificationSystem.notificationMessage = "Fire is too big to be blown out!\nTry another way to put it out.";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 7.0f;
+                        notificationSystem.displayNotification();
+                    }
+                    else
+                    {
+                        FireOnCandle.AffectFire(-FireOnCandle.intensityValue);
+
+                        notificationSystem.notificationMessage = "You have blown out the fire on the candle!\nPut out the fires on other unused candles as well!";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 8.0f;
+                        notificationSystem.displayNotification();
+                    }
+                }
+            }
         }
     }
 
@@ -819,6 +860,8 @@ public class PlayerController : MonoBehaviour
                 objectLookedAt.GetComponent<ElectricPlug>().lookedAt = false;
             else if (objectLookedAt.GetComponent<FireExtinguisher>())
                 objectLookedAt.GetComponent<FireExtinguisher>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<Candle>())
+                objectLookedAt.GetComponent<Candle>().lookedAt = false;
             
             objectLookedAt = null;
         }
