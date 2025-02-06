@@ -93,7 +93,6 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         cameraTransform = transform.GetChild(0);
 
-        currentState = "Walking";
         SetupUprightState();
         currentSpeed = walkingSpeed;
 
@@ -143,12 +142,12 @@ public class PlayerController : MonoBehaviour
                 if (hit.transform.CompareTag("Floor") || hit.transform.CompareTag("Fire")) hitTransform = null;
                 else
                 {
-                    Debug.Log(hit.transform.name + ": " + hit.distance);
+                    // Debug.Log(hit.transform.name + ": " + hit.distance);
 
                     hitTransform = hit.transform;
                     if (hitTransform.GetComponent<NonFlammableObject>())    
                     {
-                        Debug.Log("FireResistant Object is Hit");
+                        // Debug.Log("FireResistant Object is Hit");
                         NonFlammableObject fireResistant = hitTransform.GetComponent<NonFlammableObject>();
                         fireResistant.lookedAt = true;
                         
@@ -163,7 +162,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (hitTransform.GetComponent<ObjectNamePopUp>())
                     {
-                        Debug.Log("Faucet Object is Hit");  
+                        // Debug.Log("Faucet Object is Hit");  
                         ObjectNamePopUp faucet = hitTransform.GetComponent<ObjectNamePopUp>();
                         faucet.lookedAt = true;
                         
@@ -178,7 +177,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (hitTransform.GetComponent<Pail>())
                     {
-                        Debug.Log("Bucket Object is Hit");
+                        // Debug.Log("Bucket Object is Hit");
                         Pail bucket = hitTransform.GetComponent<Pail>();
                         bucket.lookedAt = true;
                         
@@ -193,7 +192,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (hitTransform.GetComponent<ElectricPlug>())
                     {
-                        Debug.Log("Plug is Hit");
+                        // Debug.Log("Plug is Hit");
                         ElectricPlug electricPlug = hitTransform.GetComponent<ElectricPlug>();
                         electricPlug.lookedAt = true;
                         
@@ -208,7 +207,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (hitTransform.GetComponent<FireExtinguisher>())
                     {
-                        Debug.Log("Extinguisher is hit");
+                        // Debug.Log("Extinguisher is hit");
                         FireExtinguisher fireExtinguisher = hitTransform.GetComponent<FireExtinguisher>();
                         fireExtinguisher.lookedAt = true;
 
@@ -230,7 +229,7 @@ public class PlayerController : MonoBehaviour
                 ResetLastObjLookedAt();
 
                 Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
-                Debug.Log("Did not Hit");
+                // Debug.Log("Did not Hit");
                 hitTransform = null;
             }
         }
@@ -307,9 +306,8 @@ public class PlayerController : MonoBehaviour
         // Run to walk
         if (playerBars.stamina <= 0 && currentState.Equals("Running"))
         {
-            currentState = "Walking";
-            currentSpeed = walkingSpeed;
             SetupUprightState();
+            currentSpeed = walkingSpeed;
         }
         // Roll to crawl
         if (playerBars.stamina <= 0 && currentState.Equals("Rolling"))
@@ -476,13 +474,11 @@ public class PlayerController : MonoBehaviour
     {
         if (currentState.Equals("Crawling"))
         {
-            currentState = "Walking";
             SetupUprightState();
             currentSpeed = walkingSpeed;
         }
         else if (!heldObject)
         {
-            currentState = "Crawling";
             SetupCrawlState();
             currentSpeed = crawlingSpeed;
         }
@@ -508,16 +504,15 @@ public class PlayerController : MonoBehaviour
     {
         if (!heldObject)
         {
-            isVerticalTiltEnabled = false;
+            SetupCrawlState();
+
             isHorizontalTiltEnabled = false;
+            previousEulerAngles = transform.eulerAngles;
+            cameraTransform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+
             rollingTimeLeft = 5.0f;
             rotationCount = 37;
             rollRotation = 5.0f;
-
-            transform.position = new Vector3(transform.position.x, 1.0f, transform.position.z);
-            transform.eulerAngles = new Vector3(75, transform.eulerAngles.y, transform.eulerAngles.z);
-            previousEulerAngles = transform.eulerAngles;
-            cameraTransform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
 
             currentSpeed = 0;
             currentState = "Rolling";
@@ -719,16 +714,26 @@ public class PlayerController : MonoBehaviour
         isHorizontalTiltEnabled = true;
         transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z);
         cameraTransform.eulerAngles = new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z);
-        transform.position = new Vector3(transform.position.x, 1.2f, transform.position.z);
+        
+        if (currentState.Equals("Crawling") || currentState.Equals("Rolling"))
+            transform.position = new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z);
+        else if (currentState.Equals(""))
+            transform.position = new Vector3(transform.position.x, 1.2f, transform.position.z);
+
+        currentState = "Walking";
     }
 
     void SetupCrawlState()
     {
-        transform.position = new Vector3(transform.position.x, 1.0f, transform.position.z);
         isVerticalTiltEnabled = false;
         isHorizontalTiltEnabled = true;
         transform.eulerAngles = new Vector3(75, transform.eulerAngles.y, transform.eulerAngles.z);
         cameraTransform.eulerAngles = new Vector3(30, transform.eulerAngles.y, transform.eulerAngles.z);
+
+        if (currentState.Equals("Walking") || currentState.Equals("Running"))
+            transform.position = new Vector3(transform.position.x, transform.position.y - 0.2f, transform.position.z);
+
+        currentState = "Crawling";
     }
 
     void EndGame()
@@ -737,13 +742,13 @@ public class PlayerController : MonoBehaviour
         {
             if (collidedWith.name.Equals("Outside Floor"))
             {            
-                Debug.Log("You Won");
+                // Debug.Log("You Won");
                 winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
                 Cursor.lockState = CursorLockMode.None;
             }
             else if (collidedWith.name.Equals("Court") && fireManager)
             {           
-                Debug.Log("You Escaped");
+                // Debug.Log("You Escaped");
                 winScreen.oneStar.color = new Color(255f, 255f, 255f);
                 if (playerBars.hydrationLevel > 50 && timeElapsed < 540)
                 {
