@@ -595,7 +595,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (extinguisher)
                 {
-                    if (extinguisher.isPinPulled)
+                    if (!extinguisher.isPinPulled)
                     {
                         notificationSystem.notificationMessage = "[Left Click] to PULL the Pin";
                         notificationSystem.disableTimer = 3.0f;
