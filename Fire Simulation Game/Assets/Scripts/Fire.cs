@@ -31,10 +31,9 @@ public class Fire : MonoBehaviour
         SmokeSpawner = GetComponentInChildren<Spawner>();
         SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
 
-        transform.localScale = Vector3.zero;
+        intensityValue += 0.01f;
 
-        if(intensityValue != 0.49f && transform.parent == null) AffectFire(-intensityValue);
-        else AffectFire(0.01f);
+        transform.localScale = Vector3.one * intensityValue;
 
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
