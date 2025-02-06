@@ -10,18 +10,34 @@ public class SmokeSystemManager : MonoBehaviour
     private int spawnersActive = 0; // updated in spawner script
 
     public GameObject smokeLayer1;      
-    public float timeToActivateLayer1 = 180f;
+    public float timeToActivateLayer1 = 80f;
     public GameObject smokeLayer2;
-    public float timeToActivateLayer2 = 360f;
+    public float timeToActivateLayer2 = 160f;
+    public GameObject smokeLayer3;
+    public float timeToActivateLayer3 = 240f;
+    public GameObject smokeLayer4;
+    public float timeToActivateLayer4 = 320f;
+    public GameObject smokeLayer5;
+    public float timeToActivateLayer5 = 400f;
+    public GameObject smokeLayer6;
+    public float timeToActivateLayer6 = 480f;
 
     private float elapsedTime = 0f;    
     private bool isSmokeLayer1Activated = false;
     private bool isSmokeLayer2Activated = false;
+    private bool isSmokeLayer3Activated = false;
+    private bool isSmokeLayer4Activated = false;
+    private bool isSmokeLayer5Activated = false;
+    private bool isSmokeLayer6Activated = false;
 
     void Start()
     {
         smokeLayer1.SetActive(false);
         smokeLayer2.SetActive(false);
+        smokeLayer3.SetActive(false);
+        smokeLayer4.SetActive(false);
+        smokeLayer5.SetActive(false);
+        smokeLayer6.SetActive(false);
     }
 
     void Update()
@@ -30,27 +46,73 @@ public class SmokeSystemManager : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
 
-            // After 3 minutes, activate layer 1
             if (elapsedTime >= timeToActivateLayer1 && isSmokeLayer1Activated == false)
             {
                 DeleteSmokeSpheres();     
                 ActivateSmokeLayer1();      
                 isSmokeLayer1Activated = true;
 
-                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 5.0f;
                 notificationSystem.displayNotification();
             }
 
-            // After 6 minutes, activate layer 1
             if (elapsedTime >= timeToActivateLayer2 && isSmokeLayer2Activated == false)
             {
                 DeleteSmokeSpheres();
                 ActivateSmokeLayer2();
                 isSmokeLayer2Activated = true;
 
-                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, don't let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't don't go near it or  let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.displayNotification();
+            }
+
+            if (elapsedTime >= timeToActivateLayer3 && isSmokeLayer3Activated == false)
+            {
+                DeleteSmokeSpheres();
+                ActivateSmokeLayer3();
+                isSmokeLayer3Activated = true;
+
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't don't go near it or  let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.displayNotification();
+            }
+
+            if (elapsedTime >= timeToActivateLayer4 && isSmokeLayer4Activated == false)
+            {
+                DeleteSmokeSpheres();
+                ActivateSmokeLayer4();
+                isSmokeLayer4Activated = true;
+
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't don't go near it or  let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.displayNotification();
+            }
+
+            if (elapsedTime >= timeToActivateLayer5 && isSmokeLayer5Activated == false)
+            {
+                DeleteSmokeSpheres();
+                ActivateSmokeLayer5();
+                isSmokeLayer5Activated = true;
+
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't don't go near it or  let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.displayNotification();
+            }
+
+            if (elapsedTime >= timeToActivateLayer6 && isSmokeLayer6Activated == false)
+            {
+                DeleteSmokeSpheres();
+                ActivateSmokeLayer6();
+                isSmokeLayer6Activated = true;
+
+                notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't don't go near it or  let the smoke orbs get to you!\n[C] to crawl / stand back up";
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.disableTimer = 5.0f;
                 notificationSystem.displayNotification();
@@ -88,6 +150,34 @@ public class SmokeSystemManager : MonoBehaviour
 
         smokeLayer2.SetActive(true);
         Debug.Log("Smoke layer2 activated.");
+    }
+
+    void ActivateSmokeLayer3()
+    {
+
+        smokeLayer3.SetActive(true);
+        Debug.Log("Smoke layer3 activated.");
+    }
+
+    void ActivateSmokeLayer4()
+    {
+
+        smokeLayer4.SetActive(true);
+        Debug.Log("Smoke layer4 activated.");
+    }
+
+    void ActivateSmokeLayer5()
+    {
+
+        smokeLayer5.SetActive(true);
+        Debug.Log("Smoke layer5 activated.");
+    }
+
+    void ActivateSmokeLayer6()
+    {
+
+        smokeLayer6.SetActive(true);
+        Debug.Log("Smoke layer6 activated.");
     }
 
     public void IncrementCounter()

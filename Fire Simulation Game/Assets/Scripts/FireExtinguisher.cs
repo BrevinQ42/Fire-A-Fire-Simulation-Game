@@ -19,7 +19,11 @@ public class FireExtinguisher : FireFightingObject
 	public bool lookedAt;
     public TextMesh textName;
 
-	void Start()
+    public AudioSource audioSource;
+    public AudioClip pullingClip;
+    public AudioClip sweepingClip;
+
+    void Start()
 	{
 		isHeld = false;
 		fireFightingValue = 0.1f;
@@ -38,15 +42,21 @@ public class FireExtinguisher : FireFightingObject
         text += type;
         text += " Fire Extinguisher";
         textName.text = text;
-	}
+
+        audioSource = GetComponent<AudioSource>();
+    }
 
 	void Update()
 	{
 		if (isHeld)
 		{
 			if (Input.GetMouseButtonDown(0) && !isPinPulled)
-				isPinPulled = true;
-			else if (Input.GetMouseButton(0) && isPinPulled)
+			{
+                isPinPulled = true;
+                audioSource.clip = pullingClip;
+                audioSource.Play();
+            }
+            else if (Input.GetMouseButton(0) && isPinPulled)
 			{
 				foam.transform.localScale = Vector3.one * foamScale;
 
@@ -59,12 +69,21 @@ public class FireExtinguisher : FireFightingObject
 				}
 
 				isBeingSqueezed = true;
-			}
+                if (audioSource.clip != sweepingClip || !audioSource.isPlaying)
+                {
+                    audioSource.clip = sweepingClip;
+                    audioSource.Play();
+                }
+            }
 			else
 			{
 				isBeingSqueezed = false;
 				foam.transform.localScale = Vector3.zero;
-			}
+                if (audioSource.clip == sweepingClip || audioSource.isPlaying)
+                {
+					audioSource.Stop();
+                }
+            }
 		}
 		else foam.transform.localScale = Vector3.zero;
 
@@ -88,5 +107,5 @@ public class FireExtinguisher : FireFightingObject
 
 		if (!foam) foam = GetComponentInChildren<Foam>();
 		foam.type = newType;
-	}
+    }
 }

@@ -66,6 +66,7 @@ public class PlayerBars : MonoBehaviour
         {
             loseScreen.DisplayGameOver();
             Cursor.lockState = CursorLockMode.None;
+            oxygenBar.value = 0f;
             Debug.Log("Player has run out of oxygen!");
             // Insert player death code here
         }

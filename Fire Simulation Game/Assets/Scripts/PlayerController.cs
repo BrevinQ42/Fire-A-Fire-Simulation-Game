@@ -829,6 +829,10 @@ public class PlayerController : MonoBehaviour
         {
             isOnStairs = true;
         }
+        if (collision.gameObject.tag == "SmokeLayer")
+        {
+            playerBars.oxygen = 0.0f;
+        }
 
         else if (collision.collider.name.Equals("Court"))
             collidedWith = collision.collider;
