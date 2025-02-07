@@ -12,6 +12,11 @@ public class SelectionManager : MonoBehaviour
 
 	void Start()
 	{
+		if (tm.ongoingFire)
+			tm.ongoingFire.notificationSystem = NotifCanvas.transform.GetChild(0).GetComponent<NotificationTriggerEvent>();
+		else
+			tm.firePrefab.notificationSystem = NotifCanvas.transform.GetChild(0).GetComponent<NotificationTriggerEvent>();
+
 		player.GetComponent<PlayerController>().enabled = false;
 		Canvas.SetActive(false);
 		NotifCanvas.SetActive(false);

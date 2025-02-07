@@ -14,9 +14,9 @@ public class TutorialManager : MonoBehaviour
 	private Dictionary<string, List<string>> ObjsVsFire;
 
 	[Header("Fire")]
-	[SerializeField] private Fire firePrefab;
+	public Fire firePrefab;
 	[SerializeField] private Vector3 fireLocation;
-	[SerializeField] private Fire ongoingFire;
+	public Fire ongoingFire;
 	[SerializeField] private string fireType;
 	private bool isNextFireComing;
 
