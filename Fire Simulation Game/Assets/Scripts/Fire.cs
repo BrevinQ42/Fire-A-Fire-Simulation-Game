@@ -192,7 +192,12 @@ public class Fire : MonoBehaviour
                     }
                     else if (foam)
                     {
-                        if (EffectivityTable[type].Equals(foam.type))
+                        if (type.Equals("UNSTOPPABLE"))
+                        {
+                            AffectFire(obj.fireFightingValue);
+                            growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
+                        }
+                        else if (EffectivityTable[type].Equals(foam.type))
                         {
                             AffectFire(-obj.fireFightingValue);
                             growingSpeed = Math.Max(growingSpeed - 0.1f * obj.fireFightingValue, 0.05f);        
@@ -205,6 +210,7 @@ public class Fire : MonoBehaviour
                             string message = "The fire grew! That is because that is a ";
                             message += type;
                             message += " fire.\nCheck the type of extinguisher you are using.";
+                            notificationSystem.notificationMessage = message;
                             notificationSystem.disableAfterTimer = true;
                             notificationSystem.disableTimer = 8.0f;
                             notificationSystem.displayNotification();

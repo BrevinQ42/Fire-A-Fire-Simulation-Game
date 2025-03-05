@@ -112,10 +112,13 @@ public class PlayerController : MonoBehaviour
 
         playerBars = GetComponent<PlayerBars>();
 
-        notificationSystem.notificationMessage = "Try to prevent fires!\nOne way is to avoid plugging extension cords on others";
-        notificationSystem.disableAfterTimer = true;
-        notificationSystem.disableTimer = 7.5f;
-        notificationSystem.displayNotification();
+        if (fireManager)
+        {
+            notificationSystem.notificationMessage = "Try to prevent fires!\nOne way is to avoid plugging extension cords on others";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 7.5f;
+            notificationSystem.displayNotification();
+        }
 
         coverNoseMessageDisplayed = false;
         stoppedCoveringNoseMessageDisplayed = false;

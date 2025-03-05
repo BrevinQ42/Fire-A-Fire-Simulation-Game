@@ -13,7 +13,7 @@ public class FireExtinguisher : FireFightingObject
 
 	[SerializeField] private string type;
 	public bool isPinPulled;
-	private bool isBeingSqueezed;
+	private bool areNextInstructionsSent;
 
 	[Header("FloatingText")]
 	public bool lookedAt;
@@ -34,7 +34,7 @@ public class FireExtinguisher : FireFightingObject
 		notificationSystem = GameObject.Find("MainPanel").GetComponent<NotificationTriggerEvent>();
 
 		isPinPulled = false;
-		isBeingSqueezed = false;
+		areNextInstructionsSent = false;
 
 		lookedAt = false;
         textName = GetComponentInChildren<TextMesh>();
@@ -59,16 +59,6 @@ public class FireExtinguisher : FireFightingObject
             else if (Input.GetMouseButton(0) && isPinPulled)
 			{
 				foam.transform.localScale = Vector3.one * foamScale;
-
-				if (!isBeingSqueezed)
-				{
-					notificationSystem.notificationMessage = "AIM at the fire, & Hold [Left Click] to SQUEEZE the handle.\n SWEEP the nozzle side to side";
-					notificationSystem.disableAfterTimer = true;
-					notificationSystem.disableTimer = 8.0f;
-					notificationSystem.displayNotification();
-				}
-
-				isBeingSqueezed = true;
                 if (audioSource.clip != sweepingClip || !audioSource.isPlaying)
                 {
                     audioSource.clip = sweepingClip;
@@ -77,7 +67,16 @@ public class FireExtinguisher : FireFightingObject
             }
 			else
 			{
-				isBeingSqueezed = false;
+				if (isPinPulled && !areNextInstructionsSent)
+				{
+					areNextInstructionsSent = true;
+					
+					notificationSystem.notificationMessage = "AIM at the fire, & Hold [Left Click] to SQUEEZE the handle.\n SWEEP the nozzle side to side";
+					notificationSystem.disableAfterTimer = true;
+					notificationSystem.disableTimer = 8.0f;
+					notificationSystem.displayNotification();
+				}
+
 				foam.transform.localScale = Vector3.zero;
                 if (audioSource.clip == sweepingClip || audioSource.isPlaying)
                 {
@@ -85,7 +84,11 @@ public class FireExtinguisher : FireFightingObject
                 }
             }
 		}
-		else foam.transform.localScale = Vector3.zero;
+		else
+		{
+			foam.transform.localScale = Vector3.zero;
+			areNextInstructionsSent = false;
+		}
 
 		if (lookedAt == false)
         {

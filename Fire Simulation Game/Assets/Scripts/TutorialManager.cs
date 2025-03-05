@@ -10,27 +10,26 @@ public class TutorialManager : MonoBehaviour
 
 	[Header("Fire Fighting Objects")]
 	[SerializeField] private Pail Bucket;
+	[SerializeField] private NonFlammableObject FireResistant;
 	[SerializeField] private FireExtinguisher FireExtinguisher;
-	private Dictionary<string, List<string>> ObjsVsFire;
 
 	[Header("Fire")]
 	public Fire firePrefab;
 	[SerializeField] private Vector3 fireLocation;
 	public Fire ongoingFire;
 	[SerializeField] private string fireType;
+	[SerializeField] private float previousIntensityValue;
 	private bool isNextFireComing;
 
 	void Start()
 	{
 		Bucket.setFractionFilled(1.0f);
 
-		PopulateObjsVsFire();
-
 		ongoingFire = Instantiate(firePrefab, fireLocation, Quaternion.identity).GetComponent<Fire>();
 		ongoingFire.Toggle(false);
 
+		previousIntensityValue = 0.5f;
 		isNextFireComing = false;
-
 
 		if (fireType != "")
 		{
@@ -63,20 +62,24 @@ public class TutorialManager : MonoBehaviour
 				SceneManager.LoadScene("Tutorial Scene");
 			}
 		}
-	}
+		
+		if (!isNextFireComing)
+		{
+			if (previousIntensityValue > ongoingFire.intensityValue)
+			{
+				tutorialNotifSystem.notificationMessage = "The fire got smaller!\nYou found the right object!";
+				tutorialNotifSystem.displayNotification();
 
-	void PopulateObjsVsFire()
-	{
-		ObjsVsFire = new Dictionary<string, List<string>>();
+				previousIntensityValue = ongoingFire.intensityValue;
+			}
+			else if (previousIntensityValue < ongoingFire.intensityValue)
+			{
+				tutorialNotifSystem.notificationMessage = "The fire got bigger!\nTry another object to put it out!";
+				tutorialNotifSystem.displayNotification();
 
-		// electrical
-		ObjsVsFire["Electrical"] = new List<string>{"Class C"};
-
-		// grease
-		ObjsVsFire["Grease"] = new List<string>{"Class K"};
-
-		// class A
-		ObjsVsFire["Class A"] = new List<string>{"Water", "Class A"};
+				previousIntensityValue = ongoingFire.intensityValue;
+			}
+		}
 	}
 
 	IEnumerator PromptForEvacuation()
@@ -84,13 +87,35 @@ public class TutorialManager : MonoBehaviour
 		yield return new WaitForSeconds(3.5f);
 
 		ongoingFire = Instantiate(firePrefab, fireLocation + new Vector3(0f,0f,1.5f), Quaternion.identity).GetComponent<Fire>();
-		ongoingFire.type = "Electrical";
+		ongoingFire.type = "UNSTOPPABLE";
 
-		yield return new WaitUntil(() => ongoingFire.type.Equals("Electrical"));
+		yield return new WaitUntil(() => ongoingFire.type.Equals("UNSTOPPABLE"));
 		ongoingFire.Toggle(true);
 
 		tutorialNotifSystem.notificationMessage = "There is a growing, unstoppable fire!\nGo to an open area like the basketball court outside";
 		tutorialNotifSystem.displayNotification();
+	}
+
+	void SpawnFireFightingObjects()
+	{
+		Vector3 objPosition = new Vector3(24.0f, 1.0f, -18.5f);
+		
+		Pail newBucket = Instantiate(Bucket, objPosition, Quaternion.identity);
+		newBucket.setFractionFilled(1.0f);
+		objPosition = new Vector3(objPosition.x + 1.5f, objPosition.y, objPosition.z);
+
+		NonFlammableObject fireResistant = Instantiate(FireResistant, objPosition, Quaternion.identity);
+		objPosition = new Vector3(objPosition.x + 1.5f, objPosition.y, objPosition.z);
+
+		List<string> fireExtinguisherTypes = new List<string>{"Class A", "Class C", "Class K"};
+
+		foreach (string type in fireExtinguisherTypes)
+		{
+			FireExtinguisher extinguisher = Instantiate(FireExtinguisher, objPosition, Quaternion.identity);
+			extinguisher.SetType(type);
+
+			objPosition = new Vector3(objPosition.x + 1.5f, objPosition.y, objPosition.z);
+		}
 	}
 
 	public void SetupFireType(string type)
@@ -98,29 +123,12 @@ public class TutorialManager : MonoBehaviour
 		fireType = type;
 		ongoingFire.type = fireType;
 
-		string message = "This is a " + ongoingFire.type + " fire.\nPut it out with the items in front of you.";
+		string message = "This is a " + ongoingFire.type + " fire.\nFigure out which of these can put it out.";
 		tutorialNotifSystem.notificationMessage = message;
 		tutorialNotifSystem.disableAfterTimer = false;
 		tutorialNotifSystem.displayNotification();
 
-		if (ObjsVsFire.ContainsKey(ongoingFire.type))
-		{
-			foreach (string name in ObjsVsFire[ongoingFire.type])
-			{
-				if (name.Equals("Water"))
-				{
-					Pail newBucket = Instantiate(Bucket, new Vector3(25.5f, 1f, -18.5f), Quaternion.identity);
-					newBucket.setFractionFilled(1.0f);
-				}
-				else
-				{
-					FireExtinguisher extinguisher = Instantiate(FireExtinguisher, new Vector3(28.5f, 1f, -18.5f), Quaternion.identity);
-					extinguisher.SetType(name);
-				}
-			}
-		}
-		else
-			Debug.Log(ongoingFire.type + " [key] not in dict");
+		SpawnFireFightingObjects();
 
 		Cursor.lockState = CursorLockMode.Locked;
 	}
