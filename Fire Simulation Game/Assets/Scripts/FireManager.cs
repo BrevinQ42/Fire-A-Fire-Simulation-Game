@@ -14,8 +14,9 @@ public class FireManager : MonoBehaviour
 	[SerializeField] private int minPlugsCountForFire;
 
 	private List<string> FireTypes;
+    public int index;
 
-	[SerializeField] private float timeBeforeFire;
+    [SerializeField] private float timeBeforeFire;
 	public bool isFireOngoing;
 	private Fire ongoingFire;
 	public bool isPlayerSuccessful;
@@ -47,7 +48,6 @@ public class FireManager : MonoBehaviour
 		if (timeBeforeFire > 0.0f) timeBeforeFire -= Time.deltaTime;
 		else if (!isFireOngoing)
 		{
-			int index;
 			Transform spawnTransform;
 
 			while(true)
