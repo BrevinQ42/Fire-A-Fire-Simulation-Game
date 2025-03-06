@@ -129,7 +129,11 @@ public class FireManager : MonoBehaviour
 				ongoingFire = Instantiate(firePrefab, spawnPoint, Quaternion.identity).GetComponent<Fire>();
 
 				if (spawnTransform.GetComponent<ElectricPlug>()) ongoingFire.type = "Electrical";
-				else if (spawnTransform.name.Equals("Pan")) ongoingFire.type = "Grease";
+				else if (spawnTransform.name.Equals("Pan"))
+				{
+					ongoingFire.type = "Grease";
+					ongoingFire.isOnPan = true;
+				}
 				else
 				{
 					if (index < 5)

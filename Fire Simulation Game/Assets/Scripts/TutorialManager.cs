@@ -34,10 +34,8 @@ public class TutorialManager : MonoBehaviour
 		previousIntensityValue = 0.5f;
 		isNextFireComing = false;
 
-		if (fireType != "")
-		{
+		if (!fireType.Equals(""))
 			SetupFireType(fireType);
-		}
 	}
 
 	void Update()
@@ -66,7 +64,7 @@ public class TutorialManager : MonoBehaviour
 			}
 		}
 		
-		if (tutorialNotifSystem && !isNextFireComing)
+		if (!isNextFireComing && !fireType.Equals(""))
 		{
 			if (previousIntensityValue > ongoingFire.intensityValue)
 			{
@@ -136,6 +134,9 @@ public class TutorialManager : MonoBehaviour
 		Cursor.lockState = CursorLockMode.Locked;
 
 		if (fireType.Equals("Grease"))
+		{
 			ongoingFire.transform.position = greaseFireLocation.position;
+			ongoingFire.isOnPan = true;
+		}
 	}
 }

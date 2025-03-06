@@ -124,8 +124,9 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            notificationSystem.notificationMessage = "";
+            notificationSystem.notificationMessage = "WELCOME TO THE TUTORIAL";
             notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 6.0f;
             notificationSystem.displayNotification();
         }
 
@@ -155,7 +156,7 @@ public class PlayerController : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, closeProximityValue, layerMask))
             {
-                Debug.Log(hit.transform.name + ": " + hit.distance);
+                // Debug.Log(hit.transform.name + ": " + hit.distance);
 
                 hitTransform = hit.transform;
                 if (hitTransform.GetComponent<NonFlammableObject>())    
@@ -267,7 +268,7 @@ public class PlayerController : MonoBehaviour
                     Transform textName = candle.textName.transform;
                     textName.SetPositionAndRotation(textName.position, transform.rotation);
                 }
-                else ResetLastObjLookedAt();
+                // else ResetLastObjLookedAt();
             }
             else
             {
@@ -275,7 +276,7 @@ public class PlayerController : MonoBehaviour
                 ResetLastObjLookedAt();
 
                 // Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
-                Debug.Log("Did not Hit");
+                // Debug.Log("Did not Hit");
                 hitTransform = null;
             }
         }

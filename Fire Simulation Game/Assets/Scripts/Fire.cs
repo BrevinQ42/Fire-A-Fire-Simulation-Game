@@ -17,6 +17,7 @@ public class Fire : MonoBehaviour
     private float maxGrowingSpeed;
 
     public string type;
+    public bool isOnPan;
 
     private Dictionary<string, string> EffectivityTable;
 
@@ -42,6 +43,8 @@ public class Fire : MonoBehaviour
 
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
+
+        isOnPan = false;
 
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = fireClip;
@@ -98,6 +101,18 @@ public class Fire : MonoBehaviour
 
             if (intensityValue <= 0.01f)
             {
+                if (isOnPan)
+                {
+                    Transform fryingPan = GameObject.Find("FryingPan").transform;
+
+                    if (fryingPan.childCount > 2)
+                    {
+                        GameObject innateFire = fryingPan.GetChild(2).gameObject;
+                        
+                        if (innateFire.name.Equals("Fire")) Destroy(innateFire);
+                    }
+                }
+
                 SmokeSpawner.Toggle(false);
                 Destroy(gameObject);
             }
