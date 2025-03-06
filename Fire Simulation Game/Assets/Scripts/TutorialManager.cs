@@ -16,6 +16,9 @@ public class TutorialManager : MonoBehaviour
 	[Header("Fire")]
 	public Fire firePrefab;
 	[SerializeField] private Vector3 fireLocation;
+	[SerializeField] private Transform greaseFireLocation;
+
+	[Header("Ongoing Fire")]
 	public Fire ongoingFire;
 	[SerializeField] private string fireType;
 	[SerializeField] private float previousIntensityValue;
@@ -63,7 +66,7 @@ public class TutorialManager : MonoBehaviour
 			}
 		}
 		
-		if (!isNextFireComing)
+		if (tutorialNotifSystem && !isNextFireComing)
 		{
 			if (previousIntensityValue > ongoingFire.intensityValue)
 			{
@@ -131,5 +134,8 @@ public class TutorialManager : MonoBehaviour
 		SpawnFireFightingObjects();
 
 		Cursor.lockState = CursorLockMode.Locked;
+
+		if (fireType.Equals("Grease"))
+			ongoingFire.transform.position = greaseFireLocation.position;
 	}
 }

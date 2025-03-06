@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7662110345231062344}
   - component: {fileID: 1905694323980460655}
   - component: {fileID: 7590818831878633105}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Fire
   m_TagString: Fire
   m_Icon: {fileID: 0}
@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 2383681636400717071}
   - component: {fileID: 5475304245103476638}
   - component: {fileID: 1426504858789961935}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FireSparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5017,7 +5017,7 @@ GameObject:
   - component: {fileID: 6409753073491194239}
   - component: {fileID: 5671400856417370378}
   - component: {fileID: 3005555581766192736}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FireGlow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9847,7 +9847,7 @@ GameObject:
   - component: {fileID: 4405772579865878736}
   - component: {fileID: 5857643465274128994}
   - component: {fileID: 5629842962512304172}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FireAdd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14676,7 +14676,7 @@ GameObject:
   m_Component:
   - component: {fileID: 158879527211127933}
   - component: {fileID: 2250723202001778216}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: SmokeSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14725,7 +14725,7 @@ GameObject:
   - component: {fileID: 7816804803792113527}
   - component: {fileID: 1452513386842577035}
   - component: {fileID: 8967925216682156982}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FireAlpha
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19555,7 +19555,7 @@ GameObject:
   - component: {fileID: 5245130681061280551}
   - component: {fileID: 387246690611245925}
   - component: {fileID: 2418881933169446763}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FireGlow2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

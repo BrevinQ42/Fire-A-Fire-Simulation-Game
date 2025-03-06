@@ -10,6 +10,7 @@ public class Fire : MonoBehaviour
 
     [SerializeField] private Spawner SmokeSpawner;
 
+    [Header("Characteristics")]
     public float intensityValue;
     private bool isGrowing;
     [SerializeField] private float growingSpeed;
@@ -17,11 +18,12 @@ public class Fire : MonoBehaviour
 
     public string type;
 
+    private Dictionary<string, string> EffectivityTable;
+
+    [Header("Sound Effects")]
     // Sound effect
     public AudioSource audioSource;
     public AudioClip fireClip;
-
-    private Dictionary<string, string> EffectivityTable;
 
     // Start is called before the first frame update
     void Start()
@@ -146,6 +148,13 @@ public class Fire : MonoBehaviour
 
                 if (obj)
                 {
+                    if (type.Equals("UNSTOPPABLE"))
+                    {
+                        AffectFire(obj.fireFightingValue);
+                        growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
+                        return;
+                    }
+
                     Water water = obj.GetComponent<Water>();
                     Foam foam = obj.GetComponent<Foam>();
                     if (water)
@@ -168,39 +177,49 @@ public class Fire : MonoBehaviour
                                 notificationSystem.displayNotification();
                             }
                         }
-                        else
+                        else if (type.Equals("Grease"))
                         {
-                            if (type.Equals("Grease"))
-                            {
-                                AffectFire(obj.fireFightingValue);
-                                growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
+                            AffectFire(obj.fireFightingValue);
+                            growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
 
-                                if (isEligibleForNotif)
-                                {
-                                    notificationSystem.notificationMessage = "The fire grew! Water is ineffective because that is a grease fire.\nThere might be something else more effective";
-                                    notificationSystem.disableAfterTimer = true;
-                                    notificationSystem.disableTimer = 8.0f;
-                                    notificationSystem.displayNotification();
-                                }
-                            }
-                            else if (type.Equals("Class A"))
+                            if (isEligibleForNotif)
                             {
-                                AffectFire(-obj.fireFightingValue);
-                                growingSpeed = Math.Max(growingSpeed - 0.1f * obj.fireFightingValue, 0.05f);
+                                notificationSystem.notificationMessage = "The fire grew! Water is ineffective because that is a grease fire.\nThere might be something else more effective";
+                                notificationSystem.disableAfterTimer = true;
+                                notificationSystem.disableTimer = 8.0f;
+                                notificationSystem.displayNotification();
                             }
                         }
-                    }
-                    else if (foam)
-                    {
-                        if (type.Equals("UNSTOPPABLE"))
+                        else if (type.Equals("Class A"))
+                        {
+                            AffectFire(-obj.fireFightingValue);
+                            growingSpeed = Math.Max(growingSpeed - 0.1f * obj.fireFightingValue, 0.05f);
+
+                            if (isEligibleForNotif)
+                            {
+                                notificationSystem.notificationMessage = "The fire got smaller!\nTake it out before it's too late!";
+                                notificationSystem.disableAfterTimer = true;
+                                notificationSystem.disableTimer = 5.0f;
+                                notificationSystem.displayNotification();
+                            }
+                        }
+                        else
                         {
                             AffectFire(obj.fireFightingValue);
                             growingSpeed = Math.Min(growingSpeed + 0.0001f * obj.fireFightingValue, maxGrowingSpeed);
                         }
-                        else if (EffectivityTable[type].Equals(foam.type))
+                    }
+                    else if (foam)
+                    {
+                        if (EffectivityTable[type].Equals(foam.type))
                         {
                             AffectFire(-obj.fireFightingValue);
                             growingSpeed = Math.Max(growingSpeed - 0.1f * obj.fireFightingValue, 0.05f);        
+                        
+                            notificationSystem.notificationMessage = "The fire got smaller!\nTake it out before it's too late!";
+                            notificationSystem.disableAfterTimer = true;
+                            notificationSystem.disableTimer = 5.0f;
+                            notificationSystem.displayNotification();
                         }
                         else
                         {
@@ -217,8 +236,31 @@ public class Fire : MonoBehaviour
                         }
                     }
 
-                    else if (obj.GetComponent<Rigidbody>().velocity != Vector3.zero)
-                        AffectFire(-obj.fireFightingValue);
+                    else if (obj.GetComponent<NonFlammableObject>())
+                    {
+                        NonFlammableObject fireResistant = obj.GetComponent<NonFlammableObject>();
+                        if (fireResistant.isOnPan)
+                        {
+                            if (intensityValue > 0.25f)
+                            {
+                                notificationSystem.notificationMessage = "The fire got smaller, but is still burning!\nMaybe try something else.";
+                                notificationSystem.disableAfterTimer = true;
+                                notificationSystem.disableTimer = 7.0f;
+                                notificationSystem.displayNotification();
+                            }
+
+                            AffectFire(-0.25f);
+                        }
+                        else if (obj.GetComponent<Rigidbody>().velocity != Vector3.zero)
+                        {
+                            AffectFire(-obj.fireFightingValue);
+
+                            notificationSystem.notificationMessage = "The fire got smaller by a bit!\nMaybe try another way.";
+                            notificationSystem.disableAfterTimer = true;
+                            notificationSystem.disableTimer = 5.0f;
+                            notificationSystem.displayNotification();
+                        }
+                    }
                 }
 
                 else if (collider.CompareTag("Outlet") && !type.Equals("Electrical"))

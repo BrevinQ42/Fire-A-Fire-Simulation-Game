@@ -49,10 +49,11 @@ public class PlayerController : MonoBehaviour
     private bool isVerticalTiltEnabled;
     private bool isHorizontalTiltEnabled;
 
+    private int layerMask;
     [SerializeField] private float closeProximityValue; // distance that is considered to be in close proximity
-    private Transform hitTransform;                     // (nearby) object that is being pointed at by the player
+    [SerializeField] private Transform hitTransform;    // (nearby) object that is being pointed at by the player
     [SerializeField] private GrabbableObject heldObject;
-    private GameObject objectLookedAt;
+    [SerializeField] private GameObject objectLookedAt;
 
     [Header("Player Roll")]
     private Vector3 previousEulerAngles;
@@ -67,6 +68,7 @@ public class PlayerController : MonoBehaviour
     public float staminaRequiredForRunning;
     public float staminaRequiredForRolling;
 
+    [Header("Sound Effects")]
     // Sound Effects
     public AudioSource audioSource;
     public AudioSource audioSource2;
@@ -98,6 +100,7 @@ public class PlayerController : MonoBehaviour
 
         cameraRotation = Vector2.zero;
         if (fireManager) Cursor.lockState = CursorLockMode.Locked;
+        layerMask = LayerMask.GetMask("Default", "TransparentFX", "Water", "UI");
 
         isCoveringNose = false;
         isOnFire = false;
@@ -119,6 +122,12 @@ public class PlayerController : MonoBehaviour
             notificationSystem.disableTimer = 7.5f;
             notificationSystem.displayNotification();
         }
+        else
+        {
+            notificationSystem.notificationMessage = "";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.displayNotification();
+        }
 
         coverNoseMessageDisplayed = false;
         stoppedCoveringNoseMessageDisplayed = false;
@@ -136,34 +145,37 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if ((heldObject && !heldObject.GetComponent<ElectricPlug>()) || currentState.Equals("Rolling")) hitTransform = null;
+        if ((heldObject && !heldObject.GetComponent<ElectricPlug>() && !heldObject.GetComponent<NonFlammableObject>()) || currentState.Equals("Rolling"))
+        {
+            hitTransform = null;
+            ResetLastObjLookedAt();
+        }
         else
         {
             RaycastHit hit;
-            if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, closeProximityValue))
+            if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, closeProximityValue, layerMask))
             {
-                if (hit.transform.CompareTag("Floor") || hit.transform.CompareTag("Fire")) hitTransform = null;
-                else
+                Debug.Log(hit.transform.name + ": " + hit.distance);
+
+                hitTransform = hit.transform;
+                if (hitTransform.GetComponent<NonFlammableObject>())    
                 {
-                    // Debug.Log(hit.transform.name + ": " + hit.distance);
-
-                    hitTransform = hit.transform;
-                    if (hitTransform.GetComponent<NonFlammableObject>())    
+                    // Debug.Log("FireResistant Object is Hit");
+                    NonFlammableObject fireResistant = hitTransform.GetComponent<NonFlammableObject>();
+                    fireResistant.lookedAt = true;
+                    
+                    if(objectLookedAt != fireResistant.gameObject)
                     {
-                        // Debug.Log("FireResistant Object is Hit");
-                        NonFlammableObject fireResistant = hitTransform.GetComponent<NonFlammableObject>();
-                        fireResistant.lookedAt = true;
-                        
-                        if(objectLookedAt != fireResistant.gameObject)
-                        {
-                            ResetLastObjLookedAt();
-                            objectLookedAt = fireResistant.gameObject;
-                        }
-
-                        Transform textName = fireResistant.textName.transform;
-                        textName.SetPositionAndRotation(textName.position, transform.rotation);
+                        ResetLastObjLookedAt();
+                        objectLookedAt = fireResistant.gameObject;
                     }
-                    else if (hitTransform.GetComponent<ObjectNamePopUp>())
+
+                    Transform textName = fireResistant.textName.transform;
+                    textName.SetPositionAndRotation(textName.position, transform.rotation);
+                }
+                else if (hitTransform.GetComponent<ObjectNamePopUp>())
+                {
+                    if (hitTransform.CompareTag("WaterSource"))
                     {
                         // Debug.Log("Faucet Object is Hit");  
                         ObjectNamePopUp faucet = hitTransform.GetComponent<ObjectNamePopUp>();
@@ -178,76 +190,92 @@ public class PlayerController : MonoBehaviour
                         Transform textName = faucet.textName.transform;
                         textName.SetPositionAndRotation(textName.position, transform.rotation);
                     }
-                    else if (hitTransform.GetComponent<Pail>())
+                    else if (heldObject && heldObject.GetComponent<NonFlammableObject>())
                     {
-                        // Debug.Log("Bucket Object is Hit");
-                        Pail bucket = hitTransform.GetComponent<Pail>();
-                        bucket.lookedAt = true;
+                        // Debug.Log("Frying Pan Object is Hit");  
+                        ObjectNamePopUp fryingPan = hitTransform.GetComponent<ObjectNamePopUp>();
+                        fryingPan.lookedAt = true;
                         
-                        if(objectLookedAt != bucket.gameObject)
-                        {    
-                            ResetLastObjLookedAt();
-                            objectLookedAt = bucket.gameObject;
-                        }
-
-                        Transform textName = bucket.textName.transform;
-                        textName.SetPositionAndRotation(textName.position, transform.rotation);
-                    }
-                    else if (hitTransform.GetComponent<ElectricPlug>())
-                    {
-                        // Debug.Log("Plug is Hit");
-                        ElectricPlug electricPlug = hitTransform.GetComponent<ElectricPlug>();
-                        electricPlug.lookedAt = true;
-                        
-                        if(objectLookedAt != electricPlug.gameObject)
+                        if(objectLookedAt != fryingPan.gameObject)
                         {
                             ResetLastObjLookedAt();
-                            objectLookedAt = electricPlug.gameObject;
+                            objectLookedAt = fryingPan.gameObject;
                         }
 
-                        Transform textName = electricPlug.textName.transform;
-                        textName.SetPositionAndRotation(textName.position, transform.rotation);
-                    }
-                    else if (hitTransform.GetComponent<FireExtinguisher>())
-                    {
-                        // Debug.Log("Extinguisher is hit");
-                        FireExtinguisher fireExtinguisher = hitTransform.GetComponent<FireExtinguisher>();
-                        fireExtinguisher.lookedAt = true;
-
-                        if(objectLookedAt != fireExtinguisher.gameObject)
-                        {
-                            ResetLastObjLookedAt();
-                            objectLookedAt = fireExtinguisher.gameObject;
-                        }
-
-                        Transform textName = fireExtinguisher.textName.transform;
-                        textName.SetPositionAndRotation(textName.position, transform.rotation);
-                    }
-                    else if (hitTransform.GetComponent<Candle>())
-                    {
-                        Debug.Log("Candle is hit");
-                        Candle candle = hitTransform.GetComponent<Candle>();
-                        candle.lookedAt = true;
-
-                        if(objectLookedAt != candle.gameObject)
-                        {
-                            ResetLastObjLookedAt();
-                            objectLookedAt = candle.gameObject;
-                        }
-
-                        Transform textName = candle.textName.transform;
+                        Transform textName = fryingPan.textName.transform;
                         textName.SetPositionAndRotation(textName.position, transform.rotation);
                     }
                     else ResetLastObjLookedAt();
                 }
+                else if (hitTransform.GetComponent<Pail>())
+                {
+                    // Debug.Log("Bucket Object is Hit");
+                    Pail bucket = hitTransform.GetComponent<Pail>();
+                    bucket.lookedAt = true;
+                    
+                    if(objectLookedAt != bucket.gameObject)
+                    {    
+                        ResetLastObjLookedAt();
+                        objectLookedAt = bucket.gameObject;
+                    }
+
+                    Transform textName = bucket.textName.transform;
+                    textName.SetPositionAndRotation(textName.position, transform.rotation);
+                }
+                else if (hitTransform.GetComponent<ElectricPlug>())
+                {
+                    // Debug.Log("Plug is Hit");
+                    ElectricPlug electricPlug = hitTransform.GetComponent<ElectricPlug>();
+                    electricPlug.lookedAt = true;
+                    
+                    if(objectLookedAt != electricPlug.gameObject)
+                    {
+                        ResetLastObjLookedAt();
+                        objectLookedAt = electricPlug.gameObject;
+                    }
+
+                    Transform textName = electricPlug.textName.transform;
+                    textName.SetPositionAndRotation(textName.position, transform.rotation);
+                }
+                else if (hitTransform.GetComponent<FireExtinguisher>())
+                {
+                    // Debug.Log("Extinguisher is hit");
+                    FireExtinguisher fireExtinguisher = hitTransform.GetComponent<FireExtinguisher>();
+                    fireExtinguisher.lookedAt = true;
+
+                    if(objectLookedAt != fireExtinguisher.gameObject)
+                    {
+                        ResetLastObjLookedAt();
+                        objectLookedAt = fireExtinguisher.gameObject;
+                    }
+
+                    Transform textName = fireExtinguisher.textName.transform;
+                    textName.SetPositionAndRotation(textName.position, transform.rotation);
+                }
+                else if (hitTransform.GetComponent<Candle>())
+                {
+                    // Debug.Log("Candle is hit");
+                    Candle candle = hitTransform.GetComponent<Candle>();
+                    candle.lookedAt = true;
+
+                    if(objectLookedAt != candle.gameObject)
+                    {
+                        ResetLastObjLookedAt();
+                        objectLookedAt = candle.gameObject;
+                    }
+
+                    Transform textName = candle.textName.transform;
+                    textName.SetPositionAndRotation(textName.position, transform.rotation);
+                }
+                else ResetLastObjLookedAt();
             }
             else
             {
                 // reset looked at of last object to false
                 ResetLastObjLookedAt();
 
-                Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
-                // Debug.Log("Did not Hit");
+                // Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
+                Debug.Log("Did not Hit");
                 hitTransform = null;
             }
         }
@@ -723,10 +751,30 @@ public class PlayerController : MonoBehaviour
 
         if (obj)
         {
-            bool isStillHeld;
-            obj.Use(throwForce, out isStillHeld);
+            NonFlammableObject fireResistant = heldObject.GetComponent<NonFlammableObject>();
+            if (fireResistant && hitTransform && hitTransform.name.Equals("FryingPan"))
+            {
+                string message;
+                float duration;
 
-            if (!isStillHeld) heldObject = null;
+                fireResistant.PutOnPan(hitTransform, out message, out duration);
+                heldObject = null;
+
+                if (!message.Equals("none"))
+                {
+                    notificationSystem.notificationMessage = message;
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = duration;
+                    notificationSystem.displayNotification();
+                }
+            }
+            else
+            {
+                bool isStillHeld;
+                obj.Use(throwForce, out isStillHeld);
+
+                if (!isStillHeld) heldObject = null;
+            }
         }
         else if (hitTransform && hitTransform.CompareTag("Outlet"))
         {
