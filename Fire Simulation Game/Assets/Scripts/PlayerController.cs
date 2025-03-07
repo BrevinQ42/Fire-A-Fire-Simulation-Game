@@ -269,6 +269,20 @@ public class PlayerController : MonoBehaviour
                     Transform textName = candle.textName.transform;
                     textName.SetPositionAndRotation(textName.position, transform.rotation);
                 }
+                else if (hitTransform.GetComponent<Door>())
+                {
+                    Door door = hitTransform.GetComponent<Door>();
+                    door.lookedAt = true;
+
+                    if (objectLookedAt != door.gameObject)
+                    {
+                        ResetLastObjLookedAt();
+                        objectLookedAt = door.gameObject;
+                    }
+
+                    Transform textName = door.textName.transform;
+                    textName.SetPositionAndRotation(textName.position, transform.rotation);
+                }
                 // else ResetLastObjLookedAt();
             }
             else
@@ -924,7 +938,9 @@ public class PlayerController : MonoBehaviour
                 objectLookedAt.GetComponent<FireExtinguisher>().lookedAt = false;
             else if (objectLookedAt.GetComponent<Candle>())
                 objectLookedAt.GetComponent<Candle>().lookedAt = false;
-            
+            else if (objectLookedAt.GetComponent<Door>())
+                objectLookedAt.GetComponent<Door>().lookedAt = false;
+
             objectLookedAt = null;
         }
     }
