@@ -18,6 +18,7 @@ public class Door : MonoBehaviour
     public GameObject textName;
     public bool lookedAt;
 
+    public PlayerController playerController;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,17 +35,20 @@ public class Door : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isOpen)
+        if (playerController.timeElapsed >= 60)
         {
-            transform.position = Vector3.Lerp(transform.position, openPosition, Time.deltaTime * speed);
-            transform.rotation = Quaternion.Lerp(transform.rotation, openRotation, Time.deltaTime * speed);
-            textName.GetComponent<TextMesh>().text = "[E] to close door";
-        }
-        else
-        {
-            transform.position = Vector3.Lerp(transform.position, closedPosition, Time.deltaTime * speed);
-            transform.rotation = Quaternion.Lerp(transform.rotation, closedRotation, Time.deltaTime * speed);
-            textName.GetComponent<TextMesh>().text = "[E] to open door";
+            if (isOpen)
+            {
+                transform.position = Vector3.Lerp(transform.position, openPosition, Time.deltaTime * speed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, openRotation, Time.deltaTime * speed);
+                textName.GetComponent<TextMesh>().text = "[E] to close door";
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, closedPosition, Time.deltaTime * speed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, closedRotation, Time.deltaTime * speed);
+                textName.GetComponent<TextMesh>().text = "[E] to open door";
+            }
         }
 
         if (lookedAt == false)

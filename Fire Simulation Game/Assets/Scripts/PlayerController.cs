@@ -752,7 +752,10 @@ public class PlayerController : MonoBehaviour
             else if (hitTransform.GetComponent<Door>())
             {
                 Door door = hitTransform.GetComponent<Door>();
-                door.toggleDoor();
+                if (timeElapsed >= 60)
+                {
+                    door.toggleDoor();
+                }
             }
         }
     }
