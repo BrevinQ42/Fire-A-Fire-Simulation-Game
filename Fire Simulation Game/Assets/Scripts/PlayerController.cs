@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 // using UnityEditor.Search;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
@@ -733,6 +734,11 @@ public class PlayerController : MonoBehaviour
                         notificationSystem.displayNotification();
                     }
                 }
+            }
+            else if (hitTransform.GetComponent<Door>())
+            {
+                Door door = hitTransform.GetComponent<Door>();
+                door.toggleDoor();
             }
         }
     }
