@@ -11,7 +11,7 @@ public class FireExtinguisher : FireFightingObject
 	[Header("Notification")]
 	[SerializeField] private NotificationTriggerEvent notificationSystem;
 
-	[SerializeField] private string type;
+	public string type;
 	public bool isPinPulled;
 	private bool areNextInstructionsSent;
 

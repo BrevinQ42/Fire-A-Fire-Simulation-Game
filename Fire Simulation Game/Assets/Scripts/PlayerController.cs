@@ -8,6 +8,9 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    // Level Manager
+    public LevelManager levelManager;
+
     // Win Screen
     public WinScreen winScreen;
     public float timeElapsed;
@@ -875,6 +878,10 @@ public class PlayerController : MonoBehaviour
                     winScreen.threeStar.color = new Color(255f, 255f, 255f);
                 }
                 if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 420 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
+                {
+                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
+                }
+                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 420 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
                 {
                     winScreen.threeStar.color = new Color(255f, 255f, 255f);
                 }

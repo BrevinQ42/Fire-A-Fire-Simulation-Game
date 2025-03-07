@@ -17,6 +17,8 @@ public class LevelManager : MonoBehaviour
 	[SerializeField] private List<Transform> candleSpawnPoints;
 	[SerializeField] private GameObject candlePrefab;
 
+	public int typeIndex;
+	public bool isClassCExtinguisher;
 	void Start()
 	{
 		extinguisherTypes = new List<string>{"Class A", "Class C", "Class C", "Class K", "Class K"};
@@ -38,7 +40,15 @@ public class LevelManager : MonoBehaviour
 
 		FireExtinguisher extinguisher = Instantiate(extinguisherPrefab, extinguisherSpawnPoint, Quaternion.identity).GetComponent<FireExtinguisher>();
 
-		int typeIndex = Random.Range(0, extinguisherTypes.Count);
+		typeIndex = Random.Range(0, extinguisherTypes.Count);
+		if (typeIndex == 1 || typeIndex == 2)
+		{
+			isClassCExtinguisher = true;
+		}
+		else
+		{
+			isClassCExtinguisher = false;
+		}
 		extinguisher.SetType(extinguisherTypes[typeIndex]);
 	}
 
