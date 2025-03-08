@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
+    [SerializeField] private NotificationTriggerEvent notificationSystem;
+
     public bool isOpen = false;
 
     public Vector3 closedPosition;
@@ -18,6 +20,8 @@ public class Door : MonoBehaviour
     public GameObject textName;
     public bool lookedAt;
 
+    private bool isMessageSent;
+
     public PlayerController playerController;
     // Start is called before the first frame update
     void Start()
@@ -30,6 +34,8 @@ public class Door : MonoBehaviour
 
         lookedAt = false;
         textName = GetComponentInChildren<TextMesh>().gameObject;
+
+        isMessageSent = false;
     }
 
     // Update is called once per frame
@@ -50,6 +56,11 @@ public class Door : MonoBehaviour
                 textName.GetComponent<TextMesh>().text = "[E] to open door";
             }
         }
+        else if (lookedAt && !isMessageSent)
+        {
+            isMessageSent = true;
+            StartCoroutine(SendMessage());
+        }
 
         if (lookedAt == false)
         {
@@ -59,6 +70,18 @@ public class Door : MonoBehaviour
         {
             textName.SetActive(true);
         }
+    }
+
+    IEnumerator SendMessage()
+    {
+        notificationSystem.notificationMessage = "Try to prevent or extinguish fires first!";
+        notificationSystem.disableAfterTimer = true;
+        notificationSystem.disableTimer = 5.0f;
+        notificationSystem.displayNotification();
+
+        yield return new WaitForSeconds(5.0f);
+
+        isMessageSent = false;
     }
     
     public void toggleDoor()
