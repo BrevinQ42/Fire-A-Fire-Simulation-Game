@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
     public bool isOnFire;
 
     [Header("Player Look Around")]
+    [SerializeField] private TextMeshProUGUI mouseSensText;
     private Vector2 cameraRotation;
     [SerializeField] private float mouseSensitivity;
     private bool isVerticalTiltEnabled;
@@ -459,7 +461,18 @@ public class PlayerController : MonoBehaviour
             else if (heldObject && Input.GetMouseButtonDown(0)) UseObject();
         }
 
-        TestFunction(); // for debugging (i.e. Debug.Log)
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            mouseSensitivity = (float) Math.Round(Math.Max(mouseSensitivity - 0.05f, 0.05f), 2);
+            mouseSensText.text = "SENS: " + mouseSensitivity;
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            mouseSensitivity = (float) Math.Round(Math.Min(mouseSensitivity + 0.05f, 1.00f), 2);
+            mouseSensText.text = "SENS: " + mouseSensitivity;
+        }
+
+        // TestFunction(); // for debugging (i.e. Debug.Log)
     }
 
     bool CheckIfGrounded()
@@ -955,12 +968,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void TestFunction()
-    {
-        // key press for testing
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-    }
+    // void TestFunction()
+    // {
+    //     // key press for testing
+    //     if (Input.GetKeyDown(KeyCode.T))
+    //     {
+    //         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    //     }
+    // }
 }
