@@ -918,9 +918,8 @@ public class PlayerController : MonoBehaviour
             {
                 collidedWith = collision.collider;
 
-                notificationSystem.notificationMessage = "Press [Enter] to End the Game!";
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.notificationMessage = "You successfully escaped!\nPress [Enter] to Call the Fire Department and End the Game";
+                notificationSystem.disableAfterTimer = false;
                 notificationSystem.displayNotification();
             }
         }

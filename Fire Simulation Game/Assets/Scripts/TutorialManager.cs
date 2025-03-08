@@ -52,10 +52,10 @@ public class TutorialManager : MonoBehaviour
 		}
 		else if (ongoingFire.intensityValue > 0.5f && player.collidedWith && player.collidedWith.name.Equals("Court"))
 		{
-			tutorialNotifSystem.notificationMessage = "You successfully escaped!\nPress [Esc] to Call the Fire Department and Leave Tutorial";
+			tutorialNotifSystem.notificationMessage = "You successfully escaped!\nPress [Enter] to Call the Fire Department and Leave Tutorial";
 			tutorialNotifSystem.displayNotification();
 
-			if(Input.GetKeyDown(KeyCode.Escape))
+			if(Input.GetKeyDown(KeyCode.Return))
 			{
         		Cursor.lockState = CursorLockMode.None;
 				
