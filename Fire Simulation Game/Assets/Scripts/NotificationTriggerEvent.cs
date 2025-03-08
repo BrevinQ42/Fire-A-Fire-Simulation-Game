@@ -21,18 +21,20 @@ public class NotificationTriggerEvent : MonoBehaviour
 
     public void displayNotification()
     {
-        StartCoroutine(EnableNotification());
+        StartCoroutine(EnableNotification(notificationMessage));
     }
 
-    IEnumerator EnableNotification()
+    IEnumerator EnableNotification(string message)
     {
         notificationAnim.Play("NotificationFadeIn");
-        notificationTextUI.text = notificationMessage;
+        notificationTextUI.text = message;
 
         if(disableAfterTimer)
         {
             yield return new WaitForSeconds(disableTimer);
-            RemoveNotification();
+
+            if (message.Equals(notificationMessage))
+                RemoveNotification();
         }
     }
 
