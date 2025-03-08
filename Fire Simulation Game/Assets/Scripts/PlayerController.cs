@@ -363,7 +363,7 @@ public class PlayerController : MonoBehaviour
         isGrounded = CheckIfGrounded();
         if (!isGrounded && !isOnStairs)
         {
-            rb.AddForce(new Vector3(0, -20, 0));
+            rb.AddForce(new Vector3(0, -40, 0));
             Debug.Log("I am floating");
         }
 
