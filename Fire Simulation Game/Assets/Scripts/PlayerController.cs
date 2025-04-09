@@ -90,6 +90,7 @@ public class PlayerController : MonoBehaviour
     private bool isExtensionsResolved;
     public Collider collidedWith;
     [SerializeField] private float throwForce;
+    [SerializeField] private float gravityForce;
 
     // Start is called before the first frame update
     void Start()
@@ -365,7 +366,7 @@ public class PlayerController : MonoBehaviour
         isGrounded = CheckIfGrounded();
         if (!isGrounded && !isOnStairs)
         {
-            rb.AddForce(new Vector3(0, -40, 0));
+            rb.AddForce(new Vector3(0, -gravityForce, 0));
             Debug.Log("I am floating");
         }
 
