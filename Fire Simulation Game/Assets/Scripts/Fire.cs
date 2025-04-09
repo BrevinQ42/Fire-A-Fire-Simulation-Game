@@ -61,9 +61,10 @@ public class Fire : MonoBehaviour
         {
             AffectFire(growingSpeed * Time.deltaTime);
 
-            SmokeSpawner.transform.position = new Vector3(SmokeSpawner.transform.position.x,
-                                                        Math.Min(intensityValue + 1.5f, 2.5f),
-                                                        SmokeSpawner.transform.position.z);
+            SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f,
+                                                                Math.Min(intensityValue + 1.5f, 2.5f),
+                                                                0.0f),
+                                                                transform.rotation);
         }
         if (intensityValue < 6)
         {

@@ -136,7 +136,7 @@ public class FireManager : MonoBehaviour
 				}
 				else
 				{
-					if (index < 5)
+					if (index < 6)
 					{
 						int typeIndex = Random.Range(0, FireTypes.Count);
 						ongoingFire.type = FireTypes[typeIndex];
@@ -148,7 +148,7 @@ public class FireManager : MonoBehaviour
 			ongoingFire.Toggle(true);
 			isFireOngoing = true;
 
-			if (index >= 5)
+			if (index >= 6)
 			{
                 notificationSystem.notificationMessage = "A fire has emerged! Identify the cause of the fire and put it out accordingly!";
                 notificationSystem.disableAfterTimer = true;
