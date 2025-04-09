@@ -5,6 +5,7 @@ using UnityEngine;
 public class Foam : FireFightingObject
 {
     public string type;
+    [SerializeField] private float affectFireMult;
 
     // Start is called before the first frame update
     void Start()
@@ -16,5 +17,17 @@ public class Foam : FireFightingObject
     void Update()
     {
 
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        Fire fire = collision.collider.GetComponent<Fire>(); 
+        if (fire)
+        {
+            if (fire.EffectivityTable[fire.type].Equals(type))
+                fire.AffectFire(-fireFightingValue * affectFireMult);
+            else
+                fire.AffectFire(fireFightingValue * affectFireMult);
+        }
     }
 }

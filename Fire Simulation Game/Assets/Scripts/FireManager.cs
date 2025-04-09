@@ -52,7 +52,7 @@ public class FireManager : MonoBehaviour
 
 			while(true)
 			{
-				index = Random.Range(0, FireSpawnPoints.Count);
+				// index = Random.Range(0, FireSpawnPoints.Count);
 				spawnTransform = FireSpawnPoints[index];
 
 				ElectricPlug plug = spawnTransform.GetComponent<ElectricPlug>();

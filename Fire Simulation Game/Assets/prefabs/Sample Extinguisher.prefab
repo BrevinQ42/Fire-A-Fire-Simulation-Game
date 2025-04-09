@@ -594,6 +594,7 @@ MonoBehaviour:
   isHeld: 0
   fireFightingValue: 2
   type: 
+  affectFireMult: 0
 --- !u!1001 &559205048778226713
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -781,6 +782,7 @@ MonoBehaviour:
   isHeld: 0
   fireFightingValue: 2
   type: 
+  affectFireMult: 0.1
 --- !u!65 &6447177426516954810
 BoxCollider:
   m_ObjectHideFlags: 0

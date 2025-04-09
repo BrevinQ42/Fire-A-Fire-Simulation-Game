@@ -549,6 +549,29 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void ResetLastObjLookedAt()
+    {
+        if(objectLookedAt)
+        {
+            if (objectLookedAt.GetComponent<NonFlammableObject>())
+                objectLookedAt.GetComponent<NonFlammableObject>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<ObjectNamePopUp>())
+                objectLookedAt.GetComponent<ObjectNamePopUp>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<Pail>())
+                objectLookedAt.GetComponent<Pail>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<ElectricPlug>())
+                objectLookedAt.GetComponent<ElectricPlug>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<FireExtinguisher>())
+                objectLookedAt.GetComponent<FireExtinguisher>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<Candle>())
+                objectLookedAt.GetComponent<Candle>().lookedAt = false;
+            else if (objectLookedAt.GetComponent<Door>())
+                objectLookedAt.GetComponent<Door>().lookedAt = false;
+
+            objectLookedAt = null;
+        }
+    }
+
     void ToggleCrawl()
     {
         if (currentState.Equals("Crawling"))
@@ -873,7 +896,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collidedWith)
         {
-            if (collidedWith.name.Equals("Outside Floor"))
+            if (collidedWith.name.Equals("Outside"))
             {            
                 // Debug.Log("You Won");
                 winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
@@ -909,7 +932,7 @@ public class PlayerController : MonoBehaviour
     {
         if (fireManager)
         {
-            if (fireManager.isPlayerSuccessful && collision.collider.name.Equals("Outside Floor"))
+            if (fireManager.isPlayerSuccessful && collision.collider.name.Equals("Outside"))
             {
                 collidedWith = collision.collider;
 
@@ -942,29 +965,6 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.tag == "Stairs")
         {
             isOnStairs = false;
-        }
-    }
-
-    void ResetLastObjLookedAt()
-    {
-        if(objectLookedAt)
-        {
-            if (objectLookedAt.GetComponent<NonFlammableObject>())
-                objectLookedAt.GetComponent<NonFlammableObject>().lookedAt = false;
-            else if (objectLookedAt.GetComponent<ObjectNamePopUp>())
-                objectLookedAt.GetComponent<ObjectNamePopUp>().lookedAt = false;
-            else if (objectLookedAt.GetComponent<Pail>())
-                objectLookedAt.GetComponent<Pail>().lookedAt = false;
-            else if (objectLookedAt.GetComponent<ElectricPlug>())
-                objectLookedAt.GetComponent<ElectricPlug>().lookedAt = false;
-            else if (objectLookedAt.GetComponent<FireExtinguisher>())
-                objectLookedAt.GetComponent<FireExtinguisher>().lookedAt = false;
-            else if (objectLookedAt.GetComponent<Candle>())
-                objectLookedAt.GetComponent<Candle>().lookedAt = false;
-            else if (objectLookedAt.GetComponent<Door>())
-                objectLookedAt.GetComponent<Door>().lookedAt = false;
-
-            objectLookedAt = null;
         }
     }
 
