@@ -397,14 +397,13 @@ public class PlayerController : MonoBehaviour
 
         timeElapsed += Time.deltaTime;
 
-        // basic controls
-        Move();
-        LookAround();
-
         if (currentState.Equals("Rolling")) RollOver();
-
         else
         {
+            // basic controls
+            Move();
+            LookAround();
+
             // actions
             if (Input.GetKeyDown(KeyCode.C)) ToggleCrawl();
             else if (Input.GetKeyDown(KeyCode.F))
@@ -681,12 +680,17 @@ public class PlayerController : MonoBehaviour
                 if (pail)
                 {
                     if(pail.hasWaterInside())
+                    {
                         notificationSystem.notificationMessage = "[Left Click] to throw water at the fire\n[G] to Drop Bucket";
+                        notificationSystem.disableTimer = 6.0f;
+                    }
                     else
-                        notificationSystem.notificationMessage = "[Left Click] to open the faucet to fill the bucket with water\n[G] to Drop Bucket";
+                    {
+                        notificationSystem.notificationMessage = "[G] to Drop Bucket and [E] to Open Faucet\nGrab Bucket & align it to catch the water. You will see it fill up to the brim";
+                        notificationSystem.disableTimer = 10.0f;
+                    }
                     
                     notificationSystem.disableAfterTimer = true;
-                    notificationSystem.disableTimer = 6.0f;
                     notificationSystem.displayNotification();
 
                     pail.closeProximityValue = closeProximityValue;
