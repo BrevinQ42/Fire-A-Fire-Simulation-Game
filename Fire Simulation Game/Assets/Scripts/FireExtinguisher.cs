@@ -30,6 +30,7 @@ public class FireExtinguisher : FireFightingObject
 
 		foam = GetComponentInChildren<Foam>();
 		foam.fireFightingValue = fireFightingValue;
+		foam.GetComponent<Collider>().enabled = false;
 
 		notificationSystem = GameObject.Find("MainPanel").GetComponent<NotificationTriggerEvent>();
 
@@ -59,6 +60,8 @@ public class FireExtinguisher : FireFightingObject
             else if (Input.GetMouseButton(0) && isPinPulled)
 			{
 				foam.transform.localScale = Vector3.one * foamScale;
+                foam.GetComponent<Collider>().enabled = true;
+
                 if (audioSource.clip != sweepingClip || !audioSource.isPlaying)
                 {
                     audioSource.clip = sweepingClip;
@@ -77,7 +80,9 @@ public class FireExtinguisher : FireFightingObject
 					notificationSystem.displayNotification();
 				}
 
+                foam.GetComponent<Collider>().enabled = false;
 				foam.transform.localScale = Vector3.zero;
+
                 if (audioSource.clip == sweepingClip || audioSource.isPlaying)
                 {
 					audioSource.Stop();

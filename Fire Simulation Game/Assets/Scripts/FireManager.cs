@@ -105,6 +105,8 @@ public class FireManager : MonoBehaviour
 					Fire fire = spawnTransform.GetComponent<Fire>();
 					if (fire)
 					{
+						fire.transform.SetParent(null);
+						fire.transform.localScale = Vector3.one * fire.intensityValue;
 						ongoingFire = fire;
 						ongoingFire.AffectFire(0.35f);
 					}
