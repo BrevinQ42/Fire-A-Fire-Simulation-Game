@@ -663,6 +663,17 @@ public class PlayerController : MonoBehaviour
     {
         if (hitTransform)
         {
+            if (heldObject && (heldObject.GetComponent<ElectricPlug>() || heldObject.GetComponent<NonFlammableObject>()))
+            {
+                notificationSystem.notificationMessage = "[G] to Drop Held Object first!";
+                notificationSystem.disableTimer = 3.0f;
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.displayNotification();
+
+                // disregard when holding an electric plug
+                return;
+            }
+
             // for this functionality, will add checker if object is grabbable (fire fighting object)
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
 
