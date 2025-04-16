@@ -258,7 +258,7 @@ public class PlayerController : MonoBehaviour
                     }
 
                     Transform textName = fireExtinguisher.textName.transform;
-                    textName.SetPositionAndRotation(textName.position, transform.rotation);
+                    textName.SetPositionAndRotation(hit.point - transform.forward * 0.25f, transform.rotation);
                 }
                 else if (hitTransform.GetComponent<Candle>())
                 {

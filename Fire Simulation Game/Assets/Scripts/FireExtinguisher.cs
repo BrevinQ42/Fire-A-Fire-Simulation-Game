@@ -38,9 +38,9 @@ public class FireExtinguisher : FireFightingObject
 
 		lookedAt = false;
         textName = GetComponentInChildren<TextMesh>();
-        string text = "[E] to Pick Up ";
+        string text = "[E] to Pick Up\n";
         text += type;
-        text += " Fire Extinguisher";
+        text += " Fire Ext.";
         textName.text = text;
 
         audioSource = GetComponent<AudioSource>();
