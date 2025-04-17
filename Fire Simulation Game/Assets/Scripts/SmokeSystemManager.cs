@@ -10,17 +10,17 @@ public class SmokeSystemManager : MonoBehaviour
     private int spawnersActive = 0; // updated in spawner script
 
     public GameObject smokeLayer1;      
-    public float timeToActivateLayer1 = 80f;
+    public float timeToActivateLayer1 = 20f;
     public GameObject smokeLayer2;
-    public float timeToActivateLayer2 = 160f;
+    public float timeToActivateLayer2 = 40f;
     public GameObject smokeLayer3;
-    public float timeToActivateLayer3 = 240f;
+    public float timeToActivateLayer3 = 60f;
     public GameObject smokeLayer4;
-    public float timeToActivateLayer4 = 320f;
+    public float timeToActivateLayer4 = 80f;
     public GameObject smokeLayer5;
-    public float timeToActivateLayer5 = 400f;
+    public float timeToActivateLayer5 = 100f;
     public GameObject smokeLayer6;
-    public float timeToActivateLayer6 = 480f;
+    public float timeToActivateLayer6 = 120f;
 
     private float elapsedTime = 0f;    
     private bool isSmokeLayer1Activated = false;

@@ -19,7 +19,7 @@ public class PlayerBars : MonoBehaviour
 
     // Oxygen
     public float oxygen = 100f;
-    public float oxygenDamage = 5f;
+    public float oxygenDamage = 0.5f;
     public float collisionCount = 0;
     public bool isLosingOxygen = false;
     public Slider oxygenBar;
@@ -240,8 +240,8 @@ public class PlayerBars : MonoBehaviour
 
         while (oxygen > 0)
         {
-            oxygen -= (oxygenDamage * collisionCount) * Time.deltaTime;
-            oxygenBar.value = oxygen / 100;
+            oxygen -= (oxygenDamage * collisionCount);
+            oxygenBar.value = (oxygen / 100);
             Debug.Log("Oxygen Level: " + oxygen);
             yield return new WaitForSeconds(1f);
         }
