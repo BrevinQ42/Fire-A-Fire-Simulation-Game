@@ -912,8 +912,25 @@ public class PlayerController : MonoBehaviour
         if (collidedWith)
         {
             if (collidedWith.name.Equals("Outside"))
-            {            
+            {
                 // Debug.Log("You Won");
+                winScreen.oneStar.color = new Color(255f, 255f, 255f);
+                if (playerBars.hydrationLevel > 50 && timeElapsed < 300)
+                {
+                    winScreen.twoStar.color = new Color(255f, 255f, 255f);
+                }
+                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.index <= 6) //3 Stars if they escape from fire caused by neighbor
+                {
+                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
+                }
+                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
+                {
+                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
+                }
+                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
+                {
+                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
+                }
                 winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
                 Cursor.lockState = CursorLockMode.None;
             }
@@ -921,19 +938,19 @@ public class PlayerController : MonoBehaviour
             {           
                 // Debug.Log("You Escaped");
                 winScreen.oneStar.color = new Color(255f, 255f, 255f);
-                if (playerBars.hydrationLevel > 50 && timeElapsed < 540)
+                if (playerBars.hydrationLevel > 50 && timeElapsed < 300)
                 {
                     winScreen.twoStar.color = new Color(255f, 255f, 255f);
                 }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 420 && fireManager.index <= 6) //3 Stars if they escape from fire caused by neighbor
+                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.index <= 6) //3 Stars if they escape from fire caused by neighbor
                 {
                     winScreen.threeStar.color = new Color(255f, 255f, 255f);
                 }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 420 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
+                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
                 {
                     winScreen.threeStar.color = new Color(255f, 255f, 255f);
                 }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 420 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
+                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
                 {
                     winScreen.threeStar.color = new Color(255f, 255f, 255f);
                 }
