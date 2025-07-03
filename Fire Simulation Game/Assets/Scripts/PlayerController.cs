@@ -670,11 +670,10 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.displayNotification();
 
-                // disregard when holding an electric plug
+                // disregard when holding an electric plug or fire resistant object
                 return;
             }
 
-            // for this functionality, will add checker if object is grabbable (fire fighting object)
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
 
             if (hitRB && hitTransform.CompareTag("Grabbable"))
@@ -690,7 +689,7 @@ public class PlayerController : MonoBehaviour
                 NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
                 if (pail)
                 {
-                    if(pail.hasWaterInside())
+                    if(pail.getWaterInside() > 0.0f)
                     {
                         notificationSystem.notificationMessage = "[Left Click] to throw water at the fire\n[G] to Drop Bucket";
                         notificationSystem.disableTimer = 6.0f;

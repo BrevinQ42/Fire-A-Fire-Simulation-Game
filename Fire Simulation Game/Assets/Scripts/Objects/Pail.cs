@@ -107,9 +107,9 @@ public class Pail : FireFightingObject
             transform.rotation);
     }
 
-    public bool hasWaterInside()
+    public float getWaterInside()
     {
-        return fractionFilled > 0.0f;
+        return fractionFilled * maxFireFightingValue;
     }
 
     public void setFractionFilled(float fraction)

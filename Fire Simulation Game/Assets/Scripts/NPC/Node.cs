@@ -36,11 +36,18 @@ public class Node : MonoBehaviour
     {
         foreach(Node node in nodes)
         {
-            if (floorLevel == node.floorLevel && !adjacentNodes.Contains(node))
+            if (!adjacentNodes.Contains(node))
             {
                 adjacentNodes.Add(node);
                 isEdgeValid.Add(true);
                 edgeWeights.Add(0.0f);
+            }
+
+            if (!node.adjacentNodes.Contains(this))
+            {
+                node.adjacentNodes.Add(this);
+                node.isEdgeValid.Add(true);
+                node.edgeWeights.Add(0.0f);
             }
         }
     }
@@ -54,19 +61,19 @@ public class Node : MonoBehaviour
         }
     }
 
-    // private void OnDrawGizmos()
-    // {
-    //     if(adjacentNodes != null && adjacentNodes.Count > 0)
-    //     {
-    //         for(int i = 0; i < adjacentNodes.Count; i++)
-    //         {
-    //             if (isEdgeValid[i])
-    //                 Gizmos.color = Color.blue;
-    //             else
-    //                 Gizmos.color = Color.yellow;
+    private void OnDrawGizmos()
+    {
+        if(adjacentNodes != null && adjacentNodes.Count > 0)
+        {
+            for(int i = 0; i < adjacentNodes.Count; i++)
+            {
+                if (isEdgeValid[i])
+                    Gizmos.color = Color.blue;
+                else
+                    Gizmos.color = Color.yellow;
 
-    //             Gizmos.DrawLine(transform.position, adjacentNodes[i].transform.position);
-    //         }
-    //     }
-    // }
+                Gizmos.DrawLine(transform.position, adjacentNodes[i].transform.position);
+            }
+        }
+    }
 }

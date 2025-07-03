@@ -25,6 +25,8 @@ public class LevelManager : MonoBehaviour
 
 		RandomizeExtinguisher();
 
+		GameObject.FindObjectOfType<Pathfinder>().populateObjectNodes();
+
 		RandomizeCandles();
 	}
 

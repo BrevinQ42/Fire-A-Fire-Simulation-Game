@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class Pathfinder : MonoBehaviour
 {
-    private List<Node> fireFightingNodes;
-    private List<Node> waterSourceNodes;
+    [SerializeField] private List<Node> fireFightingNodes;
+    private List<bool> isObjReachable;
+
+    [SerializeField] private List<Node> waterSourceNodes;
+    private List<bool> isSourceReachable;
 
     [SerializeField] private Node bottomOfStairs;
     [SerializeField] private Node topOfStairs;
@@ -15,18 +18,45 @@ public class Pathfinder : MonoBehaviour
     void Start()
     {
         fireFightingNodes = new List<Node>();
-        foreach(FireFightingObject obj in FindObjectsOfType<FireFightingObject>())
-            fireFightingNodes.Add(obj.GetComponent<Node>());
+        isObjReachable = new List<bool>();
 
         waterSourceNodes = new List<Node>();
-        foreach(GameObject obj in GameObject.FindGameObjectsWithTag("WaterSource"))
-            waterSourceNodes.Add(obj.GetComponent<Node>());
+        isSourceReachable = new List<bool>();
+    }
 
-        foreach(Node node in FindObjectsOfType<Node>())
+    public Node getExitNode()
+    {
+        return exitNode;
+    }
+
+    public void populateObjectNodes()
+    {
+        if (fireFightingNodes.Count == 0 && waterSourceNodes.Count == 0)
         {
-            node.addNodes(fireFightingNodes);
-            node.addNodes(waterSourceNodes);
-            node.initValues();
+            foreach(FireFightingObject obj in FindObjectsOfType<FireFightingObject>())
+            {
+                if (!obj.GetComponent<Foam>())
+                {
+                    fireFightingNodes.Add(obj.GetComponent<Node>());
+                    isObjReachable.Add(true);
+                }
+            }
+
+            foreach(GameObject obj in GameObject.FindGameObjectsWithTag("WaterSource"))
+            {
+                waterSourceNodes.Add(obj.GetComponent<Node>());
+                isSourceReachable.Add(true);
+            }
+
+            foreach(Node node in FindObjectsOfType<Node>())
+            {
+                if (!node.GetComponent<FireFightingObject>() && !node.transform.CompareTag("WaterSource"))
+                {
+                    node.addNodes(fireFightingNodes);
+                    node.addNodes(waterSourceNodes);
+                    node.initValues();
+                }
+            }
         }
     }
 
@@ -36,14 +66,40 @@ public class Pathfinder : MonoBehaviour
         {
             List<Node> path = generatePathToTarget(current, exitNode);
 
-            foreach(Node node in generatePathToTarget(exitNode, courtNode))
-                path.Add(node);
+            if (path.Count > 0)
+            {
+                foreach(Node node in generatePathToTarget(exitNode, courtNode))
+                    path.Add(node);
+            }
 
             return path;
         }
         else if (target.Equals("FireFightingObject") || target.Equals("WaterSource"))
         {
-            return generatePathToTarget(current, getClosestNode(current, target));
+            List<Node> path = new List<Node>();
+            Node closest = null;
+
+            while (path.Count == 0)
+            {
+                if (closest != null)
+                {
+                    if (target.Equals("FireFightingObject"))
+                    {
+                        int i = fireFightingNodes.IndexOf(closest);
+                        isObjReachable[i] = false;
+                    }
+                    else
+                    {
+                        int i = waterSourceNodes.IndexOf(closest);
+                        isSourceReachable[i] = false;
+                    }
+                }
+
+                closest = getClosestNode(current, target);
+                path = generatePathToTarget(current, closest);
+            }
+
+            return path;
         }
         // else if (target.equals("Fire"))
 
@@ -119,33 +175,39 @@ public class Pathfinder : MonoBehaviour
 
         if (type.Equals("FireFightingObject"))
         {
-            closestNode = fireFightingNodes[0];
-            float distance = GetDistance(current, closestNode);
+            closestNode = null;
+            float distance = -1.0f;
 
-            for (int i = 1; i < fireFightingNodes.Count; i++)
+            for (int i = 0; i < fireFightingNodes.Count; i++)
             {
-                float newDistance = GetDistance(current, fireFightingNodes[i]);
-
-                if (newDistance < distance)
+                if (isObjReachable[i])
                 {
-                    distance = newDistance;
-                    closestNode = fireFightingNodes[i];
+                    float newDistance = GetDistance(current, fireFightingNodes[i]);
+
+                    if (closestNode == null || newDistance < distance)
+                    {
+                        distance = newDistance;
+                        closestNode = fireFightingNodes[i];
+                    }
                 }
             }
         }
         else if (type.Equals("WaterSource"))
         {
-            closestNode = waterSourceNodes[0];
-            float distance = GetDistance(current, closestNode);
+            closestNode = null;
+            float distance = -1.0f;
 
-            for (int i = 1; i < waterSourceNodes.Count; i++)
+            for (int i = 0; i < waterSourceNodes.Count; i++)
             {
-                float newDistance = GetDistance(current, waterSourceNodes[i]);
-
-                if (newDistance < distance)
+                if (isSourceReachable[i])
                 {
-                    distance = newDistance;
-                    closestNode = waterSourceNodes[i];
+                    float newDistance = GetDistance(current, waterSourceNodes[i]);
+
+                    if (closestNode == null || newDistance < distance)
+                    {
+                        distance = newDistance;
+                        closestNode = waterSourceNodes[i];
+                    }
                 }
             }
         }

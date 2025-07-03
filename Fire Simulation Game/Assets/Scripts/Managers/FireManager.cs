@@ -21,6 +21,8 @@ public class FireManager : MonoBehaviour
 	private Fire ongoingFire;
 	public bool isPlayerSuccessful;
 
+	[SerializeField] private List<NPCStateMachine> npcStateMachines;
+
     //sound effect
     public AudioSource audioSource;
     public AudioClip helpAFireClip;
@@ -146,6 +148,9 @@ public class FireManager : MonoBehaviour
 					else ongoingFire.type = "Class A";
 				}
 			}
+
+			foreach(NPCStateMachine sm in npcStateMachines)
+				sm.ongoingFire = ongoingFire;
 
 			ongoingFire.Toggle(true);
 			isFireOngoing = true;
