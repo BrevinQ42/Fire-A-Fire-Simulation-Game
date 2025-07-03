@@ -38,6 +38,21 @@ public class NonFlammableObject : FireFightingObject
             textName.SetActive(false);
             isOnPan = false;
         }
+
+        if (transform.position.y > 5.0f)
+        {
+            if (!GetComponent<Node>())
+                gameObject.AddComponent<Node>();
+
+            GetComponent<Node>().floorLevel = 2;
+        }
+        else
+        {
+            if (!GetComponent<Node>())
+                gameObject.AddComponent<Node>();
+                
+            GetComponent<Node>().floorLevel = 1;
+        }
     }
 
     void InitializeFireManager()

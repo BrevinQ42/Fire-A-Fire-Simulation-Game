@@ -107,6 +107,11 @@ public class FireExtinguisher : FireFightingObject
         {
             textName.gameObject.SetActive(false);
         }
+
+        if (transform.position.y > 5.0f)
+        	GetComponent<Node>().floorLevel = 2;
+        else
+        	GetComponent<Node>().floorLevel = 1;
 	}
 
 	public void SetType(string newType)

@@ -51,6 +51,11 @@ public class Pail : FireFightingObject
         {
             textName.SetActive(false);
         }
+
+        if (transform.position.y > 5.0f)
+            GetComponent<Node>().floorLevel = 2;
+        else
+            GetComponent<Node>().floorLevel = 1;
     }
 
     public override void Use(float throwForce, out bool isStillHeld)
