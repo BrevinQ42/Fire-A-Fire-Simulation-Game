@@ -8,7 +8,7 @@ public class Pail : FireFightingObject
     [SerializeField] private GameObject WaterObject;
     [SerializeField] private GameObject WaterInPail;
 
-    private float fractionFilled;
+    [SerializeField] private float fractionFilled;
     private float maxFireFightingValue;
 
     public float closeProximityValue;
@@ -102,14 +102,19 @@ public class Pail : FireFightingObject
             transform.rotation);
     }
 
-    public bool hasWaterInside()
+    public float getWaterInside()
     {
-        return fractionFilled > 0.0f;
+        return fractionFilled * maxFireFightingValue;
     }
 
     public void setFractionFilled(float fraction)
     {
         fractionFilled = Math.Min(1.0f, fraction);
         UpdateWaterInPail();
+    }
+
+    public float getFractionFilled()
+    {
+        return fractionFilled;
     }
 }

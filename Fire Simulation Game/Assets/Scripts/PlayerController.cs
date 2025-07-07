@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Fire Related")]
     public Fire FireOnPlayer;
-    [SerializeField] private FireManager fireManager;
+    public FireManager fireManager;
 
     [Header("Player Components")]
     private Rigidbody rb;
@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
 
         cameraRotation = Vector2.zero;
         if (fireManager) Cursor.lockState = CursorLockMode.Locked;
-        layerMask = LayerMask.GetMask("Default", "TransparentFX", "Water", "UI");
+        layerMask = LayerMask.GetMask("Default", "TransparentFX", "Water", "UI", "Door");
 
         isCoveringNose = false;
         isOnFire = false;
@@ -397,7 +397,15 @@ public class PlayerController : MonoBehaviour
 
         timeElapsed += Time.deltaTime;
 
-        if (currentState.Equals("Rolling")) RollOver();
+        if (currentState.Equals("Rolling"))
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                // switch them to crawling state
+                transform.eulerAngles = previousEulerAngles;
+                ToggleCrawl();
+            }
+        }
         else
         {
             // basic controls
@@ -458,7 +466,12 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
-            else if (heldObject && Input.GetMouseButtonDown(0)) UseObject();
+            else
+            {
+                if (Input.GetMouseButton(0)) UseObject();
+                else if (heldObject.GetComponent<FireExtinguisher>())
+                    heldObject.GetComponent<FireExtinguisher>().isBeingUsed = false;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.O))
@@ -518,14 +531,6 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetKey(KeyCode.D))
         {
             movementVector += new Vector3(transform.right.x, 0.0f, transform.right.z);
-        }
-
-        // if the player attempts to move when they are currently rolling,
-        if (movementVector != Vector3.zero && currentState.Equals("Rolling"))
-        {
-            // switch them to crawling state
-            transform.eulerAngles = previousEulerAngles;
-            ToggleCrawl();
         }
 
         // move character accordingly
@@ -670,11 +675,10 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.disableAfterTimer = true;
                 notificationSystem.displayNotification();
 
-                // disregard when holding an electric plug
+                // disregard when holding an electric plug or fire resistant object
                 return;
             }
 
-            // for this functionality, will add checker if object is grabbable (fire fighting object)
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
 
             if (hitRB && hitTransform.CompareTag("Grabbable"))
@@ -690,7 +694,7 @@ public class PlayerController : MonoBehaviour
                 NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
                 if (pail)
                 {
-                    if(pail.hasWaterInside())
+                    if(pail.getWaterInside() > 0.0f)
                     {
                         notificationSystem.notificationMessage = "[Left Click] to throw water at the fire\n[G] to Drop Bucket";
                         notificationSystem.disableTimer = 6.0f;
@@ -851,6 +855,9 @@ public class PlayerController : MonoBehaviour
             {
                 bool isStillHeld;
                 obj.Use(throwForce, out isStillHeld);
+
+                if (obj.GetComponent<FireExtinguisher>())
+                    obj.GetComponent<FireExtinguisher>().isBeingUsed = true;
 
                 if (!isStillHeld) heldObject = null;
             }

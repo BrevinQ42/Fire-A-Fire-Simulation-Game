@@ -155,7 +155,25 @@ public class Fire : MonoBehaviour
             }
             else player.FireOnPlayer.AffectFire(intensityValue / 1.2f);
         }
+        else if (collider.GetComponent<NPC>())
+        {
+            NPC npc = collider.GetComponent<NPC>();
 
+            Fire FireOnNPC = npc.transform.GetComponentInChildren<Fire>();
+
+            if (FireOnNPC)
+                FireOnNPC.AffectFire(intensityValue / 1.2f);
+            else
+            {
+                FireOnNPC = Instantiate(gameObject,
+                                        npc.transform.position + npc.transform.forward * 0.5f,
+                                        Quaternion.identity).GetComponent<Fire>();
+
+                FireOnNPC.intensityValue = intensityValue / 1.2f;
+
+                FireOnNPC.transform.SetParent(transform);
+            }
+        }
         else
         {
             FireFightingObject obj = collider.GetComponent<FireFightingObject>();
@@ -270,6 +288,20 @@ public class Fire : MonoBehaviour
 
             else if (collider.CompareTag("Outlet") && !type.Equals("Electrical"))
                 type = "Electrical";
+        }
+    }
+
+    void OnTriggerStay(Collider collider)
+    {
+        Foam foam = collider.GetComponent<Foam>();
+        if (foam)
+        {
+            Debug.Log("Foam collided with fire");
+
+            if (EffectivityTable[type].Equals(foam.type))
+                AffectFire(-foam.fireFightingValue * foam.affectFireMult);
+            else
+                AffectFire(foam.fireFightingValue * foam.affectFireMult);
         }
     }
 }

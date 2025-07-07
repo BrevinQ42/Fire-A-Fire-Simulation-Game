@@ -278,6 +278,7 @@ GameObject:
   - component: {fileID: 5672771953037588130}
   - component: {fileID: 8861217541681847398}
   - component: {fileID: 3889997650361859739}
+  - component: {fileID: 6250771487279492891}
   m_Layer: 0
   m_Name: Sample Extinguisher
   m_TagString: Grabbable
@@ -473,6 +474,25 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6250771487279492891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4136261755027521240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73577ba54769dc045b493751e1bae1c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  adjacentNodes: []
+  isEdgeValid: 
+  edgeWeights: []
+  floorLevel: 0
+  cost: 0
+  heuristic: 0
+  previousNode: {fileID: 0}
 --- !u!1 &5382550007509952740
 GameObject:
   m_ObjectHideFlags: 0

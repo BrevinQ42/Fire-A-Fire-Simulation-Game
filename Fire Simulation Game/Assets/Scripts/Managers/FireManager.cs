@@ -16,10 +16,12 @@ public class FireManager : MonoBehaviour
 	private List<string> FireTypes;
     public int index;
 
-    [SerializeField] private float timeBeforeFire;
+    public float timeBeforeFire;
 	public bool isFireOngoing;
 	private Fire ongoingFire;
 	public bool isPlayerSuccessful;
+
+	[SerializeField] private List<NPCStateMachine> npcStateMachines;
 
     //sound effect
     public AudioSource audioSource;
@@ -35,6 +37,8 @@ public class FireManager : MonoBehaviour
 		}
 
 		FireTypes = new List<string>{"Electrical", "Grease", "Class A", "Class A"};
+
+		timeBeforeFire = (float) Random.Range(45, 76);
 
 		isFireOngoing = false;
 		ongoingFire = null;
@@ -167,6 +171,8 @@ public class FireManager : MonoBehaviour
 	            notificationSystem.disableTimer = 5.0f;
 	            notificationSystem.displayNotification();
 			}
+
+			StartCoroutine(SetupForNPC());
 		}
 		else if (ongoingFire == null && !isPlayerSuccessful)
 		{
@@ -177,6 +183,67 @@ public class FireManager : MonoBehaviour
 
 			isPlayerSuccessful = true;
 		}
+	}
+
+	IEnumerator SetupForNPC()
+	{
+		bool isNodeFinalized = false;
+
+		Node fireNode = ongoingFire.GetComponent<Node>();
+
+		if (!fireNode)
+			fireNode = ongoingFire.gameObject.AddComponent<Node>();
+
+		try
+		{
+			if (fireNode.adjacentNodes.Count == 0)
+				isNodeFinalized = addAdjacentNodesForFire(fireNode);
+		}
+		catch
+		{
+			fireNode.adjacentNodes = new List<Node>();
+			fireNode.isEdgeValid = new List<bool>();
+			fireNode.edgeWeights = new List<float>();
+
+			isNodeFinalized = addAdjacentNodesForFire(fireNode);
+		}
+
+		yield return new WaitUntil(() => isNodeFinalized == true);
+
+		foreach(NPCStateMachine sm in npcStateMachines)
+			sm.ongoingFire = ongoingFire;
+	}
+
+	bool addAdjacentNodesForFire(Node fireNode)
+	{
+		if (fireNode.transform.position.y > 5.0f)
+			fireNode.floorLevel = 2;
+		else
+			fireNode.floorLevel = 1;
+
+		foreach(Node node in GameObject.FindObjectsOfType<Node>())
+		{
+			if (node == fireNode) continue;
+
+			if (!node.GetComponent<FireFightingObject>() && !node.transform.CompareTag("WaterSource") && node.floorLevel == fireNode.floorLevel)
+			{
+				if (!fireNode.adjacentNodes.Contains(node))
+				{
+					fireNode.adjacentNodes.Add(node);
+					fireNode.isEdgeValid.Add(true);
+					fireNode.edgeWeights.Add(0.0f);
+				}
+
+				if (!node.adjacentNodes.Contains(fireNode))
+				{
+					node.adjacentNodes.Add(fireNode);
+	                node.isEdgeValid.Add(true);
+	                node.edgeWeights.Add(0.0f);	
+				}
+			}
+		}
+
+		return true;
 	}
 
 	public void AddSpawnPoint(Transform spawnPoint)
