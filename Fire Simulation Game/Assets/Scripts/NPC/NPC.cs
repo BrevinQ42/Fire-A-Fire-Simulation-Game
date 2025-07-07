@@ -10,6 +10,7 @@ public class NPC : MonoBehaviour
     
     // temp
     [SerializeField] private List<Node> generatedPath;
+    [SerializeField] private string pathTarget;
     
     [SerializeField] private int pathIndex;
     private Vector2 nextPos;
@@ -19,6 +20,7 @@ public class NPC : MonoBehaviour
     public float walkingSpeed;
     public float runningSpeed;
     public float closeProximityValue;
+    public float throwForce;
 
     // Start is called before the first frame update
     void Start()
@@ -26,7 +28,7 @@ public class NPC : MonoBehaviour
         pathfinder = GetComponent<Pathfinder>();
 
         resetPathfindingValues();
-        raycastLayerMask = LayerMask.GetMask("Default", "Ignore Raycast", "TransparentFX", "Water", "UI");
+        raycastLayerMask = LayerMask.GetMask("Default", "Ignore Raycast", "TransparentFX", "Water", "UI", "Overlay");
     }
 
     public Node getCurrentNode()
@@ -44,9 +46,12 @@ public class NPC : MonoBehaviour
         newPath = new List<Node>();
 
         generatedPath = path;
+        pathTarget = target;
 
         if (pathIndex < path.Count)
         {
+            transform.LookAt(path[pathIndex].transform);
+
             Vector3 direction = path[pathIndex].transform.position - transform.position;
 
             RaycastHit hit;
@@ -57,22 +62,42 @@ public class NPC : MonoBehaviour
                                 !hit.transform.GetComponent<Collider>().enabled;
                 if (!isValid)
                 {
-                    pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
-
-                    List<Node> temp = pathfinder.generatePath(currentNode, target);
-
-                    direction = temp[0].transform.position - transform.position;
-
-                    if (transform.position != currentNode.transform.position &&
-                        Physics.Raycast(transform.position, Vector3.Normalize(direction), direction.magnitude, raycastLayerMask))
+                    if (target.Equals("Fire") && hit.transform.GetComponent<Fire>())
                     {
-                        newPath.Add(currentNode);
-                        newPath.AddRange(temp);
+                        if (hit.distance <= closeProximityValue)
+                        {
+                            Vector3 newDirection = hit.transform.position - transform.position;
+
+                            int tempLayerMask = LayerMask.GetMask("Default", "Person", "TransparentFX", "Water", "UI", "Overlay");
+
+                            if (Vector3.Normalize(direction) != Vector3.Normalize(newDirection) &&
+                                !Physics.Raycast(transform.position, Vector3.Normalize(newDirection), newDirection.magnitude, tempLayerMask))
+                            {
+                                transform.LookAt(hit.transform);
+                            }
+
+                            return true;
+                        }
                     }
                     else
-                        newPath = temp;
+                    {
+                        pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
 
-                    pathIndex = 0;
+                        List<Node> temp = pathfinder.generatePath(currentNode, target);
+
+                        direction = temp[0].transform.position - transform.position;
+
+                        if (transform.position != currentNode.transform.position &&
+                            Physics.Raycast(transform.position, Vector3.Normalize(direction), direction.magnitude, raycastLayerMask))
+                        {
+                            newPath.Add(currentNode);
+                            newPath.AddRange(temp);
+                        }
+                        else
+                            newPath = temp;
+
+                        pathIndex = 0;
+                    }
                 }
                 else if (willInteractWithTarget && pathIndex == path.Count-1 && direction.magnitude <= closeProximityValue)
                 {
@@ -81,13 +106,6 @@ public class NPC : MonoBehaviour
                     resetPathfindingValues();
                     return true;
                 }
-            }
-            else if (willInteractWithTarget && pathIndex == path.Count-1 && direction.magnitude <= closeProximityValue)
-            {
-                InteractWithObject(hit.transform);
-
-                resetPathfindingValues();
-                return true;
             }
 
             nextPos = new Vector2(path[pathIndex].transform.position.x, path[pathIndex].transform.position.z);
@@ -141,7 +159,7 @@ public class NPC : MonoBehaviour
         if (hitTransform.CompareTag("WaterSource"))
         {
             Spawner waterSpawner = hitTransform.GetComponentInChildren<Spawner>();
-            waterSpawner.Toggle();
+            waterSpawner.Toggle(true);
         }
         else
         {
@@ -159,15 +177,6 @@ public class NPC : MonoBehaviour
                 NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
                 if (pail)
                 {
-                    // if(pail.getWaterInside() >= GetComponent<NPCStateMachine>().ongoingFire.intensityValue)
-                    // {
-                    //     // GO TO FIRE
-                    // }
-                    // else
-                    // {
-                    //     // GO TO FAUCET
-                    // }
-                    
                     pail.closeProximityValue = closeProximityValue;
                     pail.playerCamera = transform;
                     hitTransform.SetPositionAndRotation(
@@ -176,8 +185,6 @@ public class NPC : MonoBehaviour
                 }
                 else if (extinguisher)
                 {
-                    // GO TO FIRE
-
                     if (!extinguisher.isPinPulled)
                         extinguisher.isPinPulled = true;
 
@@ -187,11 +194,11 @@ public class NPC : MonoBehaviour
                 }
                 else if (nonFlammable)
                 {
-                    // GO TO FIRE
-
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
                 }
             }
+
+            hitTransform.GetComponent<GrabbableObject>().isHeld = true;
         }
     }
 }

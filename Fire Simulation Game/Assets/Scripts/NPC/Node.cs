@@ -20,10 +20,22 @@ public class Node : MonoBehaviour
     {
         initValues();
 
-        foreach(Node node in adjacentNodes)
+        try
         {
-            edgeWeights.Add(0.0f);
+            foreach(Node node in adjacentNodes)
+            {
+                edgeWeights.Add(0.0f);
+            }
         }
+        catch {}
+    }
+
+    void Update()
+    {
+        if (transform.position.y > 5.0f)
+            floorLevel = 2;
+        else
+            floorLevel = 1;
     }
 
     public void initValues()

@@ -8,7 +8,7 @@ public class Pail : FireFightingObject
     [SerializeField] private GameObject WaterObject;
     [SerializeField] private GameObject WaterInPail;
 
-    private float fractionFilled;
+    [SerializeField] private float fractionFilled;
     private float maxFireFightingValue;
 
     public float closeProximityValue;
@@ -51,11 +51,6 @@ public class Pail : FireFightingObject
         {
             textName.SetActive(false);
         }
-
-        if (transform.position.y > 5.0f)
-            GetComponent<Node>().floorLevel = 2;
-        else
-            GetComponent<Node>().floorLevel = 1;
     }
 
     public override void Use(float throwForce, out bool isStillHeld)
@@ -116,5 +111,10 @@ public class Pail : FireFightingObject
     {
         fractionFilled = Math.Min(1.0f, fraction);
         UpdateWaterInPail();
+    }
+
+    public float getFractionFilled()
+    {
+        return fractionFilled;
     }
 }

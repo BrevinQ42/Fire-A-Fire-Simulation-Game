@@ -11,9 +11,11 @@ public class FireExtinguisher : FireFightingObject
 	[Header("Notification")]
 	[SerializeField] private NotificationTriggerEvent notificationSystem;
 
+	[Header("Characteristics")]
 	public string type;
 	public bool isPinPulled;
 	private bool areNextInstructionsSent;
+	public bool isBeingUsed;
 
 	[Header("FloatingText")]
 	public bool lookedAt;
@@ -48,29 +50,33 @@ public class FireExtinguisher : FireFightingObject
     }
 
 	void Update()
-	{
-		if (isHeld)
-		{
-			if (Input.GetMouseButtonDown(0) && !isPinPulled)
-			{
-                isPinPulled = true;
-                audioSource.clip = pullingClip;
-                audioSource.Play();
-            }
-            else if (Input.GetMouseButton(0) && isPinPulled)
-			{
-				foam.transform.localScale = Vector3.one * foamScale;
-                foam.GetComponent<Collider>().enabled = true;
+	{	
+		if (lookedAt == false)
+        {
+            textName.gameObject.SetActive(false);
+        }
+        if (lookedAt == true)
+        {
+            textName.gameObject.SetActive(true);
+        }
 
-                if (audioSource.clip != sweepingClip || !audioSource.isPlaying)
-                {
-                    audioSource.clip = sweepingClip;
-                    audioSource.Play();
-                }
-            }
-			else
-			{
-				if (isPinPulled && !areNextInstructionsSent)
+        if (isHeld == true)
+        {
+            textName.gameObject.SetActive(false);
+        }
+        else
+        {
+        	foam.transform.localScale = Vector3.zero;
+			areNextInstructionsSent = false;
+		}
+
+        if (isHeld && !isBeingUsed)
+        {
+        	foam.transform.localScale = Vector3.zero;
+
+        	if(transform.parent.GetComponent<PlayerController>())
+        	{
+        		if (isPinPulled && !areNextInstructionsSent)
 				{
 					areNextInstructionsSent = true;
 					
@@ -80,38 +86,38 @@ public class FireExtinguisher : FireFightingObject
 					notificationSystem.displayNotification();
 				}
 
-                foam.GetComponent<Collider>().enabled = false;
+	            foam.GetComponent<Collider>().enabled = false;
 				foam.transform.localScale = Vector3.zero;
 
-                if (audioSource.clip == sweepingClip || audioSource.isPlaying)
-                {
+	            if (audioSource.clip == sweepingClip || audioSource.isPlaying)
+	            {
 					audioSource.Stop();
-                }
-            }
-		}
-		else
+	            }
+        	}
+        }
+	}
+
+	public override void Use(float throwForce, out bool isStillHeld)
+	{
+		if (!isPinPulled)
 		{
-			foam.transform.localScale = Vector3.zero;
-			areNextInstructionsSent = false;
-		}
-
-		if (lookedAt == false)
-        {
-            textName.gameObject.SetActive(false);
+            isPinPulled = true;
+            audioSource.clip = pullingClip;
+            audioSource.Play();
         }
-        if (lookedAt == true)
-        {
-            textName.gameObject.SetActive(true);
-        }
-        if (isHeld == true)
-        {
-            textName.gameObject.SetActive(false);
-        }
-
-        if (transform.position.y > 5.0f)
-        	GetComponent<Node>().floorLevel = 2;
         else
-        	GetComponent<Node>().floorLevel = 1;
+		{
+			foam.transform.localScale = Vector3.one * foamScale;
+            foam.GetComponent<Collider>().enabled = true;
+
+            if (audioSource.clip != sweepingClip || !audioSource.isPlaying)
+            {
+                audioSource.clip = sweepingClip;
+                audioSource.Play();
+            }
+        }
+
+        isStillHeld = isHeld;
 	}
 
 	public void SetType(string newType)

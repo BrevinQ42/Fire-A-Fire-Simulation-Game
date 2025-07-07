@@ -5,6 +5,7 @@ using UnityEngine;
 public class NPCStateMachine : MonoBehaviour
 {
     // STATES
+    public string currentStateName;
     private BaseState currentState;
     public RoamState roamState = new RoamState();
     public PanicState panicState = new PanicState();
@@ -36,7 +37,18 @@ public class NPCStateMachine : MonoBehaviour
         }
 
         if (currentState != null)
+        {
             currentState.UpdateState(this);
+
+            if (currentState == roamState)
+                currentStateName = "Roam";
+            else if (currentState == panicState)
+                currentStateName = "Panic";
+            else if (currentState == fireFightingState)
+                currentStateName = "Fire Fighting";
+            else if (currentState == evacuateState)
+                currentStateName = "Evacuate";
+        }
     }
 
     public void SwitchState(BaseState state)

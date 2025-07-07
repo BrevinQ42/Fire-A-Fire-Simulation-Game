@@ -41,7 +41,7 @@ public class Door : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerController.timeElapsed >= 60)
+        if (playerController.fireManager.timeBeforeFire <= 0.0f)
         {
             if (isOpen)
             {

@@ -17,11 +17,11 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Ignore NPC Raycast
+  - Person
   - Water
   - UI
   - Overlay
-  - 
+  - Door
   - 
   - 
   - 
