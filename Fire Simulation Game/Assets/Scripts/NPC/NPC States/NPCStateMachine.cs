@@ -32,7 +32,7 @@ public class NPCStateMachine : MonoBehaviour
     {
         if (currentState == null && Input.GetKeyDown(KeyCode.M))
         {
-            currentState = evacuateState;
+            currentState = fireFightingState;
             currentState.EnterState(this);
         }
 
