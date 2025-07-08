@@ -22,6 +22,7 @@ public class NPC : MonoBehaviour
     public float runningSpeed;
     public float closeProximityValue;
     public float throwForce;
+    public Fire FireOnNPC;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +33,8 @@ public class NPC : MonoBehaviour
         raycastLayerMask = LayerMask.GetMask("Default", "Ignore Raycast", "TransparentFX", "Water", "UI", "Overlay");
 
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
+
+        FireOnNPC = null;
     }
 
     void Update()
@@ -51,6 +54,8 @@ public class NPC : MonoBehaviour
 
     public bool followPath(List<Node> path, string target, float speed, bool willInteractWithTarget, out List<Node> newPath)
     {
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+
         newPath = new List<Node>();
 
         generatedPath = path;
@@ -91,6 +96,8 @@ public class NPC : MonoBehaviour
 
                                 transform.LookAt(new Vector3(firePos.x, transform.position.y, firePos.z));
                             }
+
+                            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
 
                             return true;
                         }
@@ -216,6 +223,14 @@ public class NPC : MonoBehaviour
             }
 
             hitTransform.GetComponent<GrabbableObject>().isHeld = true;
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Smoke"))
+        {
+            Destroy(collision.gameObject);
         }
     }
 }

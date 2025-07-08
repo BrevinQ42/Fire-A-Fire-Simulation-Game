@@ -88,12 +88,12 @@ public class FireExtinguisher : FireFightingObject
 
 	            foam.GetComponent<Collider>().enabled = false;
 				foam.transform.localScale = Vector3.zero;
-
-	            if (audioSource.clip == sweepingClip || audioSource.isPlaying)
-	            {
-					audioSource.Stop();
-	            }
         	}
+
+        	if (audioSource.clip == sweepingClip && audioSource.isPlaying)
+            {
+				audioSource.Stop();
+            }
         }
 	}
 

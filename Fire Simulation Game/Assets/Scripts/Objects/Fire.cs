@@ -26,6 +26,8 @@ public class Fire : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip fireClip;
 
+    private bool hasHitNPC;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +52,8 @@ public class Fire : MonoBehaviour
         audioSource.clip = fireClip;
         audioSource.loop = true;
         audioSource.Play();
+
+        hasHitNPC = false;
 
         PopulateEffectivityTable();
     }
@@ -143,7 +147,11 @@ public class Fire : MonoBehaviour
             notificationSystem.disableTimer = 4.0f;
             notificationSystem.displayNotification();
 
-            if (!player.FireOnPlayer)
+            if (player.FireOnPlayer && player.FireOnPlayer != this)
+            {
+                player.FireOnPlayer.AffectFire(intensityValue / 1.2f);
+            }
+            else
             {
                 player.FireOnPlayer = Instantiate(gameObject,
                                                     player.transform.position + player.transform.forward * 0.5f,
@@ -153,25 +161,26 @@ public class Fire : MonoBehaviour
                 player.FireOnPlayer.intensityValue = intensityValue / 1.2f;
                 player.isOnFire = true;
             }
-            else player.FireOnPlayer.AffectFire(intensityValue / 1.2f);
         }
-        else if (collider.GetComponent<NPC>())
+        else if (collider.GetComponent<NPC>() && !hasHitNPC)
         {
+            hasHitNPC = true;
+
             NPC npc = collider.GetComponent<NPC>();
 
-            Fire FireOnNPC = npc.transform.GetComponentInChildren<Fire>();
-
-            if (FireOnNPC)
-                FireOnNPC.AffectFire(intensityValue / 1.2f);
+            if (npc.FireOnNPC && npc.FireOnNPC != this)
+            {
+                npc.FireOnNPC.AffectFire(intensityValue / 1.2f);
+            }
             else
             {
-                FireOnNPC = Instantiate(gameObject,
+                npc.FireOnNPC = Instantiate(gameObject,
                                         npc.position + npc.transform.forward * 0.5f,
                                         Quaternion.identity).GetComponent<Fire>();
 
-                FireOnNPC.intensityValue = intensityValue / 1.2f;
+                npc.FireOnNPC.intensityValue = intensityValue / 1.2f;
 
-                FireOnNPC.transform.SetParent(transform);
+                npc.FireOnNPC.transform.SetParent(transform);
             }
         }
         else
