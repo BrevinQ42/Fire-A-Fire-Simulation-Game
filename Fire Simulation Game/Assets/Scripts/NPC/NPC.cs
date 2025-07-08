@@ -81,10 +81,11 @@ public class NPC : MonoBehaviour
                         {
                             Vector3 newDirection = hit.transform.position - position;
 
+                            Vector3 tempPosition = position + transform.forward * 0.15f;
                             int tempLayerMask = LayerMask.GetMask("Default", "Person", "TransparentFX", "Water", "UI", "Overlay");
 
                             if (Vector3.Normalize(direction) != Vector3.Normalize(newDirection) &&
-                                !Physics.Raycast(position, Vector3.Normalize(newDirection), newDirection.magnitude, tempLayerMask))
+                                !Physics.Raycast(tempPosition, Vector3.Normalize(newDirection), newDirection.magnitude, tempLayerMask))
                             {
                                 Vector3 firePos = hit.transform.position;
 
@@ -196,7 +197,7 @@ public class NPC : MonoBehaviour
                     pail.closeProximityValue = closeProximityValue;
                     pail.playerCamera = transform;
                     hitTransform.SetPositionAndRotation(
-                        position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
+                        transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
                         transform.rotation);
                 }
                 else if (extinguisher)
@@ -205,12 +206,12 @@ public class NPC : MonoBehaviour
                         extinguisher.isPinPulled = true;
 
                     hitTransform.SetPositionAndRotation(
-                        position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
+                        transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
                         transform.rotation);
                 }
                 else if (nonFlammable)
                 {
-                    hitTransform.SetPositionAndRotation(position + transform.forward, transform.rotation);
+                    hitTransform.SetPositionAndRotation(transform.position + transform.forward * 0.55f, transform.rotation);
                 }
             }
 

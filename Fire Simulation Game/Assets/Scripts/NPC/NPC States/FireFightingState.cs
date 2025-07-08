@@ -101,7 +101,7 @@ public class FireFightingState : BaseState
                         pail.getFractionFilled() >= 1.0f)
                     {
                         heldObject.transform.SetPositionAndRotation(
-                            npc.position + npc.transform.forward + npc.transform.right * 0.7f - npc.transform.up * 0.15f, 
+                            npc.transform.position + npc.transform.forward * 0.5f + npc.transform.right * 0.3f, 
                             npc.transform.rotation);
 
                         heldObject.transform.SetParent(npc.transform);
