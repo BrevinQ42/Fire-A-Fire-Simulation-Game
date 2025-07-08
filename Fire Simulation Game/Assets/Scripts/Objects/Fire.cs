@@ -166,7 +166,7 @@ public class Fire : MonoBehaviour
             else
             {
                 FireOnNPC = Instantiate(gameObject,
-                                        npc.transform.position + npc.transform.forward * 0.5f,
+                                        npc.position + npc.transform.forward * 0.5f,
                                         Quaternion.identity).GetComponent<Fire>();
 
                 FireOnNPC.intensityValue = intensityValue / 1.2f;

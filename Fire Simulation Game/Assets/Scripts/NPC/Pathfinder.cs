@@ -33,7 +33,8 @@ public class Pathfinder : MonoBehaviour
 
             foreach(Node node in FindObjectsOfType<Node>())
             {
-                if (!node.GetComponent<FireFightingObject>() && !node.transform.CompareTag("WaterSource"))
+                if (!node.GetComponent<FireFightingObject>() && !node.transform.CompareTag("WaterSource") &&
+                    !node.transform.parent.name.Equals("Outside"))
                 {
                     node.addNodes(fireFightingNodes);
                     node.addNodes(waterSourceNodes);
@@ -93,11 +94,14 @@ public class Pathfinder : MonoBehaviour
 
             for (int i = 0; i < candidates.Count; i++)
             {
-                if (candidates[i].transform.GetComponent<FireFightingObject>())
+                if (candidates[i].GetComponent<FireFightingObject>())
                 {
-                    if (!candidates[i].transform.GetComponent<Collider>().enabled)
+                    if (!candidates[i].GetComponent<Collider>().enabled ||
+                        !target.GetComponent<FireFightingObject>())
                         continue;
                 }
+                else if (candidates[i].transform.CompareTag("WaterSource") && !target.transform.CompareTag("WaterSource"))
+                    continue;
 
                 if (nextNode == null)
                     nextNode = candidates[i];

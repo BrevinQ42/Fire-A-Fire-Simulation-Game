@@ -37,7 +37,7 @@ public class FireFightingState : BaseState
             if (path.Count == 0) Debug.Log("Path to " + target + ": Fail");
             else Debug.Log("Path to " + target + ": Success");
 
-            if (heldObject == null && npc.transform.childCount == 1)
+            if (heldObject == null && npc.transform.GetComponentInChildren<FireFightingObject>())
             {
                 heldObject = npc.transform.GetComponentInChildren<FireFightingObject>();
 
@@ -101,7 +101,7 @@ public class FireFightingState : BaseState
                         pail.getFractionFilled() >= 1.0f)
                     {
                         heldObject.transform.SetPositionAndRotation(
-                            npc.transform.position + npc.transform.forward + npc.transform.right * 0.7f - npc.transform.up * 0.15f, 
+                            npc.position + npc.transform.forward + npc.transform.right * 0.7f - npc.transform.up * 0.15f, 
                             npc.transform.rotation);
 
                         heldObject.transform.SetParent(npc.transform);
