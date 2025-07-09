@@ -23,7 +23,7 @@ public class LevelManager : MonoBehaviour
 	{
 		extinguisherTypes = new List<string>{"Class A", "Class C", "Class C", "Class K", "Class K"};
 
-		RandomizeExtinguisher();
+		RandomizeExtinguishers();
 
 		GameObject.FindObjectOfType<Pathfinder>().populateObjectNodes();
 
@@ -35,7 +35,7 @@ public class LevelManager : MonoBehaviour
 
 	}
 
-	void RandomizeExtinguisher()
+	void RandomizeExtinguishers()
 	{
 		int extinguisherIndex = Random.Range(0, extinguisherSpawnPoints.Count);
 		Vector3 extinguisherSpawnPoint = extinguisherSpawnPoints[extinguisherIndex].position;
@@ -52,6 +52,14 @@ public class LevelManager : MonoBehaviour
 			isClassCExtinguisher = false;
 		}
 		extinguisher.SetType(extinguisherTypes[typeIndex]);
+
+		// generate second of the same type
+		extinguisherSpawnPoints.RemoveAt(extinguisherIndex);
+
+		extinguisherIndex = Random.Range(0, extinguisherSpawnPoints.Count);
+		extinguisherSpawnPoint = extinguisherSpawnPoints[extinguisherIndex].position;
+
+		Instantiate(extinguisher, extinguisherSpawnPoint, Quaternion.identity);
 	}
 
 	void RandomizeCandles()

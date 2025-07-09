@@ -58,18 +58,31 @@ public class Pathfinder : MonoBehaviour
 
             return path;
         }
-        else if (target.Equals("FireFightingObject") || target.Equals("WaterSource"))
+        else if (target.Equals("WaterSource"))
         {
-            Node closest = getClosestNode(current, target);
-            List<Node> path = generatePathToTarget(current, closest);
+            Node closest = getClosestNode(current, target, new HashSet<Node>());
 
-            return path;
+            return generatePathToTarget(current, closest);
         }
         else if (target.Equals("Fire"))
         {
             Node fireNode = GetComponent<NPCStateMachine>().ongoingFire.GetComponent<Node>();
 
             return generatePathToTarget(current, fireNode);
+        }
+
+        return new List<Node>();
+    }
+
+    public List<Node> generatePath(Node current, string target, HashSet<Node> blacklist)
+    {
+        if (target.Equals("FireFightingObject"))
+        {
+            Node closest = getClosestNode(current, target, blacklist);
+
+            if (closest == null) return new List<Node>();
+
+            return generatePathToTarget(current, closest);
         }
 
         return new List<Node>();
@@ -155,7 +168,7 @@ public class Pathfinder : MonoBehaviour
         return new List<Node>();
     }
 
-    private Node getClosestNode(Node current, string type)
+    private Node getClosestNode(Node current, string type, HashSet<Node> blacklist)
     {
         Node closestNode = null;
 
@@ -166,11 +179,9 @@ public class Pathfinder : MonoBehaviour
 
             for (int i = 0; i < fireFightingNodes.Count; i++)
             {
-                if (fireFightingNodes[i].transform.GetComponent<FireFightingObject>())
-                {
-                    if (!fireFightingNodes[i].transform.GetComponent<Collider>().enabled)
-                        continue;
-                }
+                if (!fireFightingNodes[i].transform.GetComponent<Collider>().enabled ||
+                    blacklist.Contains(fireFightingNodes[i]))
+                    continue;
 
                 float newDistance = GetDistance(current, fireFightingNodes[i]);
 

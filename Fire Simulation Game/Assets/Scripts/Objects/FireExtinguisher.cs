@@ -72,6 +72,7 @@ public class FireExtinguisher : FireFightingObject
 
         if (isHeld && !isBeingUsed)
         {
+        	foam.GetComponent<Collider>().enabled = false;
         	foam.transform.localScale = Vector3.zero;
 
         	if(transform.parent.GetComponent<PlayerController>())
@@ -85,9 +86,6 @@ public class FireExtinguisher : FireFightingObject
 					notificationSystem.disableTimer = 8.0f;
 					notificationSystem.displayNotification();
 				}
-
-	            foam.GetComponent<Collider>().enabled = false;
-				foam.transform.localScale = Vector3.zero;
         	}
 
         	if (audioSource.clip == sweepingClip && audioSource.isPlaying)
@@ -95,7 +93,24 @@ public class FireExtinguisher : FireFightingObject
 				audioSource.Stop();
             }
         }
+        else if (isHeld && isBeingUsed && transform.parent.GetComponent<NPC>())
+        	StartCoroutine(OnOffExtinguisher(Time.deltaTime));
 	}
+
+	IEnumerator OnOffExtinguisher(float time)
+    {
+        yield return new WaitForSeconds(time * 2.0f / 3.0f);
+
+        isBeingUsed = false;
+        foam.GetComponent<Collider>().enabled = false;
+    	foam.transform.localScale = Vector3.zero;
+
+        yield return new WaitForSeconds(time / 3.0f);
+
+        isBeingUsed = true;
+        foam.transform.localScale = Vector3.one * foamScale;
+        foam.GetComponent<Collider>().enabled = true;
+    }
 
 	public override void Use(float throwForce, out bool isStillHeld)
 	{

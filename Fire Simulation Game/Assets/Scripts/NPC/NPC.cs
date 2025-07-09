@@ -16,6 +16,8 @@ public class NPC : MonoBehaviour
     private Vector2 nextPos;
     private int raycastLayerMask;
 
+    public HashSet<Node> blacklist;
+
     [Header("Misc.")]
     public Vector3 position;
     public float walkingSpeed;
@@ -31,6 +33,8 @@ public class NPC : MonoBehaviour
 
         resetPathfindingValues();
         raycastLayerMask = LayerMask.GetMask("Default", "Ignore Raycast", "TransparentFX", "Water", "UI", "Overlay");
+
+        blacklist = new HashSet<Node>();
 
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
 
@@ -63,7 +67,18 @@ public class NPC : MonoBehaviour
 
         if (pathIndex < path.Count)
         {
-            nextPos = new Vector2(path[pathIndex].transform.position.x, path[pathIndex].transform.position.z);
+            try
+            {
+                nextPos = new Vector2(path[pathIndex].transform.position.x, path[pathIndex].transform.position.z);
+            }
+            catch
+            {
+                if (pathIndex == path.Count-1 && target.Equals("Fire"))
+                {
+                    newPath = pathfinder.generatePath(currentNode, "Court");
+                    return true;
+                }
+            }
 
                                                                         // z-coord
             transform.LookAt(new Vector3(nextPos.x, transform.position.y, nextPos.y));
@@ -80,7 +95,8 @@ public class NPC : MonoBehaviour
                                 !hit.transform.GetComponent<Collider>().enabled;
                 if (!isValid)
                 {
-                    if (target.Equals("Fire") && hit.transform.GetComponent<Fire>())
+                    if (target.Equals("Fire") &&
+                        (hit.transform.GetComponent<Fire>() || hit.transform.CompareTag("Smoke")) )
                     {
                         if (hit.distance <= closeProximityValue)
                         {
@@ -97,8 +113,8 @@ public class NPC : MonoBehaviour
                                 transform.LookAt(new Vector3(firePos.x, transform.position.y, firePos.z));
                             }
 
-                            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
-
+                            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePosition;
+                            
                             return true;
                         }
                     }
@@ -106,7 +122,11 @@ public class NPC : MonoBehaviour
                     {
                         pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
 
-                        List<Node> temp = pathfinder.generatePath(currentNode, target);
+                        List<Node> temp;
+                        if (target.Equals("FireFightingObject"))
+                            temp = pathfinder.generatePath(currentNode, target, blacklist);
+                        else
+                            temp = pathfinder.generatePath(currentNode, target);
 
                         if (temp.Count > 0)
                         {
@@ -196,6 +216,12 @@ public class NPC : MonoBehaviour
 
             if (hitRB && hitTransform.CompareTag("Grabbable"))
             {
+                NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
+                if (nonFlammable && nonFlammable.GetComponent<Rigidbody>().GetAccumulatedForce().magnitude >= 100.0f)
+                {
+                    return;
+                }
+
                 hitRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
                 hitTransform.GetComponent<Collider>().enabled = false;
 
@@ -203,7 +229,6 @@ public class NPC : MonoBehaviour
 
                 Pail pail = hitTransform.GetComponent<Pail>();
                 FireExtinguisher extinguisher = hitTransform.GetComponent<FireExtinguisher>();
-                NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
                 if (pail)
                 {
                     pail.closeProximityValue = closeProximityValue;
@@ -222,9 +247,7 @@ public class NPC : MonoBehaviour
                         transform.rotation);
                 }
                 else if (nonFlammable)
-                {
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward * 0.55f, transform.rotation);
-                }
             }
 
             hitTransform.GetComponent<GrabbableObject>().isHeld = true;

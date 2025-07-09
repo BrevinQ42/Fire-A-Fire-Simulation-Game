@@ -295,18 +295,4 @@ public class Fire : MonoBehaviour
                 type = "Electrical";
         }
     }
-
-    void OnTriggerStay(Collider collider)
-    {
-        Foam foam = collider.GetComponent<Foam>();
-        if (foam)
-        {
-            Debug.Log("Foam collided with fire");
-
-            if (EffectivityTable[type].Equals(foam.type))
-                AffectFire(-foam.fireFightingValue * foam.affectFireMult);
-            else
-                AffectFire(foam.fireFightingValue * foam.affectFireMult);
-        }
-    }
 }

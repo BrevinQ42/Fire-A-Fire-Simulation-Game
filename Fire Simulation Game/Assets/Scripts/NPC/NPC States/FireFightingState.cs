@@ -12,14 +12,12 @@ public class FireFightingState : BaseState
     private FireFightingObject heldObject;
     private FireExtinguisher lastHeldExtinguisher;
 
-    private HashSet<Node> blacklist;
-
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
 
         target = "FireFightingObject";
-        path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+        path = npc.pathfinder.generatePath(npc.getCurrentNode(), target, npc.blacklist);
 
         if (Random.Range(0, 2) == 0)
             speed = npc.walkingSpeed;
@@ -28,8 +26,6 @@ public class FireFightingState : BaseState
 
         heldObject = null;
         lastHeldExtinguisher = null;
-
-        blacklist = new HashSet<Node>();
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -39,9 +35,6 @@ public class FireFightingState : BaseState
 
         if (npc.followPath(path, target, speed, true, out newPath))
         {
-            if (path.Count == 0) Debug.Log("Path to " + target + ": Fail");
-            else Debug.Log("Path to " + target + ": Success");
-
             if (heldObject == null && npc.transform.GetComponentInChildren<FireFightingObject>())
             {
                 heldObject = npc.transform.GetComponentInChildren<FireFightingObject>();
@@ -72,6 +65,16 @@ public class FireFightingState : BaseState
             }
             else if (heldObject != null)
             {
+                if (path.Count == 0 && newPath.Count == 0)
+                {
+                    Debug.Log("NPC failed to reach " + target);
+
+                    heldObject.Deattach();
+                    heldObject = null;
+                    
+                    stateMachine.SwitchState(stateMachine.evacuateState);
+                }
+
                 if (target.Equals("Fire"))
                 {
                     Debug.Log("Using " + heldObject.transform.name + " to extinguish fire");
@@ -87,7 +90,15 @@ public class FireFightingState : BaseState
                     }
 
                     if (stateMachine.ongoingFire == null)
+                    {
+                        if (heldObject.GetComponent<FireExtinguisher>())
+                            heldObject.GetComponent<FireExtinguisher>().isBeingUsed = false;
+
+                        heldObject.Deattach();
+                        heldObject = null;
+
                         stateMachine.SwitchState(stateMachine.evacuateState);
+                    }
                     else
                     {
                         if (!isStillHeld)
@@ -95,13 +106,33 @@ public class FireFightingState : BaseState
                             heldObject = null;
                             target = "FireFightingObject";
                         }
-                        else if (heldObject.GetComponent<Pail>())
+                        else
                         {
-                            target = "WaterSource";
+                            Pail bucket = heldObject.GetComponent<Pail>();
+                            Fire fire = stateMachine.ongoingFire;
+
+                            if ( (bucket && !fire.EffectivityTable[fire.type].Equals("Class A")) ||
+                                 (!bucket && !fire.EffectivityTable[fire.type].Equals(heldObject.GetComponent<FireExtinguisher>().type)) )
+                            {
+                                heldObject.Deattach();
+                                heldObject = null;
+
+                                if (bucket) // fire is most likely pretty big if they used a bucket full of water wrongly
+                                    stateMachine.SwitchState(stateMachine.evacuateState);
+                                
+                                foreach(FireExtinguisher extinguisher in GameObject.FindObjectsOfType<FireExtinguisher>())
+                                    npc.blacklist.Add(extinguisher.GetComponent<Node>());
+                                
+                                target = "FireFightingObject";
+                            }
+                            else if (heldObject.GetComponent<Pail>())
+                                target = "WaterSource";
                         }
 
-                        if (!heldObject.GetComponent<FireExtinguisher>())
+                        if (heldObject && heldObject.GetComponent<Pail>())
                             path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+                        else if (!heldObject)
+                            path = npc.pathfinder.generatePath(npc.getCurrentNode(), target, npc.blacklist);
                     }
                 }
                 else if (target.Equals("WaterSource"))
@@ -126,18 +157,24 @@ public class FireFightingState : BaseState
                         target = "Fire";
                         path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
+                        faucet.GetComponentInChildren<Spawner>().Toggle(false);
+
                         Debug.Log(heldObject.transform.name + " is ready to take out " + target);
                     }
                 }
             }
-            else Debug.Log("NPC failed");
+            else if (path.Count == 0 && newPath.Count == 0)
+            {
+                Debug.Log("NPC failed to get fire fighting object");
+                stateMachine.SwitchState(stateMachine.evacuateState);
+            }
         }
         
         if (newPath.Count > 0) path = newPath;
 
         if (!isUsingExtinguisher)
         {
-            if (lastHeldExtinguisher && lastHeldExtinguisher.transform.parent &&
+            if (lastHeldExtinguisher && lastHeldExtinguisher.transform.parent && heldObject && 
                 lastHeldExtinguisher == heldObject.GetComponent<FireExtinguisher>())
             {
                 lastHeldExtinguisher.isBeingUsed = false;
