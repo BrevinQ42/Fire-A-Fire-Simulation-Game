@@ -123,6 +123,8 @@ public class NPC : MonoBehaviour
 
                             pathIndex = 0;
                         }
+                        else
+                            newPath = new List<Node>{currentNode};
                     }
                 }
                 else if (willInteractWithTarget && pathIndex == path.Count-1 && direction.magnitude <= closeProximityValue)

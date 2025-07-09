@@ -102,6 +102,8 @@ public class Pathfinder : MonoBehaviour
                 }
                 else if (candidates[i].transform.CompareTag("WaterSource") && !target.transform.CompareTag("WaterSource"))
                     continue;
+                else if (candidates[i].GetComponent<Fire>() && !target.GetComponent<Fire>())
+                    continue;
 
                 if (nextNode == null)
                     nextNode = candidates[i];
@@ -126,23 +128,27 @@ public class Pathfinder : MonoBehaviour
             {
                 candidates.Remove(nextNode);
 
-                for (int i = 0; i < nextNode.adjacentNodes.Count; i++)
+                try
                 {
-                    if (nextNode.isEdgeValid[i])
+                    for (int i = 0; i < nextNode.adjacentNodes.Count; i++)
                     {
-                        Node node = nextNode.adjacentNodes[i];
-                        float newCost = nextNode.cost + GetDistance(nextNode, node);
-
-                        if (newCost < node.cost)
+                        if (nextNode.isEdgeValid[i])
                         {
-                            node.updateCost(newCost, nextNode);
-                            node.heuristic = node.cost + GetDistance(node, target);
+                            Node node = nextNode.adjacentNodes[i];
+                            float newCost = nextNode.cost + GetDistance(nextNode, node);
 
-                            if (!candidates.Contains(node))
-                                candidates.Add(node);
+                            if (newCost < node.cost)
+                            {
+                                node.updateCost(newCost, nextNode);
+                                node.heuristic = node.cost + GetDistance(node, target);
+
+                                if (!candidates.Contains(node))
+                                    candidates.Add(node);
+                            }
                         }
                     }
                 }
+                catch { continue; }
             }
         }
 
