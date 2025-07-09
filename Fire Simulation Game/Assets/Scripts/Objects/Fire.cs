@@ -149,7 +149,7 @@ public class Fire : MonoBehaviour
 
             if (player.FireOnPlayer && player.FireOnPlayer != this)
             {
-                player.FireOnPlayer.AffectFire(intensityValue / 1.2f);
+                player.FireOnPlayer.AffectFire(intensityValue / 1.05f);
             }
             else
             {
@@ -158,7 +158,7 @@ public class Fire : MonoBehaviour
                                                     Quaternion.identity).GetComponent<Fire>();
 
                 player.FireOnPlayer.transform.SetParent(player.transform);
-                player.FireOnPlayer.intensityValue = intensityValue / 1.2f;
+                player.FireOnPlayer.intensityValue = intensityValue / 1.05f;
                 player.isOnFire = true;
             }
         }
@@ -170,7 +170,7 @@ public class Fire : MonoBehaviour
 
             if (npc.FireOnNPC && npc.FireOnNPC != this)
             {
-                npc.FireOnNPC.AffectFire(intensityValue / 1.2f);
+                npc.FireOnNPC.AffectFire(intensityValue / 1.05f);
             }
             else
             {
@@ -178,7 +178,7 @@ public class Fire : MonoBehaviour
                                         npc.position + npc.transform.forward * 0.5f,
                                         Quaternion.identity).GetComponent<Fire>();
 
-                npc.FireOnNPC.intensityValue = intensityValue / 1.2f;
+                npc.FireOnNPC.intensityValue = intensityValue / 1.05f;
 
                 npc.FireOnNPC.transform.SetParent(transform);
             }
