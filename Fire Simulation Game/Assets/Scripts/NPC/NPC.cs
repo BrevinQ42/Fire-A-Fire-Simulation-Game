@@ -124,7 +124,10 @@ public class NPC : MonoBehaviour
                             pathIndex = 0;
                         }
                         else
-                            newPath = new List<Node>{currentNode};
+                        {
+                            NPCStateMachine stateMachine = GetComponent<NPCStateMachine>();
+                            stateMachine.SwitchState(stateMachine.panicState);
+                        }
                     }
                 }
                 else if (willInteractWithTarget && pathIndex == path.Count-1 && direction.magnitude <= closeProximityValue)
