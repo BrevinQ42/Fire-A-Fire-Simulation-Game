@@ -26,8 +26,6 @@ public class Fire : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip fireClip;
 
-    private bool hasHitNPC;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -52,8 +50,6 @@ public class Fire : MonoBehaviour
         audioSource.clip = fireClip;
         audioSource.loop = true;
         audioSource.Play();
-
-        hasHitNPC = false;
 
         PopulateEffectivityTable();
     }
@@ -147,9 +143,10 @@ public class Fire : MonoBehaviour
             notificationSystem.disableTimer = 4.0f;
             notificationSystem.displayNotification();
 
-            if (player.FireOnPlayer && player.FireOnPlayer != this)
+            if (player.FireOnPlayer)
             {
-                player.FireOnPlayer.AffectFire(intensityValue / 1.05f);
+                if (player.FireOnPlayer != this)
+                    player.FireOnPlayer.AffectFire(intensityValue / 1.05f);
             }
             else
             {
@@ -162,25 +159,24 @@ public class Fire : MonoBehaviour
                 player.isOnFire = true;
             }
         }
-        else if (collider.GetComponent<NPC>() && !hasHitNPC)
+        else if (collider.GetComponent<NPC>())
         {
-            hasHitNPC = true;
-
             NPC npc = collider.GetComponent<NPC>();
 
-            if (npc.FireOnNPC && npc.FireOnNPC != this)
+            if (npc.FireOnNPC)
             {
-                npc.FireOnNPC.AffectFire(intensityValue / 1.05f);
+                if (npc.FireOnNPC != this)
+                    npc.FireOnNPC.AffectFire(intensityValue / 1.05f);
             }
             else
             {
                 npc.FireOnNPC = Instantiate(gameObject,
-                                        npc.position + npc.transform.forward * 0.5f,
+                                        npc.transform.position,
                                         Quaternion.identity).GetComponent<Fire>();
 
                 npc.FireOnNPC.intensityValue = intensityValue / 1.05f;
 
-                npc.FireOnNPC.transform.SetParent(transform);
+                npc.FireOnNPC.transform.SetParent(npc.transform);
             }
         }
         else

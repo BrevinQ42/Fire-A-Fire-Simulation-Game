@@ -61,7 +61,7 @@ public class FireManager : MonoBehaviour
 				}
 			}
 
-			// index = Random.Range(0, FireSpawnPoints.Count);
+			index = Random.Range(0, FireSpawnPoints.Count);
 			Transform spawnTransform = FireSpawnPoints[index];
 
 			if (!spawnTransform.GetComponent<ElectricPlug>())
