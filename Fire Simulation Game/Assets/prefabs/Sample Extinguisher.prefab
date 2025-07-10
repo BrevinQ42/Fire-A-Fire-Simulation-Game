@@ -373,6 +373,7 @@ MonoBehaviour:
   notificationSystem: {fileID: 0}
   type: 
   isPinPulled: 0
+  isBeingUsed: 0
   lookedAt: 0
   textName: {fileID: 0}
   audioSource: {fileID: 0}
@@ -802,7 +803,7 @@ MonoBehaviour:
   isHeld: 0
   fireFightingValue: 2
   type: 
-  affectFireMult: 0.1
+  affectFireMult: 0.01
 --- !u!65 &6447177426516954810
 BoxCollider:
   m_ObjectHideFlags: 0

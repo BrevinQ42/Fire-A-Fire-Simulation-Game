@@ -692,6 +692,7 @@ public class PlayerController : MonoBehaviour
                 Pail pail = hitTransform.GetComponent<Pail>();
                 FireExtinguisher extinguisher = hitTransform.GetComponent<FireExtinguisher>();
                 NonFlammableObject nonFlammable = hitTransform.GetComponent<NonFlammableObject>();
+                ElectricPlug plug = hitTransform.GetComponent<ElectricPlug>();
                 if (pail)
                 {
                     if(pail.getWaterInside() > 0.0f)
@@ -734,16 +735,19 @@ public class PlayerController : MonoBehaviour
                         transform.position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
                         transform.rotation);
                 }
-                else if (nonFlammable)
+                else
                 {
-                    notificationSystem.notificationMessage = "You can [Left Click] to throw this directly at a fire to put it out!\n[G] to Drop Object";
-                    notificationSystem.disableAfterTimer = true;
-                    notificationSystem.disableTimer = 6.0f;
-                    notificationSystem.displayNotification();
+                    if (nonFlammable)
+                    {
+                        notificationSystem.notificationMessage = "You can [Left Click] to throw this directly at a fire to put it out!\n[G] to Drop Object";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 6.0f;
+                        notificationSystem.displayNotification();
+                        hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
+                    }
+
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
                 }
-                else
-                    hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
 
                 heldObject = hitTransform.GetComponent<GrabbableObject>();
                 heldObject.isHeld = true;
@@ -751,11 +755,10 @@ public class PlayerController : MonoBehaviour
                 audioSource2.clip = pickUpClip;
                 audioSource2.Play();
 
-                ElectricPlug plug = heldObject.GetComponent<ElectricPlug>();
                 if (plug)
                 {
-                    if(!isExtensionsResolved &&
-                        plug.owner.name.Equals("ExtensionCord") && plug.pluggedInto.name.Equals("ExtensionCord"))
+                    if(!isExtensionsResolved && plug.owner.name.Equals("ExtensionCord") &&
+                        plug.pluggedInto && plug.pluggedInto.name.Equals("ExtensionCord"))
                     {
                         notificationSystem.notificationMessage = "Unplug unused appliances as well!\n*Take note that fire may come from other houses despite doing this*";
                         notificationSystem.disableAfterTimer = true;
@@ -772,9 +775,7 @@ public class PlayerController : MonoBehaviour
                         notificationSystem.displayNotification();
                     }
 
-                    plug.pluggedInto = null;
-
-                    if(fireManager) fireManager.RemoveSpawnPoint(plug.transform);
+                    plug.Unplug();
                 }
             }
             else if (hitTransform.CompareTag("WaterSource"))

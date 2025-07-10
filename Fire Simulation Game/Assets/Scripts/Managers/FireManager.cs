@@ -52,83 +52,31 @@ public class FireManager : MonoBehaviour
 		if (timeBeforeFire > 0.0f) timeBeforeFire -= Time.deltaTime;
 		else if (!isFireOngoing)
 		{
-			Transform spawnTransform;
-
-			while(true)
+			if (plugsCount < minPlugsCountForFire)
 			{
-				index = Random.Range(0, FireSpawnPoints.Count);
-				spawnTransform = FireSpawnPoints[index];
-
-				ElectricPlug plug = spawnTransform.GetComponent<ElectricPlug>();
-				if (plug)
+				foreach(ElectricPlug plug in FindObjectsOfType<ElectricPlug>())
 				{
-					if (plugsCount >= minPlugsCountForFire)
-					{
-						bool isPowered = false;
-
-						while(true)
-						{
-							if (!plug.pluggedInto) break;
-
-							if (plug.pluggedInto.name.Equals("WallOutlet"))
-							{
-								isPowered = true;
-								break;
-							}
-							else
-							{
-								Transform plugOwner = plug.pluggedInto;
-
-								foreach(ElectricPlug electricPlug in FindObjectsByType<ElectricPlug>(FindObjectsSortMode.None))
-								{
-									if (electricPlug.owner == plugOwner)
-									{
-										plug = electricPlug;
-										break;
-									}
-								}
-							}
-						}
-
-						if (!isPowered) RemoveSpawnPoint(spawnTransform);
-						else
-						{
-							if (plug.owner.name.Equals("ExtensionCord")) break;
-							else RemoveSpawnPoint(spawnTransform);
-						}
-					}
-					else
-					{
-						Debug.Log("No electrical fires possible");
-						spawnTransform = null;
-						break;
-					}
-				}
-				else
-				{
-					Fire fire = spawnTransform.GetComponent<Fire>();
-					if (fire)
-					{
-						fire.transform.SetParent(null);
-						fire.transform.localScale = Vector3.one * fire.intensityValue;
-						ongoingFire = fire;
-						ongoingFire.AffectFire(0.35f);
-					}
-					
-					break;
+					if (FireSpawnPoints.Contains(plug.transform))
+						FireSpawnPoints.Remove(plug.transform);
 				}
 			}
 
-			Vector3 spawnPoint;
+			index = Random.Range(0, FireSpawnPoints.Count);
+			Transform spawnTransform = FireSpawnPoints[index];
 
-			if (spawnTransform)
-				spawnPoint = spawnTransform.position;
-			else
+			if (!spawnTransform.GetComponent<ElectricPlug>())
 			{
-				Debug.Log("No generated fire\nPlacing a random one now");
-				spawnTransform = FireSpawnPoints[0];
-				spawnPoint = spawnTransform.position + Vector3.one * 2.0f;
+				Fire fire = spawnTransform.GetComponent<Fire>();
+				if (fire)
+				{
+					fire.transform.SetParent(null);
+					fire.transform.localScale = Vector3.one * fire.intensityValue;
+					ongoingFire = fire;
+					ongoingFire.AffectFire(0.35f);
+				}
 			}
+
+			Vector3 spawnPoint = spawnTransform.position;
 
 			if (!ongoingFire)
 			{
@@ -246,13 +194,13 @@ public class FireManager : MonoBehaviour
 		return true;
 	}
 
-	public void AddSpawnPoint(Transform spawnPoint)
+	public void AddSpawnPoint(Transform spawnPoint, bool isDuplicate)
 	{
 		if (!isFireOngoing)
 		{
 			FireSpawnPoints.Add(spawnPoint);
 
-			if (spawnPoint.GetComponent<ElectricPlug>()) plugsCount++;
+			if (spawnPoint.GetComponent<ElectricPlug>() && !isDuplicate) plugsCount++;
 		}
 	}
 
@@ -262,7 +210,8 @@ public class FireManager : MonoBehaviour
 		{
 			bool isRemoved = true;
 
-			if (spawnPoint.GetComponent<ElectricPlug>()) plugsCount--;
+			if (FireSpawnPoints.Contains(spawnPoint) && spawnPoint.GetComponent<ElectricPlug>())
+				plugsCount--;
 
 			while(isRemoved)
 			{

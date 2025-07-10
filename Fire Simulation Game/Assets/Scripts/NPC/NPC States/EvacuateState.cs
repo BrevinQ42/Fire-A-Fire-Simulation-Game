@@ -29,9 +29,14 @@ public class EvacuateState : BaseState
         if (npc.followPath(path, target, speed, false, out newPath))
         {
             if (npc.getCurrentNode().name.Equals("EvacuationNode"))
+            {
                 Debug.Log("NPC has evacuated");
+                path = new List<Node>{npc.getCurrentNode()};
+            }
             else
+            {
                 Debug.Log("NPC is stuck");
+            }
         }
 
         if (newPath.Count > 0) path = newPath;

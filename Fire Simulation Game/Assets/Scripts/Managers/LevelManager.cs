@@ -69,7 +69,7 @@ public class LevelManager : MonoBehaviour
 			FireOnCandle.intensityValue += 0.14f;
 			FireOnCandle.transform.localScale = Vector3.one * FireOnCandle.intensityValue;
 
-			fireManager.AddSpawnPoint(FireOnCandle.transform);
+			fireManager.AddSpawnPoint(FireOnCandle.transform, false);
 
 			candleSpawnPoints.RemoveAt(index);
 		}

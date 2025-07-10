@@ -12,12 +12,13 @@ public class ElectricPlug : GrabbableObject
     public bool lookedAt;
     public GameObject textName;
 
+    [SerializeField] private List<ElectricPlug> ExtensionCordPlugs;
+
     void Start()
     {
         lookedAt = false;
         textName = GetComponentInChildren<TextMesh>().gameObject;
 
-        if (transform.parent && !transform.parent.name.Equals("Main House")) pluggedInto = transform.parent;
         InitializeFireManager();
     }
 
@@ -34,6 +35,40 @@ public class ElectricPlug : GrabbableObject
         if (isHeld == true)
         {
             textName.SetActive(false);
+        }
+    }
+
+    bool isPowered()
+    {
+        Transform currentPlug = pluggedInto;
+
+        HashSet<Transform> plugs = new HashSet<Transform>();
+        plugs.Add(currentPlug);
+
+        if (currentPlug == null) return false;
+        if (currentPlug.name.Equals("WallOutlet")) return true;
+
+        while(true)
+        {
+            bool isPlugFound = false;
+
+            foreach(ElectricPlug plug in ExtensionCordPlugs)
+            {
+                if (plug.owner == currentPlug)
+                {
+                    if (plugs.Contains(plug.pluggedInto)) return false;
+
+                    currentPlug = plug.pluggedInto;
+
+                    if (currentPlug == null) return false;
+                    if (currentPlug.name.Equals("WallOutlet")) return true;
+
+                    isPlugFound = true;
+                    break;
+                }
+            }
+
+            if (!isPlugFound) return false;
         }
     }
 
@@ -65,14 +100,65 @@ public class ElectricPlug : GrabbableObject
 
         if(!fireManager) InitializeFireManager();
 
-        if(fireManager)
+        if(fireManager && isPowered())
         {
-            fireManager.AddSpawnPoint(transform);
+            fireManager.AddSpawnPoint(transform, false);
 
-            if (owner.name.Equals("ExtensionCord") && pluggedInto.name.Equals("ExtensionCord"))
+            if (owner.name.Equals("ExtensionCord"))
             {
-                // additional chance of being set on fire
-                fireManager.AddSpawnPoint(pluggedInto.GetComponentInChildren<ElectricPlug>().transform);
+                if (pluggedInto.name.Equals("ExtensionCord"))
+                    fireManager.AddSpawnPoint(transform, true); // additional chance of being set on fire
+
+                Transform currentOwner = owner;
+
+                // WARNING: will have issue when there are more than two extension cords
+                while(currentOwner.name.Equals("ExtensionCord"))
+                {
+                    bool isNewOwnerFound = false;
+
+                    foreach(ElectricPlug plug in currentOwner.GetComponentsInChildren<ElectricPlug>())
+                    {
+                        if (plug.owner != currentOwner && plug.owner.name.Equals("ExtensionCord"))
+                        {
+                            currentOwner = plug.owner;
+                            isNewOwnerFound = true;
+                        }
+
+                        fireManager.AddSpawnPoint(plug.transform, false);
+                    }
+
+                    if (!isNewOwnerFound) break;
+                }
+            }
+        }
+    }
+
+    public void Unplug()
+    {
+        if (pluggedInto)
+        {
+            pluggedInto = null;
+            fireManager.RemoveSpawnPoint(transform);
+
+            Transform currentOwner = owner;
+
+            // WARNING: will have issue when there are more than two extension cords
+            while(currentOwner.name.Equals("ExtensionCord"))
+            {
+                bool isNewOwnerFound = false;
+
+                foreach(ElectricPlug plug in currentOwner.GetComponentsInChildren<ElectricPlug>())
+                {
+                    if (plug.owner != currentOwner && plug.owner.name.Equals("ExtensionCord"))
+                    {
+                        currentOwner = plug.owner;
+                        isNewOwnerFound = true;
+                    }
+
+                    fireManager.RemoveSpawnPoint(plug.transform);
+                }
+
+                if (!isNewOwnerFound) break;
             }
         }
     }

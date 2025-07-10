@@ -143,35 +143,40 @@ public class Fire : MonoBehaviour
             notificationSystem.disableTimer = 4.0f;
             notificationSystem.displayNotification();
 
-            if (!player.FireOnPlayer)
+            if (player.FireOnPlayer)
+            {
+                if (player.FireOnPlayer != this)
+                    player.FireOnPlayer.AffectFire(intensityValue / 1.05f);
+            }
+            else
             {
                 player.FireOnPlayer = Instantiate(gameObject,
                                                     player.transform.position + player.transform.forward * 0.5f,
                                                     Quaternion.identity).GetComponent<Fire>();
 
                 player.FireOnPlayer.transform.SetParent(player.transform);
-                player.FireOnPlayer.intensityValue = intensityValue / 1.2f;
+                player.FireOnPlayer.intensityValue = intensityValue / 1.05f;
                 player.isOnFire = true;
             }
-            else player.FireOnPlayer.AffectFire(intensityValue / 1.2f);
         }
         else if (collider.GetComponent<NPC>())
         {
             NPC npc = collider.GetComponent<NPC>();
 
-            Fire FireOnNPC = npc.transform.GetComponentInChildren<Fire>();
-
-            if (FireOnNPC)
-                FireOnNPC.AffectFire(intensityValue / 1.2f);
+            if (npc.FireOnNPC)
+            {
+                if (npc.FireOnNPC != this)
+                    npc.FireOnNPC.AffectFire(intensityValue / 1.05f);
+            }
             else
             {
-                FireOnNPC = Instantiate(gameObject,
-                                        npc.position + npc.transform.forward * 0.5f,
+                npc.FireOnNPC = Instantiate(gameObject,
+                                        npc.transform.position,
                                         Quaternion.identity).GetComponent<Fire>();
 
-                FireOnNPC.intensityValue = intensityValue / 1.2f;
+                npc.FireOnNPC.intensityValue = intensityValue / 1.05f;
 
-                FireOnNPC.transform.SetParent(transform);
+                npc.FireOnNPC.transform.SetParent(npc.transform);
             }
         }
         else

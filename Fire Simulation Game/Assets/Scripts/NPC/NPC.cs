@@ -22,6 +22,7 @@ public class NPC : MonoBehaviour
     public float runningSpeed;
     public float closeProximityValue;
     public float throwForce;
+    public Fire FireOnNPC;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +33,8 @@ public class NPC : MonoBehaviour
         raycastLayerMask = LayerMask.GetMask("Default", "Ignore Raycast", "TransparentFX", "Water", "UI", "Overlay");
 
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
+
+        FireOnNPC = null;
     }
 
     void Update()
@@ -51,6 +54,8 @@ public class NPC : MonoBehaviour
 
     public bool followPath(List<Node> path, string target, float speed, bool willInteractWithTarget, out List<Node> newPath)
     {
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+
         newPath = new List<Node>();
 
         generatedPath = path;
@@ -81,15 +86,18 @@ public class NPC : MonoBehaviour
                         {
                             Vector3 newDirection = hit.transform.position - position;
 
+                            Vector3 tempPosition = position + transform.forward * 0.15f;
                             int tempLayerMask = LayerMask.GetMask("Default", "Person", "TransparentFX", "Water", "UI", "Overlay");
 
                             if (Vector3.Normalize(direction) != Vector3.Normalize(newDirection) &&
-                                !Physics.Raycast(position, Vector3.Normalize(newDirection), newDirection.magnitude, tempLayerMask))
+                                !Physics.Raycast(tempPosition, Vector3.Normalize(newDirection), newDirection.magnitude, tempLayerMask))
                             {
                                 Vector3 firePos = hit.transform.position;
 
                                 transform.LookAt(new Vector3(firePos.x, transform.position.y, firePos.z));
                             }
+
+                            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
 
                             return true;
                         }
@@ -114,6 +122,11 @@ public class NPC : MonoBehaviour
                                 newPath = temp;
 
                             pathIndex = 0;
+                        }
+                        else
+                        {
+                            NPCStateMachine stateMachine = GetComponent<NPCStateMachine>();
+                            stateMachine.SwitchState(stateMachine.panicState);
                         }
                     }
                 }
@@ -196,7 +209,7 @@ public class NPC : MonoBehaviour
                     pail.closeProximityValue = closeProximityValue;
                     pail.playerCamera = transform;
                     hitTransform.SetPositionAndRotation(
-                        position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
+                        transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
                         transform.rotation);
                 }
                 else if (extinguisher)
@@ -205,16 +218,24 @@ public class NPC : MonoBehaviour
                         extinguisher.isPinPulled = true;
 
                     hitTransform.SetPositionAndRotation(
-                        position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
+                        transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
                         transform.rotation);
                 }
                 else if (nonFlammable)
                 {
-                    hitTransform.SetPositionAndRotation(position + transform.forward, transform.rotation);
+                    hitTransform.SetPositionAndRotation(transform.position + transform.forward * 0.55f, transform.rotation);
                 }
             }
 
             hitTransform.GetComponent<GrabbableObject>().isHeld = true;
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Smoke"))
+        {
+            Destroy(collision.gameObject);
         }
     }
 }

@@ -10,6 +10,8 @@ public class FireFightingState : BaseState
     private float speed;
 
     private FireFightingObject heldObject;
+    private FireExtinguisher lastHeldExtinguisher;
+
     private HashSet<Node> blacklist;
 
     public override void EnterState(NPCStateMachine stateMachine)
@@ -25,12 +27,15 @@ public class FireFightingState : BaseState
             speed = npc.runningSpeed;
 
         heldObject = null;
+        lastHeldExtinguisher = null;
+
         blacklist = new HashSet<Node>();
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
         List<Node> newPath;
+        bool isUsingExtinguisher = false;
 
         if (npc.followPath(path, target, speed, true, out newPath))
         {
@@ -42,7 +47,12 @@ public class FireFightingState : BaseState
                 heldObject = npc.transform.GetComponentInChildren<FireFightingObject>();
 
                 if (heldObject.GetComponent<FireExtinguisher>() || heldObject.GetComponent<NonFlammableObject>())
+                {
                     target = "Fire";
+
+                    if (heldObject.GetComponent<FireExtinguisher>())
+                        lastHeldExtinguisher = heldObject.GetComponent<FireExtinguisher>();
+                }
                 else
                 {
                     Pail pail = heldObject.GetComponent<Pail>();
@@ -70,6 +80,12 @@ public class FireFightingState : BaseState
 
                     heldObject.Use(npc.throwForce, out isStillHeld);
 
+                    if (heldObject.GetComponent<FireExtinguisher>())
+                    {
+                        heldObject.GetComponent<FireExtinguisher>().isBeingUsed = true;
+                        isUsingExtinguisher = true;
+                    }
+
                     if (stateMachine.ongoingFire == null)
                         stateMachine.SwitchState(stateMachine.evacuateState);
                     else
@@ -84,7 +100,8 @@ public class FireFightingState : BaseState
                             target = "WaterSource";
                         }
 
-                        path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+                        if (!heldObject.GetComponent<FireExtinguisher>())
+                            path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
                     }
                 }
                 else if (target.Equals("WaterSource"))
@@ -101,7 +118,7 @@ public class FireFightingState : BaseState
                         pail.getFractionFilled() >= 1.0f)
                     {
                         heldObject.transform.SetPositionAndRotation(
-                            npc.position + npc.transform.forward + npc.transform.right * 0.7f - npc.transform.up * 0.15f, 
+                            npc.transform.position + npc.transform.forward * 0.5f + npc.transform.right * 0.3f, 
                             npc.transform.rotation);
 
                         heldObject.transform.SetParent(npc.transform);
@@ -117,5 +134,14 @@ public class FireFightingState : BaseState
         }
         
         if (newPath.Count > 0) path = newPath;
+
+        if (!isUsingExtinguisher)
+        {
+            if (lastHeldExtinguisher && lastHeldExtinguisher.transform.parent &&
+                lastHeldExtinguisher == heldObject.GetComponent<FireExtinguisher>())
+            {
+                lastHeldExtinguisher.isBeingUsed = false;
+            }
+        }
     }
 }
