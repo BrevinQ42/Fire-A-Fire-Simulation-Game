@@ -24,6 +24,10 @@ public class NPC : MonoBehaviour
     public float throwForce;
     public Fire FireOnNPC;
 
+    // Animation Related
+    public bool isHoldingPail;
+    public Animator NPCAnimator;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,11 +39,23 @@ public class NPC : MonoBehaviour
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
 
         FireOnNPC = null;
+
+        isHoldingPail = false;
+        NPCAnimator = GetComponent<Animator>();
     }
 
     void Update()
     {
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
+
+        if (isHoldingPail == true)
+        {
+            NPCAnimator.SetBool("isHoldingPail", true);
+        }
+        else if (isHoldingPail == false)
+        {
+            NPCAnimator.SetBool("isHoldingPail", false);
+        }
     }
 
     public Node getCurrentNode()
@@ -211,6 +227,7 @@ public class NPC : MonoBehaviour
                     hitTransform.SetPositionAndRotation(
                         transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
                         transform.rotation);
+                    isHoldingPail = true; 
                 }
                 else if (extinguisher)
                 {
