@@ -20,6 +20,7 @@ public class NPC : MonoBehaviour
 
     [Header("Misc.")]
     public Vector3 position;
+    public float gravityForce;
     public float walkingSpeed;
     public float runningSpeed;
     public float closeProximityValue;
@@ -43,6 +44,9 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
+        if (!isGrounded())
+            GetComponent<Rigidbody>().AddForce(new Vector3(0, -gravityForce, 0));
+
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
     }
 
@@ -164,9 +168,8 @@ public class NPC : MonoBehaviour
                             Vector2.Distance(nextPos, new Vector2(position.x, position.z)) <= closeProximityValue ) )
                 {
                     InteractWithObject(hit.transform);
-
-                    resetPathfindingValues();
                     currentNode = pathfinder.getClosestNode(currentNode);
+                    
                     return true;
                 }
             }
@@ -252,6 +255,8 @@ public class NPC : MonoBehaviour
         }
         else
         {
+            resetPathfindingValues();
+
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
 
             if (hitRB && hitTransform.CompareTag("Grabbable"))
@@ -287,6 +292,11 @@ public class NPC : MonoBehaviour
 
             hitTransform.GetComponent<GrabbableObject>().isHeld = true;
         }
+    }
+
+    bool isGrounded()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, 1.0f);
     }
 
     void OnCollisionEnter(Collision collision)
