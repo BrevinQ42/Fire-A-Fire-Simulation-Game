@@ -11,6 +11,7 @@ public class FireFightingState : BaseState
 
     private FireFightingObject heldObject;
     private FireExtinguisher lastHeldExtinguisher;
+    private float targetFractionFilled;
 
     public override void EnterState(NPCStateMachine stateMachine)
     {
@@ -26,6 +27,7 @@ public class FireFightingState : BaseState
 
         heldObject = null;
         lastHeldExtinguisher = null;
+        targetFractionFilled = 0.5f;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -42,6 +44,7 @@ public class FireFightingState : BaseState
                 if (heldObject.GetComponent<FireExtinguisher>() || heldObject.GetComponent<NonFlammableObject>())
                 {
                     target = "Fire";
+                    npc.closeProximityValue = 1.25f;
 
                     if (heldObject.GetComponent<FireExtinguisher>())
                         lastHeldExtinguisher = heldObject.GetComponent<FireExtinguisher>();
@@ -51,17 +54,30 @@ public class FireFightingState : BaseState
                     Pail pail = heldObject.GetComponent<Pail>();
                     if (pail)
                     {
-                        if (pail.getWaterInside() > stateMachine.ongoingFire.intensityValue ||
-                            pail.getFractionFilled() >= 1.0f)
+                        if (pail.getFractionFilled() >= targetFractionFilled || targetFractionFilled - pail.getFractionFilled() <= 0.05f)
+                        {
                             target = "Fire";
+                            targetFractionFilled = 1.0f;
+                        }
                         else
                             target = "WaterSource";
+
+                        npc.closeProximityValue = 1.25f;
                     }
                 }
 
                 path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
                 Debug.Log("Got " + heldObject.transform.name + " / Next Target: " + target);
+
+                foreach(Node node in npc.blacklist)
+                {
+                    if (node.GetComponent<NonFlammableObject>())
+                    {
+                        npc.blacklist.Remove(node);
+                        break;
+                    }
+                }
             }
             else if (heldObject != null)
             {
@@ -79,9 +95,19 @@ public class FireFightingState : BaseState
                 {
                     Debug.Log("Using " + heldObject.transform.name + " to extinguish fire");
 
+                    Pail bucket = heldObject.GetComponent<Pail>();
+
                     bool isStillHeld;
 
-                    heldObject.Use(npc.throwForce, out isStillHeld);
+                    if (bucket)
+                    {
+                        float yOffset = stateMachine.ongoingFire.transform.position.y - npc.position.y;
+                        if (yOffset <= 0.0f) yOffset = 0.0f;
+
+                        bucket.Use(npc.throwForce, out isStillHeld, yOffset);
+                    }
+                    else
+                        heldObject.Use(npc.throwForce, out isStillHeld);
 
                     if (heldObject.GetComponent<FireExtinguisher>())
                     {
@@ -103,12 +129,13 @@ public class FireFightingState : BaseState
                     {
                         if (!isStillHeld)
                         {
+                            npc.blacklist.Add(heldObject.GetComponent<Node>());
                             heldObject = null;
                             target = "FireFightingObject";
+                            npc.closeProximityValue = 2.0f;
                         }
                         else
                         {
-                            Pail bucket = heldObject.GetComponent<Pail>();
                             Fire fire = stateMachine.ongoingFire;
 
                             if ( (bucket && !fire.EffectivityTable[fire.type].Equals("Class A")) ||
@@ -124,12 +151,16 @@ public class FireFightingState : BaseState
                                     npc.blacklist.Add(extinguisher.GetComponent<Node>());
                                 
                                 target = "FireFightingObject";
+                                npc.closeProximityValue = 2.0f;
                             }
                             else if (heldObject.GetComponent<Pail>())
+                            {
                                 target = "WaterSource";
+                                npc.closeProximityValue = 1.25f;
+                            }
                         }
 
-                        if (heldObject && heldObject.GetComponent<Pail>())
+                        if (heldObject && bucket)
                             path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
                         else if (!heldObject)
                             path = npc.pathfinder.generatePath(npc.getCurrentNode(), target, npc.blacklist);
@@ -148,13 +179,14 @@ public class FireFightingState : BaseState
                     if(pail.getWaterInside() > stateMachine.ongoingFire.intensityValue ||
                         pail.getFractionFilled() >= 1.0f)
                     {
+                        heldObject.transform.SetParent(npc.transform);
+
                         heldObject.transform.SetPositionAndRotation(
                             npc.transform.position + npc.transform.forward * 0.5f + npc.transform.right * 0.3f, 
                             npc.transform.rotation);
 
-                        heldObject.transform.SetParent(npc.transform);
-
                         target = "Fire";
+                        npc.closeProximityValue = 1.25f;
                         path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
                         faucet.GetComponentInChildren<Spawner>().Toggle(false);

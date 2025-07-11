@@ -154,6 +154,8 @@ public class Fire : MonoBehaviour
                                                     player.transform.position + player.transform.forward * 0.5f,
                                                     Quaternion.identity).GetComponent<Fire>();
 
+                player.FireOnPlayer.GetComponent<Collider>().enabled = false;
+
                 player.FireOnPlayer.transform.SetParent(player.transform);
                 player.FireOnPlayer.intensityValue = intensityValue / 1.05f;
                 player.isOnFire = true;
@@ -173,6 +175,8 @@ public class Fire : MonoBehaviour
                 npc.FireOnNPC = Instantiate(gameObject,
                                         npc.transform.position,
                                         Quaternion.identity).GetComponent<Fire>();
+
+                npc.FireOnNPC.GetComponent<Collider>().enabled = false;
 
                 npc.FireOnNPC.intensityValue = intensityValue / 1.05f;
 

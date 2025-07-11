@@ -18,7 +18,8 @@ public class Water : FireFightingObject
 
     void OnCollisionEnter(Collision collision)
     {
-        if (!collision.collider.CompareTag("Fire") && !collision.collider.GetComponent<Pail>() && !collision.collider.CompareTag("Smoke"))
+        if (!collision.collider.CompareTag("Fire") && !collision.collider.GetComponent<Pail>()
+            && !collision.collider.CompareTag("Smoke") && !collision.collider.CompareTag("SmokeLayer"))
         {
             Destroy(gameObject);
             Debug.Log("Water hit " + collision.collider.name);

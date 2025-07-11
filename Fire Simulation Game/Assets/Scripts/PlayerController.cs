@@ -977,6 +977,8 @@ public class PlayerController : MonoBehaviour
                 collidedWith = collision.collider;
 
                 EndGame();
+                
+                return;
             }
             else if (fireManager.isFireOngoing && collision.collider.name.Equals("Court"))
             {
@@ -985,19 +987,56 @@ public class PlayerController : MonoBehaviour
                 notificationSystem.notificationMessage = "You successfully escaped!\nPress [Enter] to Call the Fire Department and End the Game";
                 notificationSystem.disableAfterTimer = false;
                 notificationSystem.displayNotification();
+
+                return;
             }
         }
+
         if (collision.gameObject.tag == "Stairs")
         {
             isOnStairs = true;
         }
-        if (collision.gameObject.tag == "SmokeLayer")
+        else if (collision.gameObject.tag == "SmokeLayer")
         {
             playerBars.oxygen = 0.0f;
         }
+        else if (collision.collider.GetComponent<NPC>())
+        {
+            NPC npc = collision.collider.GetComponent<NPC>();
 
-        else if (collision.collider.name.Equals("Court"))
-            collidedWith = collision.collider;
+            if (FireOnPlayer)
+            {
+                if (npc.FireOnNPC)
+                {
+                    npc.FireOnNPC.AffectFire(FireOnPlayer.intensityValue);
+                    FireOnPlayer.AffectFire(npc.FireOnNPC.intensityValue);
+                }
+                else
+                {
+                    npc.FireOnNPC = Instantiate(FireOnPlayer.gameObject,
+                                            npc.transform.position,
+                                            Quaternion.identity).GetComponent<Fire>();
+
+                    npc.FireOnNPC.GetComponent<Collider>().enabled = false;
+
+                    npc.FireOnNPC.intensityValue = FireOnPlayer.intensityValue;
+
+                    npc.FireOnNPC.transform.SetParent(npc.transform);
+                }
+            }
+            else if (npc.FireOnNPC)
+            {
+                FireOnPlayer = Instantiate(npc.FireOnNPC.gameObject,
+                                            transform.position + transform.forward * 0.5f,
+                                            Quaternion.identity).GetComponent<Fire>();
+
+                FireOnPlayer.GetComponent<Collider>().enabled = false;
+
+                FireOnPlayer.transform.SetParent(transform);
+                FireOnPlayer.intensityValue = npc.FireOnNPC.intensityValue;
+                isOnFire = true;
+            }
+        }
     }
 
     private void OnCollisionExit(Collision collision)
