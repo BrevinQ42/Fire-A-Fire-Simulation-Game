@@ -109,7 +109,8 @@ public class Pathfinder : MonoBehaviour
                 if (candidates[i].GetComponent<FireFightingObject>())
                 {
                     if (!candidates[i].GetComponent<Collider>().enabled ||
-                        !target.GetComponent<FireFightingObject>())
+                        !target.GetComponent<FireFightingObject>() ||
+                        GetComponent<NPC>().blacklist.Contains(candidates[i]))
                         continue;
                 }
                 else if (candidates[i].transform.CompareTag("WaterSource") && !target.transform.CompareTag("WaterSource"))
@@ -165,29 +166,6 @@ public class Pathfinder : MonoBehaviour
         }
 
         return new List<Node>();
-    }
-
-    public Node getClosestNode(Node current)
-    {
-        Node closestNode = null;
-        float distance = -1.0f;
-
-        foreach(Node node in FindObjectsOfType<Node>())
-        {
-            if (!node.GetComponent<Fire>() && !node.GetComponent<FireFightingObject>() && !node.transform.CompareTag("WaterSource")
-                && node != current)
-            {
-                float newDistance = GetDistance(current, node);
-
-                if (closestNode == null || newDistance < distance)
-                {
-                    distance = newDistance;
-                    closestNode = node;
-                }
-            }
-        }
-
-        return closestNode;
     }
 
     private Node getClosestNode(Node current, string type, HashSet<Node> blacklist)

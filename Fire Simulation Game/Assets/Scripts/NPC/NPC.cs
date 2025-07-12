@@ -147,7 +147,6 @@ public class NPC : MonoBehaviour
                             }
 
                             GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePosition;
-                            currentNode = pathfinder.getClosestNode(currentNode);
                             
                             return true;
                         }
@@ -169,7 +168,6 @@ public class NPC : MonoBehaviour
                             Vector2.Distance(nextPos, new Vector2(position.x, position.z)) <= closeProximityValue ) )
                 {
                     InteractWithObject(hit.transform);
-                    currentNode = pathfinder.getClosestNode(currentNode);
                     
                     return true;
                 }
@@ -182,7 +180,7 @@ public class NPC : MonoBehaviour
 
             if (newPos == nextPos)
             {
-                if (path[pathIndex] == pathfinder.getExitNode())
+                if (target.Equals("Court") && path[pathIndex] == pathfinder.getExitNode())
                 {
                     Door door = GameObject.FindObjectOfType<Door>();
 
