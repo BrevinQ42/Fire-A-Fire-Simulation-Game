@@ -19,6 +19,7 @@ public class NPC : MonoBehaviour
     public HashSet<Node> blacklist;
 
     [Header("Misc.")]
+    [SerializeField] private Transform head;
     public Vector3 position;
     public float gravityForce;
     public float walkingSpeed;
@@ -272,7 +273,7 @@ public class NPC : MonoBehaviour
                 if (pail)
                 {
                     pail.closeProximityValue = closeProximityValue;
-                    pail.playerCamera = transform;
+                    pail.playerCamera = head;
                     hitTransform.SetPositionAndRotation(
                         transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
                         transform.rotation);

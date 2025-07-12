@@ -32,6 +32,17 @@ public class FireFightingState : BaseState
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
+        if (stateMachine.ongoingFire == null)
+        {
+            if (heldObject != null)
+            {
+                heldObject.Deattach();
+                heldObject = null;
+            }
+
+            stateMachine.SwitchState(stateMachine.evacuateState);
+        }
+
         List<Node> newPath;
         bool isUsingExtinguisher = false;
 
@@ -98,16 +109,7 @@ public class FireFightingState : BaseState
                     Pail bucket = heldObject.GetComponent<Pail>();
 
                     bool isStillHeld;
-
-                    if (bucket)
-                    {
-                        float yOffset = stateMachine.ongoingFire.transform.position.y - npc.position.y;
-                        if (yOffset <= 0.0f) yOffset = 0.0f;
-
-                        bucket.Use(npc.throwForce, out isStillHeld, yOffset);
-                    }
-                    else
-                        heldObject.Use(npc.throwForce, out isStillHeld);
+                    heldObject.Use(npc.throwForce, out isStillHeld);
 
                     if (heldObject.GetComponent<FireExtinguisher>())
                     {
@@ -176,22 +178,34 @@ public class FireFightingState : BaseState
                     Debug.Log("Filling up " + heldObject.transform.name);
 
                     Pail pail = heldObject.GetComponent<Pail>();
-                    if(pail.getWaterInside() > stateMachine.ongoingFire.intensityValue ||
-                        pail.getFractionFilled() >= 1.0f)
+                    try
                     {
-                        heldObject.transform.SetParent(npc.transform);
+                        if(pail.getWaterInside() > stateMachine.ongoingFire.intensityValue ||
+                            pail.getFractionFilled() >= 1.0f)
+                        {
+                            heldObject.transform.SetParent(npc.transform);
 
-                        heldObject.transform.SetPositionAndRotation(
-                            npc.transform.position + npc.transform.forward * 0.5f + npc.transform.right * 0.3f, 
-                            npc.transform.rotation);
+                            heldObject.transform.SetPositionAndRotation(
+                                npc.transform.position + npc.transform.forward * 0.5f + npc.transform.right * 0.3f, 
+                                npc.transform.rotation);
 
-                        target = "Fire";
-                        npc.closeProximityValue = 1.25f;
-                        path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+                            target = "Fire";
+                            npc.closeProximityValue = 1.25f;
+                            path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
-                        faucet.GetComponentInChildren<Spawner>().Toggle(false);
+                            faucet.GetComponentInChildren<Spawner>().Toggle(false);
 
-                        Debug.Log(heldObject.transform.name + " is ready to take out " + target);
+                            Debug.Log(heldObject.transform.name + " is ready to take out " + target);
+                        }
+                    }
+                    catch
+                    {
+                        Debug.Log("Fire has been taken out by player");
+
+                        heldObject.Deattach();
+                        heldObject = null;
+
+                        stateMachine.SwitchState(stateMachine.evacuateState);
                     }
                 }
             }

@@ -55,14 +55,7 @@ public class Pail : FireFightingObject
 
     public override void Use(float throwForce, out bool isStillHeld)
     {
-        if (fractionFilled > 0) StartCoroutine(ThrowWater(throwForce, 0));
-
-        isStillHeld = isHeld;
-    }
-
-    public void Use(float throwForce, out bool isStillHeld, float yOffset)
-    {
-        if (fractionFilled > 0) StartCoroutine(ThrowWater(throwForce, yOffset));
+        if (fractionFilled > 0) StartCoroutine(ThrowWater(throwForce));
 
         isStillHeld = isHeld;
     }
@@ -83,7 +76,7 @@ public class Pail : FireFightingObject
         WaterInPail.transform.localScale = new Vector3(125.0f, 75.0f * fractionFilled, 125.0f);
     }
 
-    IEnumerator ThrowWater(float throwForce, float yOffset)
+    IEnumerator ThrowWater(float throwForce)
     {
         transform.SetPositionAndRotation(
                     playerCamera.position + playerCamera.forward - playerCamera.up * 0.67f, 
@@ -95,7 +88,7 @@ public class Pail : FireFightingObject
         Water water = ThrownWater.GetComponent<Water>();
         water.fireFightingValue = maxFireFightingValue * fractionFilled;
         water.Deattach();
-        ThrownWater.GetComponent<Rigidbody>().AddForce(Vector3.one * yOffset + playerCamera.forward * throwForce);
+        ThrownWater.GetComponent<Rigidbody>().AddForce(playerCamera.forward * throwForce);
         audioSource.clip = waterThrowClip;
         audioSource.Play();
 
