@@ -35,7 +35,7 @@ public class Fire : MonoBehaviour
             notificationSystem = mainPanel.GetComponent<NotificationTriggerEvent>();
 
         SmokeSpawner = GetComponentInChildren<Spawner>();
-        SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.5f, 0.0f), transform.rotation);
+        SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
 
         intensityValue += 0.01f;
 
@@ -62,7 +62,7 @@ public class Fire : MonoBehaviour
             AffectFire(growingSpeed * Time.deltaTime);
 
             SmokeSpawner.transform.SetLocalPositionAndRotation(new Vector3(0.0f,
-                                                                0.0f,
+                                                                1.0f + transform.localScale.y / 2.0f,
                                                                 0.0f),
                                                                 transform.rotation);
         }

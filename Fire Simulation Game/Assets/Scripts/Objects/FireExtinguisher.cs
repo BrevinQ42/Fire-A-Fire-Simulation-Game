@@ -101,14 +101,10 @@ public class FireExtinguisher : FireFightingObject
     {
         yield return new WaitForSeconds(time * 2.0f / 3.0f);
 
-        isBeingUsed = false;
         foam.GetComponent<Collider>().enabled = false;
-    	foam.transform.localScale = Vector3.zero;
 
         yield return new WaitForSeconds(time / 3.0f);
 
-        isBeingUsed = true;
-        foam.transform.localScale = Vector3.one * foamScale;
         foam.GetComponent<Collider>().enabled = true;
     }
 

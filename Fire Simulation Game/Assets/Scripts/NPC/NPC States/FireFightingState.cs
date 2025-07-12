@@ -11,7 +11,7 @@ public class FireFightingState : BaseState
 
     private FireFightingObject heldObject;
     private FireExtinguisher lastHeldExtinguisher;
-    private float targetFractionFilled;
+    private bool isExtinguisherEffective;
 
     public override void EnterState(NPCStateMachine stateMachine)
     {
@@ -27,7 +27,7 @@ public class FireFightingState : BaseState
 
         heldObject = null;
         lastHeldExtinguisher = null;
-        targetFractionFilled = 0.5f;
+        isExtinguisherEffective = false;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -41,6 +41,14 @@ public class FireFightingState : BaseState
             }
 
             stateMachine.SwitchState(stateMachine.evacuateState);
+        }
+        else if (isExtinguisherEffective)
+        {
+            bool isStillHeld;
+            heldObject.Use(npc.throwForce, out isStillHeld);
+            heldObject.GetComponent<FireExtinguisher>().isBeingUsed = true;
+
+            return;
         }
 
         List<Node> newPath;
@@ -65,11 +73,9 @@ public class FireFightingState : BaseState
                     Pail pail = heldObject.GetComponent<Pail>();
                     if (pail)
                     {
-                        if (pail.getFractionFilled() >= targetFractionFilled || targetFractionFilled - pail.getFractionFilled() <= 0.05f)
-                        {
+                        if (pail.getWaterInside() > stateMachine.ongoingFire.intensityValue ||
+                            pail.getFractionFilled() >= 1.0f)
                             target = "Fire";
-                            targetFractionFilled = 1.0f;
-                        }
                         else
                             target = "WaterSource";
 
@@ -160,6 +166,8 @@ public class FireFightingState : BaseState
                                 target = "WaterSource";
                                 npc.closeProximityValue = 1.25f;
                             }
+                            else if (heldObject.GetComponent<FireExtinguisher>())
+                                isExtinguisherEffective = true;
                         }
 
                         if (heldObject && bucket)
