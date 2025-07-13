@@ -7,7 +7,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Holding Bukcet While Walking
+  m_Name: Holding Object While Walking
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -36,7 +36,7 @@ AnimatorController:
   m_Name: NPCAnimator
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: isHoldingPail
+  - m_Name: isHoldingObject
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -91,7 +91,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: isHoldingPail
+    m_ConditionEvent: isHoldingObject
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -5093938034499316265}
@@ -121,7 +121,7 @@ AnimatorStateMachine:
     m_Position: {x: 340, y: 80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -5093938034499316265}
-    m_Position: {x: 360, y: 210, z: 0}
+    m_Position: {x: 350, y: 210, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -141,7 +141,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: isHoldingPail
+    m_ConditionEvent: isHoldingObject
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 438745941753764379}

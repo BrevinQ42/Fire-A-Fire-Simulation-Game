@@ -29,7 +29,7 @@ public class NPC : MonoBehaviour
     public Fire FireOnNPC;
 
     // Animation Related
-    public bool isHoldingPail;
+    public bool isHoldingObject;
     public Animator NPCAnimator;
 
     // Start is called before the first frame update
@@ -46,7 +46,7 @@ public class NPC : MonoBehaviour
 
         FireOnNPC = null;
 
-        isHoldingPail = false;
+        isHoldingObject = false;
         NPCAnimator = GetComponent<Animator>();
     }
 
@@ -57,13 +57,13 @@ public class NPC : MonoBehaviour
 
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
 
-        if (isHoldingPail == true)
+        if (isHoldingObject == true)
         {
-            NPCAnimator.SetBool("isHoldingPail", true);
+            NPCAnimator.SetBool("isHoldingObject", true);
         }
-        else if (isHoldingPail == false)
+        else if (isHoldingObject == false)
         {
-            NPCAnimator.SetBool("isHoldingPail", false);
+            NPCAnimator.SetBool("isHoldingObject", false);
         }
     }
 
@@ -291,7 +291,7 @@ public class NPC : MonoBehaviour
                     hitTransform.SetPositionAndRotation(
                         transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
                         transform.rotation);
-                    isHoldingPail = true; 
+                    isHoldingObject = true; 
                 }
                 else if (extinguisher)
                 {
@@ -301,6 +301,7 @@ public class NPC : MonoBehaviour
                     hitTransform.SetPositionAndRotation(
                         transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
                         transform.rotation);
+                    isHoldingObject = true;
                 }
                 else if (nonFlammable)
                     hitTransform.SetPositionAndRotation(transform.position + transform.forward * 0.55f, transform.rotation);
