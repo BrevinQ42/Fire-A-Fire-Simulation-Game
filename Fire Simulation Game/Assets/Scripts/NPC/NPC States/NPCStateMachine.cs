@@ -22,33 +22,23 @@ public class NPCStateMachine : MonoBehaviour
         npc = GetComponent<NPC>();
         ongoingFire = null;
 
-        // currentState = roamState;
-        // currentState.EnterState(this);
-        currentState = null;
+        currentState = roamState;
+        currentState.EnterState(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (currentState == null && Input.GetKeyDown(KeyCode.M))
-        {
-            currentState = fireFightingState;
-            currentState.EnterState(this);
-        }
+        currentState.UpdateState(this);
 
-        if (currentState != null)
-        {
-            currentState.UpdateState(this);
-
-            if (currentState == roamState)
-                currentStateName = "Roam";
-            else if (currentState == panicState)
-                currentStateName = "Panic";
-            else if (currentState == fireFightingState)
-                currentStateName = "Fire Fighting";
-            else if (currentState == evacuateState)
-                currentStateName = "Evacuate";
-        }
+        if (currentState == roamState)
+            currentStateName = "Roam";
+        else if (currentState == panicState)
+            currentStateName = "Panic";
+        else if (currentState == fireFightingState)
+            currentStateName = "Fire Fighting";
+        else if (currentState == evacuateState)
+            currentStateName = "Evacuate";
     }
 
     public void SwitchState(BaseState state)
