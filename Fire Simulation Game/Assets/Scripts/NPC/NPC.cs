@@ -30,6 +30,7 @@ public class NPC : MonoBehaviour
 
     // Animation Related
     public bool isHoldingObject;
+    public Vector3 lastPosition;
     public Animator NPCAnimator;
 
     // Start is called before the first frame update
@@ -65,6 +66,17 @@ public class NPC : MonoBehaviour
         {
             NPCAnimator.SetBool("isHoldingObject", false);
         }
+
+        if (isHoldingObject == true && position == lastPosition)
+        {
+            NPCAnimator.SetBool("isStandingStill", true);
+        }
+        else
+        {
+            NPCAnimator.SetBool("isStandingStill", false);
+        }
+
+        lastPosition = position;
     }
 
     public Node getCurrentNode()
