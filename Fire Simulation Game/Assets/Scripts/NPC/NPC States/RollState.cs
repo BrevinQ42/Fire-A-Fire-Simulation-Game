@@ -24,6 +24,19 @@ public class RollState : BaseState
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
+        List<Node> newPath;
 
+        if (npc.followPath(path, target, speed, false, out newPath))
+        {
+            if (npc.getCurrentNode().name.Equals("RollNode"))
+            {
+                Debug.Log("NPC is in Roll Spot");
+                path = new List<Node> { npc.getCurrentNode() };
+            }
+            else
+            {
+                Debug.Log("NPC is stuck");
+            }
+        }
     }
 }
