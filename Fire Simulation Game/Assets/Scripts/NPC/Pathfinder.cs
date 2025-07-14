@@ -11,6 +11,7 @@ public class Pathfinder : MonoBehaviour
     [SerializeField] private Node topOfStairs;
     [SerializeField] private Node exitNode;
     [SerializeField] private Node courtNode;
+    [SerializeField] private Node rollNode;
 
     void Start()
     {
@@ -68,6 +69,11 @@ public class Pathfinder : MonoBehaviour
             Node fireNode = GetComponent<NPCStateMachine>().ongoingFire.GetComponent<Node>();
 
             return generatePathToTarget(current, fireNode);
+        }
+        else if (target.Equals("Roll"))
+        {
+            List<Node> path = generatePathToTarget(current, rollNode);
+            return path;
         }
 
         return new List<Node>();
