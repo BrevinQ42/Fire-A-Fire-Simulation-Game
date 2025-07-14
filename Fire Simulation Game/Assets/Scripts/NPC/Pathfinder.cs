@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Pathfinder : MonoBehaviour
 {
+    [SerializeField] private List<Node> outsidePathNodes;
     [SerializeField] private List<Node> fireFightingNodes;
     [SerializeField] private List<Node> waterSourceNodes;
 
@@ -14,6 +15,14 @@ public class Pathfinder : MonoBehaviour
 
     void Start()
     {
+        outsidePathNodes = new List<Node>();
+        foreach(Node node in FindObjectsOfType<Node>())
+        {
+            if (!node.GetComponent<FireFightingObject>() && !node.transform.CompareTag("WaterSource") &&
+                !node.transform.parent.name.Equals("Outside"))
+                outsidePathNodes.Add(node);
+        }
+
         fireFightingNodes = new List<Node>();
         waterSourceNodes = new List<Node>();
     }
@@ -68,6 +77,33 @@ public class Pathfinder : MonoBehaviour
             Node fireNode = GetComponent<NPCStateMachine>().ongoingFire.GetComponent<Node>();
 
             return generatePathToTarget(current, fireNode);
+        }
+        else if (target.Equals("Any"))
+        {
+            outsidePathNodes.Remove(current);
+            int index = Random.Range(0, outsidePathNodes.Count);
+            Node targetNode = outsidePathNodes[index];
+
+            outsidePathNodes.Add(current);
+
+            if (current.floorLevel == targetNode.floorLevel)
+                return generatePathToTarget(current, targetNode);
+
+            List<Node> path = new List<Node>();
+            if (current.floorLevel == 1)
+            {
+                path = generatePathToTarget(current, bottomOfStairs);
+                path.Add(topOfStairs);
+                path.AddRange(generatePathToTarget(topOfStairs, targetNode));
+            }
+            else if (current.floorLevel == 2)
+            {
+                path = generatePathToTarget(current, topOfStairs);
+                path.Add(bottomOfStairs);
+                path.AddRange(generatePathToTarget(bottomOfStairs, targetNode));
+            }
+
+            return path;
         }
 
         return new List<Node>();
