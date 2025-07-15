@@ -87,7 +87,8 @@ public class FireFightingState : BaseState
                     }
                 }
 
-                path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+                path = new List<Node>{npc.getCurrentNode()};
+                path.AddRange(npc.pathfinder.generatePath(npc.getCurrentNode(), target));
 
                 Debug.Log("Got " + heldObject.transform.name + " / Next Target: " + target);
 
