@@ -19,10 +19,7 @@ public class RoamState : BaseState
         target = "Any";
         path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
-        if (Random.Range(0, 2) == 0)
-            speed = npc.walkingSpeed;
-        else
-            speed = npc.runningSpeed;
+        speed = npc.walkingSpeed;
 
         timeBeforeNextPath = 0.0f;
     }
