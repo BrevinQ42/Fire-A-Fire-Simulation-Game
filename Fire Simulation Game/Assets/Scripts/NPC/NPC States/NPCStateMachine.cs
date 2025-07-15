@@ -33,7 +33,7 @@ public class NPCStateMachine : MonoBehaviour
     {
         if (currentState == null && Input.GetKeyDown(KeyCode.M))
         {
-            currentState = rollState;
+            currentState = fireFightingState;
             currentState.EnterState(this);
         }
 

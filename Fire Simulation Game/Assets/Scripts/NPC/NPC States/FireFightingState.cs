@@ -38,17 +38,29 @@ public class FireFightingState : BaseState
             {
                 heldObject.Deattach();
                 heldObject = null;
+                npc.isHoldingObject = false;
             }
 
             stateMachine.SwitchState(stateMachine.evacuateState);
         }
-        else if (isExtinguisherEffective)
+        else if (isExtinguisherEffective && npc.FireOnNPC == null)
         {
             bool isStillHeld;
             heldObject.Use(npc.throwForce, out isStillHeld);
             heldObject.GetComponent<FireExtinguisher>().isBeingUsed = true;
 
             return;
+        }
+        //Roll
+        else if (npc.FireOnNPC != null)
+        {
+            if (heldObject != null)
+            {
+                heldObject.Deattach();
+                heldObject = null;
+                npc.isHoldingObject = false;
+            }
+            stateMachine.SwitchState(stateMachine.rollState);
         }
 
         List<Node> newPath;
@@ -104,7 +116,8 @@ public class FireFightingState : BaseState
 
                     heldObject.Deattach();
                     heldObject = null;
-                    
+                    npc.isHoldingObject = false;
+
                     stateMachine.SwitchState(stateMachine.evacuateState);
                 }
 
@@ -130,6 +143,7 @@ public class FireFightingState : BaseState
 
                         heldObject.Deattach();
                         heldObject = null;
+                        npc.isHoldingObject = false;
 
                         stateMachine.SwitchState(stateMachine.evacuateState);
                     }
@@ -151,6 +165,7 @@ public class FireFightingState : BaseState
                             {
                                 heldObject.Deattach();
                                 heldObject = null;
+                                npc.isHoldingObject = false;
 
                                 if (bucket) // fire is most likely pretty big if they used a bucket full of water wrongly
                                     stateMachine.SwitchState(stateMachine.evacuateState);
@@ -212,6 +227,7 @@ public class FireFightingState : BaseState
 
                         heldObject.Deattach();
                         heldObject = null;
+                        npc.isHoldingObject = false;
 
                         stateMachine.SwitchState(stateMachine.evacuateState);
                     }
