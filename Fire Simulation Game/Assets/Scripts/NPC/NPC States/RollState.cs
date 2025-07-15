@@ -32,11 +32,18 @@ public class RollState : BaseState
             {
                 //play roll animation
                 npc.NPCAnimator.SetBool("isRolling", true);
+                npc.isRolling = true;
             }
             else
             {
                 Debug.Log("NPC is stuck");
             }
+        }
+
+        if (npc.FireOnNPC == null)
+        {
+            npc.isRolling = false;
+            stateMachine.SwitchState(stateMachine.evacuateState);
         }
     }
 }

@@ -30,6 +30,8 @@ public class NPC : MonoBehaviour
 
     // Animation Related
     public bool isHoldingObject;
+    public bool isRolling;
+    public bool coroutinePlaying;
     public Vector3 lastPosition;
     public Animator NPCAnimator;
 
@@ -48,6 +50,8 @@ public class NPC : MonoBehaviour
         FireOnNPC = null;
 
         isHoldingObject = false;
+        isRolling = false;
+        coroutinePlaying = false;
         NPCAnimator = GetComponent<Animator>();
     }
 
@@ -74,6 +78,17 @@ public class NPC : MonoBehaviour
         else
         {
             NPCAnimator.SetBool("isStandingStill", false);
+        }
+
+        if (isRolling == true)
+        {
+            StartCoroutine(RollOver());
+            coroutinePlaying = true;
+        }
+        else if (isRolling == false && coroutinePlaying == true)
+        {
+            StopCoroutine(RollOver());
+            coroutinePlaying = false;
         }
 
         lastPosition = position;
@@ -333,6 +348,16 @@ public class NPC : MonoBehaviour
         if (collision.gameObject.CompareTag("Smoke"))
         {
             Destroy(collision.gameObject);
+        }
+    }
+
+    public IEnumerator RollOver()
+    {
+        while (FireOnNPC != null)
+        {
+            yield return new WaitForSeconds(2.0f);
+            FireOnNPC.AffectFire(-0.01f);
+            yield return null;
         }
     }
 }

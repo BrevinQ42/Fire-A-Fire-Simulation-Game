@@ -83,48 +83,51 @@ public class Fire : MonoBehaviour
 
     public void AffectFire(float amt)
     {
-        Vector3 newScale;
-
-        if (amt > 0)
+        if (this != null)
         {
-            intensityValue += amt;
+            Vector3 newScale;
 
-            if (intensityValue > 0.5f) SmokeSpawner.Toggle(true);
-
-            if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * intensityValue;
-            else newScale = transform.localScale * intensityValue / (intensityValue - amt);
-
-            growingSpeed = Math.Min(growingSpeed + 0.00001f, maxGrowingSpeed);
-        }
-        else
-        {
-            intensityValue = Math.Max(intensityValue + amt, 0.0f);
-
-            if (intensityValue <= 0.01f)
+            if (amt > 0)
             {
-                if (isOnPan)
-                {
-                    Transform fryingPan = GameObject.Find("FryingPan").transform;
+                intensityValue += amt;
 
-                    if (fryingPan.childCount > 2)
+                if (intensityValue > 0.5f) SmokeSpawner.Toggle(true);
+
+                if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * intensityValue;
+                else newScale = transform.localScale * intensityValue / (intensityValue - amt);
+
+                growingSpeed = Math.Min(growingSpeed + 0.00001f, maxGrowingSpeed);
+            }
+            else
+            {
+                intensityValue = Math.Max(intensityValue + amt, 0.0f);
+
+                if (intensityValue <= 0.01f)
+                {
+                    if (isOnPan)
                     {
-                        GameObject innateFire = fryingPan.GetChild(2).gameObject;
-                        
-                        if (innateFire.name.Equals("Fire")) Destroy(innateFire);
+                        Transform fryingPan = GameObject.Find("FryingPan").transform;
+
+                        if (fryingPan.childCount > 2)
+                        {
+                            GameObject innateFire = fryingPan.GetChild(2).gameObject;
+
+                            if (innateFire.name.Equals("Fire")) Destroy(innateFire);
+                        }
                     }
+
+                    SmokeSpawner.Toggle(false);
+                    Destroy(gameObject);
                 }
 
-                SmokeSpawner.Toggle(false);
-                Destroy(gameObject);
+                newScale = transform.localScale * intensityValue / (intensityValue - amt);
+                if (newScale.x < 0.0f) newScale.x = 0.0f;
+                if (newScale.y < 0.0f) newScale.y = 0.0f;
+                if (newScale.z < 0.0f) newScale.z = 0.0f;
             }
 
-            newScale = transform.localScale * intensityValue / (intensityValue - amt);
-            if (newScale.x < 0.0f) newScale.x = 0.0f;
-            if (newScale.y < 0.0f) newScale.y = 0.0f;
-            if (newScale.z < 0.0f) newScale.z = 0.0f;
+            transform.localScale = newScale;
         }
-
-        transform.localScale = newScale;
     }
 
     public void Toggle(bool mustGrow)
