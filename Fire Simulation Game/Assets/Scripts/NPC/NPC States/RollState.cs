@@ -30,8 +30,8 @@ public class RollState : BaseState
         {
             if (npc.getCurrentNode().name.Equals("RollNode"))
             {
-                Debug.Log("NPC is in Roll Spot");
-                path = new List<Node> { npc.getCurrentNode() };
+                //play roll animation
+                npc.NPCAnimator.SetBool("isRolling", true);
             }
             else
             {
