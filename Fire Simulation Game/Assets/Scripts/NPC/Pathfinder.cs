@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Pathfinder : MonoBehaviour
 {
+    [SerializeField] private List<Node> firstFloorPathNodes;
+    [SerializeField] private List<Node> secondFloorPathNodes;
     [SerializeField] private List<Node> fireFightingNodes;
     [SerializeField] private List<Node> waterSourceNodes;
 
@@ -13,10 +15,26 @@ public class Pathfinder : MonoBehaviour
     [SerializeField] private Node courtNode;
     [SerializeField] private Node rollNode;
 
+    public bool justUsedStairs;
+
     void Start()
     {
+        firstFloorPathNodes = new List<Node>();
+        secondFloorPathNodes = new List<Node>();
+        foreach(Node node in FindObjectsOfType<Node>())
+        {
+            if (!node.GetComponent<FireFightingObject>() && !node.transform.CompareTag("WaterSource") &&
+                !node.transform.parent.name.Equals("Outside"))
+            {
+                if (node.floorLevel == 1) firstFloorPathNodes.Add(node);
+                else secondFloorPathNodes.Add(node);
+            }
+        }
+
         fireFightingNodes = new List<Node>();
         waterSourceNodes = new List<Node>();
+
+        justUsedStairs = false;
     }
 
     public void populateObjectNodes()
@@ -75,6 +93,51 @@ public class Pathfinder : MonoBehaviour
             List<Node> path = generatePathToTarget(current, rollNode);
             return path;
         }
+        else if (target.Equals("Any"))
+        {
+            int index = -1;
+            Node targetNode = null;
+
+            if (current.floorLevel == 1)
+                firstFloorPathNodes.Remove(current);
+            else
+                secondFloorPathNodes.Remove(current);
+
+            if (justUsedStairs)
+            {
+                if (current == topOfStairs)
+                {
+                    index = Random.Range(0, secondFloorPathNodes.Count);
+                    targetNode = secondFloorPathNodes[index];
+
+                    secondFloorPathNodes.Add(current);
+                }
+                else // if bottomOfStairs
+                {
+                    index = Random.Range(0, firstFloorPathNodes.Count);
+                    targetNode = firstFloorPathNodes[index];
+
+                    firstFloorPathNodes.Add(current);
+                }
+
+                justUsedStairs = false;
+
+                return generatePathToTarget(current, targetNode);
+            }
+
+            index = Random.Range(0, firstFloorPathNodes.Count + secondFloorPathNodes.Count);
+            if (index >= firstFloorPathNodes.Count)
+                targetNode = secondFloorPathNodes[index-firstFloorPathNodes.Count];
+            else
+                targetNode = firstFloorPathNodes[index];
+
+            if (current.floorLevel == 1)
+                firstFloorPathNodes.Add(current);
+            else
+                secondFloorPathNodes.Add(current);
+
+            return generatePathToTarget(current, targetNode);
+        }
 
         return new List<Node>();
     }
@@ -93,8 +156,27 @@ public class Pathfinder : MonoBehaviour
         return new List<Node>();
     }
 
-    private List<Node> generatePathToTarget(Node current, Node target)
+    private List<Node> generatePathToTarget(Node current, Node targetNode)
     {
+        Node target = targetNode;
+        Node additionalNode = null;
+
+        if (current.floorLevel != targetNode.floorLevel)
+        {
+            justUsedStairs = true;
+
+            if (current.floorLevel == 1)
+            {
+                target = bottomOfStairs;
+                additionalNode = topOfStairs;
+            }
+            else
+            {
+                target = topOfStairs;
+                additionalNode = bottomOfStairs;
+            }
+        }
+
         foreach(Node node in FindObjectsOfType<Node>())
             node.initValues();
 
@@ -141,6 +223,10 @@ public class Pathfinder : MonoBehaviour
                 }
 
                 path.Reverse();
+
+                if (additionalNode != null)
+                    path.Add(additionalNode);
+                    
                 return path;
             }
             else
@@ -252,7 +338,6 @@ public class Pathfinder : MonoBehaviour
         if (i > -1)
             node2.isEdgeValid[i] = false;
     }
-
 
     public Node getExitNode()
     {

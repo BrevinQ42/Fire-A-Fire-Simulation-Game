@@ -28,6 +28,8 @@ public class FireFightingState : BaseState
         heldObject = null;
         lastHeldExtinguisher = null;
         isExtinguisherEffective = false;
+
+        npc.pathfinder.justUsedStairs = false;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -68,7 +70,9 @@ public class FireFightingState : BaseState
 
         if (npc.followPath(path, target, speed, true, out newPath))
         {
-            if (heldObject == null && npc.transform.GetComponentInChildren<FireFightingObject>())
+            if (npc.pathfinder.justUsedStairs)
+                npc.pathfinder.justUsedStairs = false;
+            else if (heldObject == null && npc.transform.GetComponentInChildren<FireFightingObject>())
             {
                 heldObject = npc.transform.GetComponentInChildren<FireFightingObject>();
 
@@ -95,7 +99,8 @@ public class FireFightingState : BaseState
                     }
                 }
 
-                path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+                path = new List<Node>{npc.getCurrentNode()};
+                path.AddRange(npc.pathfinder.generatePath(npc.getCurrentNode(), target));
 
                 Debug.Log("Got " + heldObject.transform.name + " / Next Target: " + target);
 

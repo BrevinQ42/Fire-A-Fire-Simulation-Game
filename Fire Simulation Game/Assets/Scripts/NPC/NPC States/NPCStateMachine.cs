@@ -23,9 +23,8 @@ public class NPCStateMachine : MonoBehaviour
         npc = GetComponent<NPC>();
         ongoingFire = null;
 
-        // currentState = roamState;
-        // currentState.EnterState(this);
-        currentState = null;
+        currentState = roamState;
+        currentState.EnterState(this);
     }
 
     // Update is called once per frame

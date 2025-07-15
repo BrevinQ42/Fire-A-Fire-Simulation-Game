@@ -20,6 +20,8 @@ public class EvacuateState : BaseState
             speed = npc.walkingSpeed;
         else
             speed = npc.runningSpeed;
+
+        npc.pathfinder.justUsedStairs = false;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -28,7 +30,9 @@ public class EvacuateState : BaseState
 
         if (npc.followPath(path, target, speed, false, out newPath))
         {
-            if (npc.getCurrentNode().name.Equals("EvacuationNode"))
+            if (npc.pathfinder.justUsedStairs)
+                npc.pathfinder.justUsedStairs = false;
+            else if (npc.getCurrentNode().name.Equals("EvacuationNode"))
             {
                 Debug.Log("NPC has evacuated");
                 path = new List<Node>{npc.getCurrentNode()};

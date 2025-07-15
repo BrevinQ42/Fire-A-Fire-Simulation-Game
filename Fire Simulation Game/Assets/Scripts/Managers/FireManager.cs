@@ -38,7 +38,8 @@ public class FireManager : MonoBehaviour
 
 		FireTypes = new List<string>{"Electrical", "Grease", "Class A", "Class A"};
 
-		timeBeforeFire = 20; //(float) Random.Range(45, 76);
+		timeBeforeFire = (float) Random.Range(45, 76);
+		// timeBeforeFire = 20;
 
 		isFireOngoing = false;
 		ongoingFire = null;
