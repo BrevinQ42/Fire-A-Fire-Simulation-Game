@@ -40,6 +40,7 @@ public class FireFightingState : BaseState
             {
                 heldObject.Deattach();
                 heldObject = null;
+                npc.isHoldingObject = false;
             }
 
             stateMachine.SwitchState(stateMachine.evacuateState);
@@ -109,6 +110,7 @@ public class FireFightingState : BaseState
 
                     heldObject.Deattach();
                     heldObject = null;
+                    npc.isHoldingObject = false;
                     
                     stateMachine.SwitchState(stateMachine.evacuateState);
                 }
@@ -135,6 +137,7 @@ public class FireFightingState : BaseState
 
                         heldObject.Deattach();
                         heldObject = null;
+                        npc.isHoldingObject = false;
 
                         stateMachine.SwitchState(stateMachine.evacuateState);
                     }
@@ -156,6 +159,7 @@ public class FireFightingState : BaseState
                             {
                                 heldObject.Deattach();
                                 heldObject = null;
+                                npc.isHoldingObject = false;
 
                                 if (bucket) // fire is most likely pretty big if they used a bucket full of water wrongly
                                     stateMachine.SwitchState(stateMachine.evacuateState);
@@ -217,6 +221,7 @@ public class FireFightingState : BaseState
 
                         heldObject.Deattach();
                         heldObject = null;
+                        npc.isHoldingObject = false;
 
                         stateMachine.SwitchState(stateMachine.evacuateState);
                     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NPCStateMachine : MonoBehaviour
@@ -11,6 +12,7 @@ public class NPCStateMachine : MonoBehaviour
     public PanicState panicState = new PanicState();
     public FireFightingState fireFightingState = new FireFightingState();
     public EvacuateState evacuateState = new EvacuateState();
+    public RollState rollState = new RollState();
 
     // MISC.
     public NPC npc;
@@ -39,6 +41,8 @@ public class NPCStateMachine : MonoBehaviour
             currentStateName = "Fire Fighting";
         else if (currentState == evacuateState)
             currentStateName = "Evacuate";
+        else if (currentState == rollState)
+            currentStateName = "Roll";
     }
 
     public void SwitchState(BaseState state)
