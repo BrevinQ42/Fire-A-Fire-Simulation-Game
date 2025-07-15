@@ -28,6 +28,8 @@ public class FireFightingState : BaseState
         heldObject = null;
         lastHeldExtinguisher = null;
         isExtinguisherEffective = false;
+
+        npc.pathfinder.justUsedStairs = false;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)

@@ -20,6 +20,8 @@ public class EvacuateState : BaseState
             speed = npc.walkingSpeed;
         else
             speed = npc.runningSpeed;
+
+        npc.pathfinder.justUsedStairs = false;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
