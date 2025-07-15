@@ -27,7 +27,15 @@ public class RoamState : BaseState
     public override void UpdateState(NPCStateMachine stateMachine)
     {
         if (stateMachine.ongoingFire != null)
-            stateMachine.SwitchState(stateMachine.fireFightingState);
+        {
+            if (Random.Range(0, 2) == 0)
+            {
+                npc.isPanicking = true;
+                stateMachine.SwitchState(stateMachine.panicState);
+            }
+            else
+                stateMachine.SwitchState(stateMachine.fireFightingState);
+        }
 
         List<Node> newPath = new List<Node>();
 

@@ -27,8 +27,9 @@ public class NPC : MonoBehaviour
     public float closeProximityValue;
     public float throwForce;
     public Fire FireOnNPC;
+    public bool isPanicking;
 
-    // Animation Related
+    [Header("Animation Related")]
     public bool isHoldingObject;
     public bool isRolling;
     public bool coroutinePlaying;
@@ -201,6 +202,7 @@ public class NPC : MonoBehaviour
                             if (newPath.Count == 0)
                             {
                                 NPCStateMachine stateMachine = GetComponent<NPCStateMachine>();
+                                isPanicking = true;
                                 stateMachine.SwitchState(stateMachine.panicState);
                             }
                         }
