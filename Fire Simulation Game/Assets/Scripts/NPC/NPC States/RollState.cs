@@ -43,7 +43,11 @@ public class RollState : BaseState
         if (npc.FireOnNPC == null)
         {
             npc.isRolling = false;
-            stateMachine.SwitchState(stateMachine.evacuateState);
+            npc.NPCAnimator.SetBool("isRolling", false);
+            if (npc.coroutinePlaying == false)
+            {
+                stateMachine.SwitchState(stateMachine.evacuateState);
+            }
         }
     }
 }

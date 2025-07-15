@@ -38,6 +38,10 @@ public class EvacuateState : BaseState
                 Debug.Log("NPC is stuck");
             }
         }
+        else if (npc.FireOnNPC != null)
+        {
+            stateMachine.SwitchState(stateMachine.rollState);
+        }
 
         if (newPath.Count > 0) path = newPath;
     }
