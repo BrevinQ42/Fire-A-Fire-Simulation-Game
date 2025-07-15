@@ -11,6 +11,7 @@ public class NPCStateMachine : MonoBehaviour
     public PanicState panicState = new PanicState();
     public FireFightingState fireFightingState = new FireFightingState();
     public EvacuateState evacuateState = new EvacuateState();
+    public RollState rollState = new RollState();
 
     // MISC.
     public NPC npc;
@@ -29,16 +30,27 @@ public class NPCStateMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        currentState.UpdateState(this);
+        if (currentState == null && Input.GetKeyDown(KeyCode.M))
+        {
+            currentState = rollState;
+            currentState.EnterState(this);
+        }
 
-        if (currentState == roamState)
-            currentStateName = "Roam";
-        else if (currentState == panicState)
-            currentStateName = "Panic";
-        else if (currentState == fireFightingState)
-            currentStateName = "Fire Fighting";
-        else if (currentState == evacuateState)
-            currentStateName = "Evacuate";
+        if (currentState != null)
+        {
+            currentState.UpdateState(this);
+
+            if (currentState == roamState)
+                currentStateName = "Roam";
+            else if (currentState == panicState)
+                currentStateName = "Panic";
+            else if (currentState == fireFightingState)
+                currentStateName = "Fire Fighting";
+            else if (currentState == evacuateState)
+                currentStateName = "Evacuate";
+            else if (currentState == rollState)
+                currentStateName = "Roll";
+        }
     }
 
     public void SwitchState(BaseState state)
