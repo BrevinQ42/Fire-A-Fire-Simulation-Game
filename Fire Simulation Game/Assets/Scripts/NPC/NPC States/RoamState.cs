@@ -46,8 +46,12 @@ public class RoamState : BaseState
 
             if (npc.getCurrentNode() == destination)
             {
+                if (npc.pathfinder.justUsedStairs)
+                    timeBeforeNextPath = 0;
+                else
+                    timeBeforeNextPath = Random.Range(3, 8);
+
                 Debug.Log("NPC has reached " + destination);
-                timeBeforeNextPath = Random.Range(5, 11);
             }
 
             path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);

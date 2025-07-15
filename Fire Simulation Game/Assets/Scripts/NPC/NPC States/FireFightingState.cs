@@ -56,7 +56,9 @@ public class FireFightingState : BaseState
 
         if (npc.followPath(path, target, speed, true, out newPath))
         {
-            if (heldObject == null && npc.transform.GetComponentInChildren<FireFightingObject>())
+            if (npc.pathfinder.justUsedStairs)
+                npc.pathfinder.justUsedStairs = false;
+            else if (heldObject == null && npc.transform.GetComponentInChildren<FireFightingObject>())
             {
                 heldObject = npc.transform.GetComponentInChildren<FireFightingObject>();
 
