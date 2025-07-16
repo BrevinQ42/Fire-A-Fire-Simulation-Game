@@ -21,6 +21,7 @@ public class PanicState : BaseState
         path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
         speed = npc.runningSpeed;
+        npc.isRunning = true;
 
         panicDuration = Random.Range(10f, 15f);
         panicTimer = 0f;

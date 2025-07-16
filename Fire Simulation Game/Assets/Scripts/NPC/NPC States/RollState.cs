@@ -17,9 +17,15 @@ public class RollState : BaseState
         path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
         if (Random.Range(0, 2) == 0)
+        {
             speed = npc.walkingSpeed;
+            npc.isRunning = false;
+        }
         else
+        {
             speed = npc.runningSpeed;
+            npc.isRunning = true;
+        }
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
