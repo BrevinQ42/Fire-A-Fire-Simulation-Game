@@ -27,6 +27,8 @@ public class FireManager : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip helpAFireClip;
 
+	public NPC npc;
+
     void Start()
 	{
 		plugsCount = 0;
@@ -110,7 +112,18 @@ public class FireManager : MonoBehaviour
 	            notificationSystem.disableTimer = 5.0f;
 	            notificationSystem.displayNotification();
 			}
-			else
+            else if (index == 6)
+            {
+				npc.fireOnDoor = true;
+                audioSource.clip = helpAFireClip;
+                audioSource.Play();
+
+                notificationSystem.notificationMessage = "A fire has emerged from your neighbors! Be careful trying to extinguish it since you're uncertain of the cause of fire!";
+                notificationSystem.disableAfterTimer = true;
+                notificationSystem.disableTimer = 5.0f;
+                notificationSystem.displayNotification();
+            }
+            else
 			{
                 audioSource.clip = helpAFireClip;
                 audioSource.Play();

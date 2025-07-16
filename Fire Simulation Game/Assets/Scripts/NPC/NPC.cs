@@ -34,6 +34,9 @@ public class NPC : MonoBehaviour
     public bool isRolling;
     public bool coroutinePlaying;
     public Vector3 lastPosition;
+    public bool fireOnDoor;
+    public bool isRunning;
+    public bool isInPanicState;
     public Animator NPCAnimator;
 
     // Start is called before the first frame update
@@ -79,6 +82,24 @@ public class NPC : MonoBehaviour
         else
         {
             NPCAnimator.SetBool("isStandingStill", false);
+        }
+
+        if (isRunning == true && isHoldingObject == false && isInPanicState == false)
+        {
+            NPCAnimator.SetBool("isRunning", true);
+        }
+        else if (isRunning == false)
+        {
+            NPCAnimator.SetBool("isRunning", false);
+        }
+
+        if (isInPanicState == true)
+        {
+            NPCAnimator.SetBool("isInPanicState", true);
+        }
+        else if (isInPanicState == false)
+        {
+            NPCAnimator.SetBool("isInPanicState", false);
         }
 
         if (isRolling == true)

@@ -19,9 +19,15 @@ public class EvacuateState : BaseState
         // if npc is not panicking, walking speed
         // if npc is panicking, 25% chance of calming down (walking speed)
         if (!npc.isPanicking || Random.Range(0, 4) == 0)
+        {
             speed = npc.walkingSpeed;
+            npc.isRunning = false;
+        }
         else
+        {
             speed = npc.runningSpeed;
+            npc.isRunning = true;
+        }
 
         npc.pathfinder.justUsedStairs = false;
     }

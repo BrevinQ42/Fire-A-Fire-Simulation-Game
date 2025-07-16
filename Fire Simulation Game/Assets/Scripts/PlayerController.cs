@@ -944,7 +944,7 @@ public class PlayerController : MonoBehaviour
                 winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
                 Cursor.lockState = CursorLockMode.None;
             }
-            else if (collidedWith.name.Equals("Court") && fireManager)
+            else if (collidedWith.name.Equals("Court") && fireManager && npcState.currentStateName == "Evacuate")
             {           
                 // Debug.Log("You Escaped");
                 winScreen.oneStar.color = new Color(255f, 255f, 255f);
