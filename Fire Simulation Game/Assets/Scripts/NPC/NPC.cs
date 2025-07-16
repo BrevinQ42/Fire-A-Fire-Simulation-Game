@@ -144,87 +144,91 @@ public class NPC : MonoBehaviour
 
             Vector3 direction = path[pathIndex].transform.position - transform.position;
 
-            if (!target.Equals("Any"))
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.Normalize(direction), out hit, direction.magnitude, raycastLayerMask))
             {
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, Vector3.Normalize(direction), out hit, direction.magnitude, raycastLayerMask))
+                Debug.Log(pathIndex + " / " + hit.transform.name);
+
+                bool isValid = (target.Equals("WaterSource") && hit.transform.CompareTag(target)) ||
+                                (target.Equals("FireFightingObject") && hit.transform.GetComponent<FireFightingObject>()) ||
+                                !hit.transform.GetComponent<Collider>().enabled;
+                if (!isValid)
                 {
-                    Debug.Log(pathIndex + " / " + hit.transform.name);
-
-                    bool isValid = (target.Equals("WaterSource") && hit.transform.CompareTag(target)) ||
-                                    (target.Equals("FireFightingObject") && hit.transform.GetComponent<FireFightingObject>()) ||
-                                    !hit.transform.GetComponent<Collider>().enabled;
-                    if (!isValid)
+                    if (target.Equals("Fire") &&
+                        (hit.transform.GetComponent<Fire>() || hit.transform.CompareTag("Smoke")) )
                     {
-                        if (target.Equals("Fire") &&
-                            (hit.transform.GetComponent<Fire>() || hit.transform.CompareTag("Smoke")) )
+                        bool isFireFound = false;
+
+                        if (hit.transform.GetComponent<Fire>() && hit.transform.GetComponent<Fire>() == FireOnNPC)
                         {
-                            bool isFireFound = false;
+                            RaycastHit[] hits = Physics.RaycastAll(transform.position, Vector3.Normalize(direction), direction.magnitude, raycastLayerMask);
 
-                            if (hit.transform.GetComponent<Fire>() && hit.transform.GetComponent<Fire>() == FireOnNPC)
+                            foreach(RaycastHit obj in hits)
                             {
-                                RaycastHit[] hits = Physics.RaycastAll(transform.position, Vector3.Normalize(direction), direction.magnitude, raycastLayerMask);
-
-                                foreach(RaycastHit obj in hits)
+                                if (obj.transform.GetComponent<Fire>())
                                 {
-                                    if (obj.transform.GetComponent<Fire>())
-                                    {
-                                        if (obj.transform.GetComponent<Fire>() != FireOnNPC)
-                                            isFireFound = true;
-                                    }
-                                    else
-                                    {
-                                        pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
-                                        newPath = findNewPath(target);
-                                        return false;
-                                    }
+                                    if (obj.transform.GetComponent<Fire>() != FireOnNPC)
+                                        isFireFound = true;
                                 }
-                            }
-                            else
-                                isFireFound = true;
-                            
-                            if (isFireFound && hit.distance <= closeProximityValue)
-                            {
-                                Vector3 newDirection = hit.transform.position - position;
-
-                                Vector3 tempPosition = transform.position + transform.forward * 0.15f;
-
-                                int tempLayerMask = LayerMask.GetMask("Default", "Person", "TransparentFX", "Water", "UI", "Overlay");
-
-                                if (Vector3.Normalize(direction) != Vector3.Normalize(newDirection) &&
-                                    !Physics.Raycast(tempPosition, Vector3.Normalize(newDirection), newDirection.magnitude, tempLayerMask))
+                                else
                                 {
-                                    Vector3 firePos = hit.transform.position;
-
-                                    transform.LookAt(new Vector3(firePos.x, transform.position.y, firePos.z));
+                                    pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
+                                    newPath = findNewPath(target);
+                                    return false;
                                 }
-
-                                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePosition;
-                                
-                                return true;
                             }
                         }
                         else
+                            isFireFound = true;
+                        
+                        if (isFireFound && hit.distance <= closeProximityValue)
                         {
-                            pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
+                            Vector3 newDirection = hit.transform.position - position;
 
-                            newPath = findNewPath(target);
-                            if (newPath.Count == 0)
+                            Vector3 tempPosition = transform.position + transform.forward * 0.15f;
+
+                            int tempLayerMask = LayerMask.GetMask("Default", "Person", "TransparentFX", "Water", "UI", "Overlay");
+
+                            if (Vector3.Normalize(direction) != Vector3.Normalize(newDirection) &&
+                                !Physics.Raycast(tempPosition, Vector3.Normalize(newDirection), newDirection.magnitude, tempLayerMask))
                             {
-                                NPCStateMachine stateMachine = GetComponent<NPCStateMachine>();
-                                isPanicking = true;
-                                stateMachine.SwitchState(stateMachine.panicState);
+                                Vector3 firePos = hit.transform.position;
+
+                                transform.LookAt(new Vector3(firePos.x, transform.position.y, firePos.z));
                             }
+
+                            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePosition;
+                            
+                            return true;
                         }
                     }
-                    else if ( willInteractWithTarget && pathIndex == path.Count-1 &&
-                                ( direction.magnitude <= closeProximityValue ||
-                                Vector2.Distance(nextPos, new Vector2(position.x, position.z)) <= closeProximityValue ) )
+                    else
                     {
-                        InteractWithObject(hit.transform);
-                        
-                        return true;
+                        pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
+
+                        newPath = findNewPath(target);
+                        if (newPath.Count == 0)
+                        {
+                            Debug.Log("No paths found");
+
+                            NPCStateMachine stateMachine = GetComponent<NPCStateMachine>();
+                            isPanicking = true;
+                            stateMachine.SwitchState(stateMachine.panicState);
+                        }
+                        else
+                        {
+                            resetPathfindingValues();
+                            return false;
+                        }
                     }
+                }
+                else if ( willInteractWithTarget && pathIndex == path.Count-1 &&
+                            ( direction.magnitude <= closeProximityValue ||
+                            Vector2.Distance(nextPos, new Vector2(position.x, position.z)) <= closeProximityValue ) )
+                {
+                    InteractWithObject(hit.transform);
+                    
+                    return true;
                 }
             }
             

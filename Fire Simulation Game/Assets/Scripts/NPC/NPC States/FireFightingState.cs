@@ -228,7 +228,14 @@ public class FireFightingState : BaseState
 
                             target = "Fire";
                             npc.closeProximityValue = 1.25f;
-                            path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+
+                            if (faucet.GetComponent<Node>().floorLevel == 1)
+                            {
+                                path = new List<Node>{npc.pathfinder.crDoorNode};
+                                path.AddRange(npc.pathfinder.generatePath(npc.pathfinder.crDoorNode, target));
+                            }
+                            else
+                                path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
                             faucet.GetComponentInChildren<Spawner>().Toggle(false);
 

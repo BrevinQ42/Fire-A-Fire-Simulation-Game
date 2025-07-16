@@ -40,6 +40,8 @@ public class RollState : BaseState
                 Debug.Log("NPC is stuck");
         }
 
+        if (newPath.Count > 0) path = newPath;
+
         if (npc.FireOnNPC == null)
         {
             npc.isRolling = false;

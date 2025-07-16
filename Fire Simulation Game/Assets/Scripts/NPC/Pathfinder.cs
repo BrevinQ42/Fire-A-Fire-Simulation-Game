@@ -16,6 +16,7 @@ public class Pathfinder : MonoBehaviour
     [SerializeField] private Node exitNode;
     [SerializeField] private Node courtNode;
     [SerializeField] private Node rollNode;
+    public Node crDoorNode;
 
     void Start()
     {
@@ -103,17 +104,17 @@ public class Pathfinder : MonoBehaviour
             }
 
             int count = current.adjacentNodes.Count;
-            int offset = 0;
+            int offset = -5;
 
-            try
-            {
-                if (current.adjacentNodes[count-6].transform.CompareTag("WaterSource") ||
-                    current.adjacentNodes[count-6].transform.parent.name.Equals("Outside"))
-                    offset = -1;
-            }
-            catch { Debug.Log("cannot detect node"); }
+            Fire fire = GetComponent<NPCStateMachine>().ongoingFire;
+            if (fire != null && fire.GetComponent<Node>().floorLevel == current.floorLevel)
+                offset--;
 
-            int index = Random.Range(0, count - 5 + offset);
+            if (current.adjacentNodes[count+offset-1].transform.CompareTag("WaterSource") ||
+                current.adjacentNodes[count+offset-1].transform.parent.name.Equals("Outside"))
+                offset--;
+
+            int index = Random.Range(0, count + offset);
 
             return generatePathToTarget(current, current.adjacentNodes[index]);
         }

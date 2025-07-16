@@ -12,6 +12,7 @@ public class RoamState : BaseState
 
     private int nodesBeforeStop;
     private float timeBeforeNextPath;
+    private float timeBeforeAction;
 
     public override void EnterState(NPCStateMachine stateMachine)
     {
@@ -24,19 +25,28 @@ public class RoamState : BaseState
 
         nodesBeforeStop = Random.Range(5, 11);
         timeBeforeNextPath = 0.0f;
+        timeBeforeAction = -1.0f;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
         if (stateMachine.ongoingFire != null)
         {
-            if (Random.Range(0, 2) == 0)
+            if (timeBeforeAction == -1.0f)
+                timeBeforeAction = 1.5f;
+
+            timeBeforeAction -= Time.deltaTime;
+
+            if (timeBeforeAction <= 0.0f)
             {
-                npc.isPanicking = true;
-                stateMachine.SwitchState(stateMachine.panicState);
+                if (Random.Range(0, 2) == 0)
+                {
+                    npc.isPanicking = true;
+                    stateMachine.SwitchState(stateMachine.panicState);
+                }
+                else
+                    stateMachine.SwitchState(stateMachine.fireFightingState);
             }
-            else
-                stateMachine.SwitchState(stateMachine.fireFightingState);
         }
 
         List<Node> newPath = new List<Node>();

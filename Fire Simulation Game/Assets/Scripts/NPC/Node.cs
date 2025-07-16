@@ -73,19 +73,19 @@ public class Node : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        if(adjacentNodes != null && adjacentNodes.Count > 0)
-        {
-            for(int i = 0; i < adjacentNodes.Count; i++)
-            {
-                if (isEdgeValid[i])
-                    Gizmos.color = Color.blue;
-                else
-                    Gizmos.color = Color.yellow;
+    // private void OnDrawGizmos()
+    // {
+    //     if(adjacentNodes != null && adjacentNodes.Count > 0)
+    //     {
+    //         for(int i = 0; i < adjacentNodes.Count; i++)
+    //         {
+    //             if (isEdgeValid[i])
+    //                 Gizmos.color = Color.blue;
+    //             else
+    //                 Gizmos.color = Color.yellow;
 
-                Gizmos.DrawLine(transform.position, adjacentNodes[i].transform.position);
-            }
-        }
-    }
+    //             Gizmos.DrawLine(transform.position, adjacentNodes[i].transform.position);
+    //         }
+    //     }
+    // }
 }
