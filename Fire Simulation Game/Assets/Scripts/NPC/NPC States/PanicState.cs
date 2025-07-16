@@ -22,12 +22,12 @@ public class PanicState : BaseState
 
         speed = npc.runningSpeed;
         npc.isRunning = true;
+        npc.isInPanicState = true;
 
         panicDuration = Random.Range(10f, 15f);
         panicTimer = 0f;
 
         Debug.Log($"{npc.name} has entered PANIC STATE!");
-        // npc.NPCAnimator.SetTrigger("Panic");
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -43,6 +43,7 @@ public class PanicState : BaseState
         else if (npc.FireOnNPC != null)
         {
             stateMachine.SwitchState(stateMachine.rollState);
+            npc.isInPanicState = false;
         }
 
         if (newPath.Count > 0)
@@ -54,11 +55,13 @@ public class PanicState : BaseState
             if (roll <= 0.25f)
             {
                 Debug.Log($"{npc.name} decides to fight the fire.");
+                npc.isInPanicState = false;
                 stateMachine.SwitchState(stateMachine.fireFightingState);
             }
             else
             {
                 Debug.Log($"{npc.name} decides to evacuates.");
+                npc.isInPanicState = false;
                 stateMachine.SwitchState(stateMachine.evacuateState);
             }
         }
