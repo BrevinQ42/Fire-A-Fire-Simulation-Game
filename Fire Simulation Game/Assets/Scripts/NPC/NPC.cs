@@ -34,6 +34,7 @@ public class NPC : MonoBehaviour
     public bool isRolling;
     public bool coroutinePlaying;
     public Vector3 lastPosition;
+    public bool fireOnDoor;
     public Animator NPCAnimator;
 
     // Start is called before the first frame update

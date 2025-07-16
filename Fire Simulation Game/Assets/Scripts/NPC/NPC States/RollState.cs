@@ -40,13 +40,22 @@ public class RollState : BaseState
                 Debug.Log("NPC is stuck");
         }
 
-        if (npc.FireOnNPC == null)
+        if (npc.FireOnNPC == null && npc.fireOnDoor != true)
         {
             npc.isRolling = false;
             npc.NPCAnimator.SetBool("isRolling", false);
             if (npc.coroutinePlaying == false)
             {
                 stateMachine.SwitchState(stateMachine.evacuateState);
+            }
+        }
+        else if (npc.FireOnNPC == null && npc.fireOnDoor == true) // If Fire is On Door, go back to fire fighting
+        {
+            npc.isRolling = false;
+            npc.NPCAnimator.SetBool("isRolling", false);
+            if (npc.coroutinePlaying == false)
+            {
+                stateMachine.SwitchState(stateMachine.fireFightingState);
             }
         }
     }
