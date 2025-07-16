@@ -92,6 +92,16 @@ public class NPC : MonoBehaviour
             coroutinePlaying = false;
         }
 
+        if (position == lastPosition)
+        {
+            NPCAnimator.SetBool("isIdle", true);
+        }
+        else
+        {
+            NPCAnimator.SetBool("isIdle", false);
+        }
+
+
         lastPosition = position;
     }
 
