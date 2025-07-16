@@ -802,6 +802,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else
                     {
+                        fireManager.RemoveSpawnPoint(FireOnCandle.transform);
                         FireOnCandle.AffectFire(-FireOnCandle.intensityValue);
 
                         notificationSystem.notificationMessage = "You have blown out the fire on the candle!\nPut out the fires on other unused candles as well!";

@@ -66,31 +66,18 @@ public class NonFlammableObject : FireFightingObject
         transform.SetParent(pan);
         transform.localPosition = pan.GetChild(1).localPosition;
     
-        string message = "none";
-        float duration = 0.0f;
+        notifMessage = "none";
+        messageDuration = 0.0f;
 
-        foreach (Transform child in pan)
+        if (pan.childCount == 5)
         {
-            if (child.CompareTag("Fire"))
-            {
-                if (!child.GetComponent<Fire>())
-                {
-                    Destroy(child.gameObject);
+            Destroy(pan.GetChild(2).gameObject);
 
-                    if (message.Equals("none"))
-                    {
-                        message = "Fire got taken out!";
-                        duration = 3.0f;
-                    }
+            notifMessage = "Fire got taken out!";
+            messageDuration = 3.0f;
 
-                    if (transform.childCount > 1 && !transform.GetChild(1).GetComponent<Fire>())
-                        fireManager.RemoveSpawnPoint(transform.GetChild(1));
-                }
-            }
+            fireManager.RemoveSpawnPoint(pan.GetChild(1));
         }
-
-        notifMessage = message;
-        messageDuration = duration;
 
         isOnPan = true;
     }
