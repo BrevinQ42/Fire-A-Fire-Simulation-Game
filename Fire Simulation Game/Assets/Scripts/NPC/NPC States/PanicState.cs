@@ -12,7 +12,6 @@ public class PanicState : BaseState
 
     private float panicDuration;
     private float panicTimer;
-    private float timeBeforeNextPath;
 
     public override void EnterState(NPCStateMachine stateMachine)
     {
@@ -21,18 +20,13 @@ public class PanicState : BaseState
         target = "Any";
         path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
-        if (Random.Range(0, 2) == 0)
-            speed = npc.walkingSpeed;
-        else
-            speed = npc.runningSpeed;
-
-        timeBeforeNextPath = 0.0f;
+        speed = npc.runningSpeed;
 
         panicDuration = Random.Range(10f, 15f);
         panicTimer = 0f;
 
         Debug.Log($"{npc.name} has entered PANIC STATE!");
-        npc.animator.SetTrigger("Panic");
+        // npc.NPCAnimator.SetTrigger("Panic");
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -41,23 +35,13 @@ public class PanicState : BaseState
 
         List<Node> newPath = new List<Node>();
 
-        if (timeBeforeNextPath > 0.0f)
+        if (npc.followPath(path, target, speed, false, out newPath))
         {
-            timeBeforeNextPath -= Time.deltaTime;
-        }
-        else if (npc.followPath(path, target, speed, false, out newPath))
-        {
-            Node destination = path[path.Count - 1];
-
-            if (npc.getCurrentNode() == destination)
-            {
-                if (npc.pathfinder.justUsedStairs)
-                    timeBeforeNextPath = 0f;
-                else
-                    timeBeforeNextPath = Random.Range(1f, 3f); 
-            }
-
             path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+        }
+        else if (npc.FireOnNPC != null)
+        {
+            stateMachine.SwitchState(stateMachine.rollState);
         }
 
         if (newPath.Count > 0)

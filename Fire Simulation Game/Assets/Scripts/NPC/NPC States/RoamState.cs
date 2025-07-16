@@ -10,6 +10,7 @@ public class RoamState : BaseState
     private List<Node> path;
     private float speed;
 
+    private int nodesBeforeStop;
     private float timeBeforeNextPath;
 
     public override void EnterState(NPCStateMachine stateMachine)
@@ -21,6 +22,7 @@ public class RoamState : BaseState
 
         speed = npc.walkingSpeed;
 
+        nodesBeforeStop = Random.Range(5, 11);
         timeBeforeNextPath = 0.0f;
     }
 
@@ -43,7 +45,7 @@ public class RoamState : BaseState
         {
             timeBeforeNextPath -= Time.deltaTime;
 
-            Debug.Log(timeBeforeNextPath);
+            Debug.Log("timeBeforeNextPath:" + timeBeforeNextPath);
         }
         else if (npc.followPath(path, target, speed, false, out newPath))
         {
@@ -51,10 +53,18 @@ public class RoamState : BaseState
 
             if (npc.getCurrentNode() == destination)
             {
-                if (npc.pathfinder.justUsedStairs)
-                    timeBeforeNextPath = 0;
-                else
-                    timeBeforeNextPath = Random.Range(3, 8);
+                if (nodesBeforeStop > 0)
+                {
+                    nodesBeforeStop--;
+
+                    Debug.Log("NodesBeforeStop: " + nodesBeforeStop);
+
+                    if (nodesBeforeStop == 0)
+                    {
+                        timeBeforeNextPath = Random.Range(3, 8);
+                        nodesBeforeStop = Random.Range(5, 11);
+                    }
+                }
 
                 Debug.Log("NPC has reached " + destination);
             }

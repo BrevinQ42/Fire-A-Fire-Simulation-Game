@@ -39,9 +39,15 @@ public class EvacuateState : BaseState
                 Debug.Log("NPC has evacuated");
                 path = new List<Node>{npc.getCurrentNode()};
             }
+            else if (npc.getCurrentNode().name.Equals("BottomNode") ||
+                        npc.getCurrentNode() == npc.pathfinder.getExitNode())
+            {
+                path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+            }
             else
             {
                 Debug.Log("NPC is stuck");
+                stateMachine.SwitchState(stateMachine.panicState);
             }
         }
         else if (npc.FireOnNPC != null)

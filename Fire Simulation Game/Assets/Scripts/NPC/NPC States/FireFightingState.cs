@@ -85,6 +85,8 @@ public class FireFightingState : BaseState
 
                     if (heldObject.GetComponent<FireExtinguisher>())
                         lastHeldExtinguisher = heldObject.GetComponent<FireExtinguisher>();
+
+                    path = new List<Node>{npc.getCurrentNode()};
                 }
                 else
                 {
@@ -93,15 +95,20 @@ public class FireFightingState : BaseState
                     {
                         if (pail.getWaterInside() > stateMachine.ongoingFire.intensityValue ||
                             pail.getFractionFilled() >= 1.0f)
+                        {
+                            path = new List<Node>{npc.getCurrentNode()};
                             target = "Fire";
+                        }
                         else
+                        {
+                            path = new List<Node>();
                             target = "WaterSource";
+                        }
 
                         npc.closeProximityValue = 1.25f;
                     }
                 }
 
-                path = new List<Node>{npc.getCurrentNode()};
                 path.AddRange(npc.pathfinder.generatePath(npc.getCurrentNode(), target));
 
                 Debug.Log("Got " + heldObject.transform.name + " / Next Target: " + target);

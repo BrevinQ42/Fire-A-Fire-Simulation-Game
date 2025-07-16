@@ -34,10 +34,10 @@ public class RollState : BaseState
                 npc.NPCAnimator.SetBool("isRolling", true);
                 npc.isRolling = true;
             }
+            else if (npc.getCurrentNode().name.Equals("BottomNode"))
+                path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
             else
-            {
                 Debug.Log("NPC is stuck");
-            }
         }
 
         if (npc.FireOnNPC == null)

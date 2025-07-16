@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Pathfinder : MonoBehaviour
 {
+    public bool justUsedStairs;
+    
     [SerializeField] private List<Node> firstFloorPathNodes;
     [SerializeField] private List<Node> secondFloorPathNodes;
     [SerializeField] private List<Node> fireFightingNodes;
@@ -14,8 +16,6 @@ public class Pathfinder : MonoBehaviour
     [SerializeField] private Node exitNode;
     [SerializeField] private Node courtNode;
     [SerializeField] private Node rollNode;
-
-    public bool justUsedStairs;
 
     void Start()
     {
@@ -66,15 +66,10 @@ public class Pathfinder : MonoBehaviour
     {
         if (target.Equals("Court"))
         {
-            List<Node> path = generatePathToTarget(current, exitNode);
-
-            if (path.Count > 0)
-            {
-                foreach(Node node in generatePathToTarget(exitNode, courtNode))
-                    path.Add(node);
-            }
-
-            return path;
+            if (current == exitNode)
+                return generatePathToTarget(current, courtNode);
+            
+            return generatePathToTarget(current, exitNode);
         }
         else if (target.Equals("WaterSource"))
         {
@@ -95,48 +90,32 @@ public class Pathfinder : MonoBehaviour
         }
         else if (target.Equals("Any"))
         {
-            int index = -1;
-            Node targetNode = null;
-
-            if (current.floorLevel == 1)
-                firstFloorPathNodes.Remove(current);
-            else
-                secondFloorPathNodes.Remove(current);
-
             if (justUsedStairs)
-            {
-                if (current == topOfStairs)
-                {
-                    index = Random.Range(0, secondFloorPathNodes.Count);
-                    targetNode = secondFloorPathNodes[index];
-
-                    secondFloorPathNodes.Add(current);
-                }
-                else // if bottomOfStairs
-                {
-                    index = Random.Range(0, firstFloorPathNodes.Count);
-                    targetNode = firstFloorPathNodes[index];
-
-                    firstFloorPathNodes.Add(current);
-                }
-
                 justUsedStairs = false;
-
-                return generatePathToTarget(current, targetNode);
+            else if (Random.Range(0, 2) == 0) // making it more likely for npc to use stairs
+            {
+                if (current == bottomOfStairs)
+                    return new List<Node>{topOfStairs};
+                else if (current.transform.name.Equals("BottomNode (1)"))
+                    return new List<Node>{bottomOfStairs};
+                else if (current.transform.name.Equals("TopNode (1)"))
+                    return new List<Node>{topOfStairs};
             }
 
-            index = Random.Range(0, firstFloorPathNodes.Count + secondFloorPathNodes.Count);
-            if (index >= firstFloorPathNodes.Count)
-                targetNode = secondFloorPathNodes[index-firstFloorPathNodes.Count];
-            else
-                targetNode = firstFloorPathNodes[index];
+            int count = current.adjacentNodes.Count;
+            int offset = 0;
 
-            if (current.floorLevel == 1)
-                firstFloorPathNodes.Add(current);
-            else
-                secondFloorPathNodes.Add(current);
+            try
+            {
+                if (current.adjacentNodes[count-6].transform.CompareTag("WaterSource") ||
+                    current.adjacentNodes[count-6].transform.parent.name.Equals("Outside"))
+                    offset = -1;
+            }
+            catch { Debug.Log("cannot detect node"); }
 
-            return generatePathToTarget(current, targetNode);
+            int index = Random.Range(0, count - 5 + offset);
+
+            return generatePathToTarget(current, current.adjacentNodes[index]);
         }
 
         return new List<Node>();
