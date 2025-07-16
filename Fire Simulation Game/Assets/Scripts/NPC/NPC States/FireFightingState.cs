@@ -20,7 +20,9 @@ public class FireFightingState : BaseState
         target = "FireFightingObject";
         path = npc.pathfinder.generatePath(npc.getCurrentNode(), target, npc.blacklist);
 
-        if (Random.Range(0, 2) == 0)
+        // if npc is not panicking, walking speed
+        // if npc is panicking, 25% chance of calming down (walking speed)
+        if (!npc.isPanicking || Random.Range(0, 4) == 0)
             speed = npc.walkingSpeed;
         else
             speed = npc.runningSpeed;

@@ -19,10 +19,7 @@ public class RoamState : BaseState
         target = "Any";
         path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
 
-        if (Random.Range(0, 2) == 0)
-            speed = npc.walkingSpeed;
-        else
-            speed = npc.runningSpeed;
+        speed = npc.walkingSpeed;
 
         timeBeforeNextPath = 0.0f;
     }
@@ -30,7 +27,15 @@ public class RoamState : BaseState
     public override void UpdateState(NPCStateMachine stateMachine)
     {
         if (stateMachine.ongoingFire != null)
-            stateMachine.SwitchState(stateMachine.fireFightingState);
+        {
+            if (Random.Range(0, 2) == 0)
+            {
+                npc.isPanicking = true;
+                stateMachine.SwitchState(stateMachine.panicState);
+            }
+            else
+                stateMachine.SwitchState(stateMachine.fireFightingState);
+        }
 
         List<Node> newPath = new List<Node>();
 
