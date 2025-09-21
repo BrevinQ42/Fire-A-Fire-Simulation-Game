@@ -25,28 +25,20 @@ public class RoamState : BaseState
 
         nodesBeforeStop = Random.Range(5, 11);
         timeBeforeNextPath = 0.0f;
-        timeBeforeAction = -1.0f;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
-        if (stateMachine.ongoingFire != null)
+        if (stateMachine.ongoingFire != null &&
+            isNpcCloseToFire(stateMachine.npc, stateMachine.ongoingFire))
         {
-            if (timeBeforeAction == -1.0f)
-                timeBeforeAction = 1.5f;
-
-            timeBeforeAction -= Time.deltaTime;
-
-            if (timeBeforeAction <= 0.0f)
+            if (Random.Range(0, 2) == 0)
             {
-                if (Random.Range(0, 2) == 0)
-                {
-                    npc.isPanicking = true;
-                    stateMachine.SwitchState(stateMachine.panicState);
-                }
-                else
-                    stateMachine.SwitchState(stateMachine.fireFightingState);
+                npc.isPanicking = true;
+                stateMachine.SwitchState(stateMachine.panicState);
             }
+            else
+                stateMachine.SwitchState(stateMachine.fireFightingState);
         }
 
         List<Node> newPath = new List<Node>();
@@ -83,5 +75,10 @@ public class RoamState : BaseState
         }
         else
             if (newPath.Count > 0) path = newPath;
+    }
+
+    private bool isNpcCloseToFire(NPC npc, Fire fire)
+    {
+        return Vector2.Distance(npc.transform.position, fire.transform.position) <= fire.intensityValue * 7.5f;
     }
 }
