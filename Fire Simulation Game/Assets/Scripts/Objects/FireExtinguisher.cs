@@ -131,6 +131,11 @@ public class FireExtinguisher : FireFightingObject
         isStillHeld = isHeld;
 	}
 
+	public override string GetObjectType()
+	{
+		return "Extinguisher" + type;
+	}
+
 	public void SetType(string newType)
 	{
 		type = newType;

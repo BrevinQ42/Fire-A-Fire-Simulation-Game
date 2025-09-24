@@ -6,6 +6,7 @@ public class ObjectNamePopUp : MonoBehaviour
 {
     public bool lookedAt;
     public GameObject textName;
+    public bool isOutside;
 
     // Start is called before the first frame update
     void Start()

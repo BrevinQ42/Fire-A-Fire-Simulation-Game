@@ -53,6 +53,11 @@ public class NonFlammableObject : FireFightingObject
         isStillHeld = isHeld;
     }
 
+    public override string GetObjectType()
+    {
+        return "NonFlammableObject";
+    }
+
     void Throw(float throwForce)
     {
         Deattach();

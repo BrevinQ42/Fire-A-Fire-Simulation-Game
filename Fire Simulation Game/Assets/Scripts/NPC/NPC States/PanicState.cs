@@ -5,9 +5,6 @@ using UnityEngine;
 public class PanicState : BaseState
 {
     private NPC npc;
-    private string target;
-
-    private List<Node> path;
     private float speed;
 
     private float panicDuration;
@@ -16,18 +13,17 @@ public class PanicState : BaseState
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
-
-        target = "Any";
-        path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
-
         speed = npc.runningSpeed;
+
         npc.isRunning = true;
         npc.isInPanicState = true;
 
         panicDuration = Random.Range(10f, 15f);
         panicTimer = 0f;
 
-        Debug.Log($"{npc.name} has entered PANIC STATE!");
+        float angle = Random.Range(0, 360) * Mathf.Deg2Rad;
+        npc.SetStoppingDistance(0.01f);
+        npc.GoTo(npc.transform.position + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * 2.5f, speed);
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -36,18 +32,19 @@ public class PanicState : BaseState
 
         List<Node> newPath = new List<Node>();
 
-        if (npc.followPath(path, target, speed, false, out newPath))
+        if (npc.isHalted() || npc.hasReachedTarget())
         {
-            path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
+            float angle = Random.Range(0, 360) * Mathf.Deg2Rad;
+            npc.GoTo(npc.transform.position + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * 2.5f, speed);
         }
-        else if (npc.FireOnNPC != null)
+        
+        if (npc.FireOnNPC != null)
         {
-            stateMachine.SwitchState(stateMachine.rollState);
-            npc.isInPanicState = false;
-        }
+            npc.lastState = this;
 
-        if (newPath.Count > 0)
-            path = newPath;
+            npc.isInPanicState = false;
+            stateMachine.SwitchState(stateMachine.rollState);
+        }
 
         if (panicTimer >= panicDuration)
         {
@@ -56,7 +53,7 @@ public class PanicState : BaseState
             {
                 Debug.Log($"{npc.name} decides to fight the fire.");
                 npc.isInPanicState = false;
-                stateMachine.SwitchState(stateMachine.fireFightingState);
+                stateMachine.SwitchState(stateMachine.preparationState);
             }
             else
             {

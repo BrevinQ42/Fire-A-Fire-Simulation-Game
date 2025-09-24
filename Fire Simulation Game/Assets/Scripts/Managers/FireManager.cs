@@ -21,7 +21,7 @@ public class FireManager : MonoBehaviour
 	private Fire ongoingFire;
 	public bool isPlayerSuccessful;
 
-	[SerializeField] private List<NPCStateMachine> npcStateMachines;
+	public List<NPCStateMachine> npcStateMachines;
 
     //sound effect
     public AudioSource audioSource;
@@ -105,107 +105,26 @@ public class FireManager : MonoBehaviour
 			ongoingFire.Toggle(true);
 			isFireOngoing = true;
 
-			if (index >= 6)
-			{
-                notificationSystem.notificationMessage = "A fire has emerged! Identify the cause of the fire and put it out accordingly!";
-                notificationSystem.disableAfterTimer = true;
-	            notificationSystem.disableTimer = 5.0f;
-	            notificationSystem.displayNotification();
-			}
-            else if (index == 6)
-            {
-				npc.fireOnDoor = true;
-                audioSource.clip = helpAFireClip;
-                audioSource.Play();
+			audioSource.clip = helpAFireClip;
+            audioSource.Play();
 
-                notificationSystem.notificationMessage = "A fire has emerged from your neighbors! Be careful trying to extinguish it since you're uncertain of the cause of fire!";
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.disableTimer = 5.0f;
-                notificationSystem.displayNotification();
-            }
-            else
-			{
-                audioSource.clip = helpAFireClip;
-                audioSource.Play();
+            notificationSystem.notificationMessage = "A fire has emerged! Identify the cause of the fire and put it out quickly!";
+            notificationSystem.disableAfterTimer = true;
+            notificationSystem.disableTimer = 5.0f;
+            notificationSystem.displayNotification();
 
-                notificationSystem.notificationMessage = "A fire has emerged from your neighbors! Be careful trying to extinguish it since you're uncertain of the cause of fire!";
-                notificationSystem.disableAfterTimer = true;
-	            notificationSystem.disableTimer = 5.0f;
-	            notificationSystem.displayNotification();
-			}
-
-			StartCoroutine(SetupForNPC());
+            foreach(NPCStateMachine sm in npcStateMachines)
+            	sm.ongoingFire = ongoingFire;
 		}
 		else if (ongoingFire == null && !isPlayerSuccessful)
 		{
-			notificationSystem.notificationMessage = "You have extinguished the fire!\nHelp your neighbors who might still need it!";
+			notificationSystem.notificationMessage = "You have extinguished the fire!";
             notificationSystem.disableAfterTimer = true;
             notificationSystem.disableTimer = 4.0f;
             notificationSystem.displayNotification();
 
 			isPlayerSuccessful = true;
 		}
-	}
-
-	IEnumerator SetupForNPC()
-	{
-		bool isNodeFinalized = false;
-
-		Node fireNode = ongoingFire.GetComponent<Node>();
-
-		if (!fireNode)
-			fireNode = ongoingFire.gameObject.AddComponent<Node>();
-
-		try
-		{
-			if (fireNode.adjacentNodes.Count == 0)
-				isNodeFinalized = addAdjacentNodesForFire(fireNode);
-		}
-		catch
-		{
-			fireNode.adjacentNodes = new List<Node>();
-			fireNode.isEdgeValid = new List<bool>();
-			fireNode.edgeWeights = new List<float>();
-
-			isNodeFinalized = addAdjacentNodesForFire(fireNode);
-		}
-
-		yield return new WaitUntil(() => isNodeFinalized == true);
-
-		foreach(NPCStateMachine sm in npcStateMachines)
-			sm.ongoingFire = ongoingFire;
-	}
-
-	bool addAdjacentNodesForFire(Node fireNode)
-	{
-		if (fireNode.transform.position.y > 5.0f)
-			fireNode.floorLevel = 2;
-		else
-			fireNode.floorLevel = 1;
-
-		foreach(Node node in GameObject.FindObjectsOfType<Node>())
-		{
-			if (node == fireNode) continue;
-
-			if (!node.GetComponent<FireFightingObject>() && !node.transform.CompareTag("WaterSource") && node.floorLevel == fireNode.floorLevel)
-			{
-				if (!fireNode.adjacentNodes.Contains(node))
-				{
-					fireNode.adjacentNodes.Add(node);
-					fireNode.isEdgeValid.Add(true);
-					fireNode.edgeWeights.Add(0.0f);
-				}
-
-				if (!node.adjacentNodes.Contains(fireNode))
-				{
-					node.adjacentNodes.Add(fireNode);
-	                node.isEdgeValid.Add(true);
-	                node.edgeWeights.Add(0.0f);	
-				}
-			}
-		}
-
-		return true;
 	}
 
 	public void AddSpawnPoint(Transform spawnPoint, bool isDuplicate)

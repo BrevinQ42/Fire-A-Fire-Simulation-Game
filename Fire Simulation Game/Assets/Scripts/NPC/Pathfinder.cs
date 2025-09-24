@@ -177,8 +177,7 @@ public class Pathfinder : MonoBehaviour
                 if (candidates[i].GetComponent<FireFightingObject>())
                 {
                     if (!candidates[i].GetComponent<Collider>().enabled ||
-                        !target.GetComponent<FireFightingObject>() ||
-                        GetComponent<NPC>().blacklist.Contains(candidates[i]))
+                        !target.GetComponent<FireFightingObject>())
                         continue;
                 }
                 else if (candidates[i].transform.CompareTag("WaterSource") && !target.transform.CompareTag("WaterSource"))

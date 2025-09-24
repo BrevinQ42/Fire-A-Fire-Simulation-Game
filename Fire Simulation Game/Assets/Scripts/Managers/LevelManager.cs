@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
@@ -17,56 +18,54 @@ public class LevelManager : MonoBehaviour
 	[SerializeField] private List<Transform> candleSpawnPoints;
 	[SerializeField] private GameObject candlePrefab;
 
+	[Header("Characters")]
+	[SerializeField] private PlayerController playerPrefab;
+	[SerializeField] private NPC npcPrefab;
+	[SerializeField] private List<Transform> characterSpawnPoints;
+
+	[Header("Misc.")]
+	[SerializeField] private GameObject OutsideFloor;
 	public int typeIndex;
 	public bool isClassCExtinguisher;
+	
 	void Start()
 	{
+		OutsideFloor.GetComponent<NavMeshSurface>().BuildNavMesh();
+
 		extinguisherTypes = new List<string>{"Class A", "Class C", "Class C", "Class K", "Class K"};
 
 		RandomizeExtinguishers();
-
-		GameObject.FindObjectOfType<Pathfinder>().populateObjectNodes();
-
 		RandomizeCandles();
-	}
-
-	void Update()
-	{
-
+		RandomizeCharacterSpawns();
 	}
 
 	void RandomizeExtinguishers()
 	{
-		int extinguisherIndex = Random.Range(0, extinguisherSpawnPoints.Count);
-		Vector3 extinguisherSpawnPoint = extinguisherSpawnPoints[extinguisherIndex].position;
-
-		FireExtinguisher extinguisher = Instantiate(extinguisherPrefab, extinguisherSpawnPoint, Quaternion.identity).GetComponent<FireExtinguisher>();
-
-		typeIndex = Random.Range(0, extinguisherTypes.Count);
-		if (typeIndex == 1 || typeIndex == 2)
+		for (int i = 0; i < 9; i++)
 		{
-			isClassCExtinguisher = true;
+			int extinguisherIndex = Random.Range(0, extinguisherSpawnPoints.Count);
+			Vector3 extinguisherSpawnPoint = extinguisherSpawnPoints[extinguisherIndex].position;
+
+			FireExtinguisher extinguisher = Instantiate(extinguisherPrefab, extinguisherSpawnPoint, Quaternion.identity).GetComponent<FireExtinguisher>();
+
+			typeIndex = Random.Range(0, extinguisherTypes.Count);
+			if (typeIndex == 1 || typeIndex == 2)
+			{
+				isClassCExtinguisher = true;
+			}
+			else
+			{
+				isClassCExtinguisher = false;
+			}
+			extinguisher.SetType(extinguisherTypes[typeIndex]);
+
+			extinguisherSpawnPoints.RemoveAt(extinguisherIndex);
 		}
-		else
-		{
-			isClassCExtinguisher = false;
-		}
-		extinguisher.SetType(extinguisherTypes[typeIndex]);
-
-		// generate second of the same type
-		extinguisherSpawnPoints.RemoveAt(extinguisherIndex);
-
-		extinguisherIndex = Random.Range(0, extinguisherSpawnPoints.Count);
-		extinguisherSpawnPoint = extinguisherSpawnPoints[extinguisherIndex].position;
-
-		Instantiate(extinguisher, extinguisherSpawnPoint, Quaternion.identity);
 	}
 
 	void RandomizeCandles()
 	{
-		int candleCount = Random.Range(1, candleSpawnPoints.Count);
-
-		for (int i = 0; i < candleCount; i++)
+		for (int i = 0; i < 9; i++)
 		{
 			int index = Random.Range(0, candleSpawnPoints.Count);
 			Vector3 candleSpawnPoint = candleSpawnPoints[index].position;
@@ -80,6 +79,22 @@ public class LevelManager : MonoBehaviour
 			fireManager.AddSpawnPoint(FireOnCandle.transform, false);
 
 			candleSpawnPoints.RemoveAt(index);
+		}
+	}
+
+	void RandomizeCharacterSpawns()
+	{
+		int index = Random.Range(0, characterSpawnPoints.Count);
+
+		Instantiate(playerPrefab, characterSpawnPoints[index].position, characterSpawnPoints[index].rotation);
+		characterSpawnPoints.RemoveAt(index);
+
+		for (int i = 0; i < 2; i++)
+		{
+			index = Random.Range(0, characterSpawnPoints.Count);
+
+			Instantiate(npcPrefab, characterSpawnPoints[index].position, characterSpawnPoints[index].rotation);
+			characterSpawnPoints.RemoveAt(index);
 		}
 	}
 }

@@ -2,8 +2,13 @@ using UnityEngine;
 
 public class ControlsToggle : MonoBehaviour
 {
-    public GameObject controlsPanel; // Assign in Inspector
+    public GameObject controlsPanel;
     private bool isPaused = false;
+
+    void Start()
+    {
+        controlsPanel = GameObject.Find("ControlsPage");
+    }
 
     void Update()
     {

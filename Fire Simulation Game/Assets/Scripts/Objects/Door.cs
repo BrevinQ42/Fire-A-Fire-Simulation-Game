@@ -19,10 +19,8 @@ public class Door : MonoBehaviour
 
     public GameObject textName;
     public bool lookedAt;
-
-    private bool isMessageSent;
-
     public PlayerController playerController;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -34,32 +32,22 @@ public class Door : MonoBehaviour
 
         lookedAt = false;
         textName = GetComponentInChildren<TextMesh>().gameObject;
-
-        isMessageSent = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (playerController.fireManager.timeBeforeFire <= 0.0f)
+        if (isOpen)
         {
-            if (isOpen)
-            {
-                transform.position = Vector3.Lerp(transform.position, openPosition, Time.deltaTime * speed);
-                transform.rotation = Quaternion.Lerp(transform.rotation, openRotation, Time.deltaTime * speed);
-                textName.GetComponent<TextMesh>().text = "[E] to close door";
-            }
-            else
-            {
-                transform.position = Vector3.Lerp(transform.position, closedPosition, Time.deltaTime * speed);
-                transform.rotation = Quaternion.Lerp(transform.rotation, closedRotation, Time.deltaTime * speed);
-                textName.GetComponent<TextMesh>().text = "[E] to open door";
-            }
+            transform.position = Vector3.Lerp(transform.position, openPosition, Time.deltaTime * speed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, openRotation, Time.deltaTime * speed);
+            textName.GetComponent<TextMesh>().text = "[E] to close door";
         }
-        else if (lookedAt && !isMessageSent)
+        else
         {
-            isMessageSent = true;
-            StartCoroutine(SendMessage());
+            transform.position = Vector3.Lerp(transform.position, closedPosition, Time.deltaTime * speed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, closedRotation, Time.deltaTime * speed);
+            textName.GetComponent<TextMesh>().text = "[E] to open door";
         }
 
         if (lookedAt == false)
@@ -70,18 +58,6 @@ public class Door : MonoBehaviour
         {
             textName.SetActive(true);
         }
-    }
-
-    IEnumerator SendMessage()
-    {
-        notificationSystem.notificationMessage = "Try to prevent or extinguish fires first!";
-        notificationSystem.disableAfterTimer = true;
-        notificationSystem.disableTimer = 5.0f;
-        notificationSystem.displayNotification();
-
-        yield return new WaitForSeconds(5.0f);
-
-        isMessageSent = false;
     }
     
     public void toggleDoor()

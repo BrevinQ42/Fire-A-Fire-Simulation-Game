@@ -33,7 +33,7 @@ public class PlayerBars : MonoBehaviour
     public bool isRolling;
     public bool isCrawling;
 
-    private PlayerController playerController;
+    [SerializeField] private PlayerController playerController;
     private Coroutine fireDamageCoroutine;
     private Coroutine staminaRunDepletionCoroutine;
     private Coroutine staminaWalkRegenerationCoroutine;
@@ -45,7 +45,8 @@ public class PlayerBars : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerController = GetComponent<PlayerController>();
+        ConfigureReferences();
+
         ResetMovementStates();
     }
 
@@ -72,6 +73,20 @@ public class PlayerBars : MonoBehaviour
         }
 
         HandleStaminaRegeneration();
+    }
+
+    void ConfigureReferences()
+    {
+        notificationSystem = GameObject.Find("MainPanel").GetComponent<NotificationTriggerEvent>();
+        loseScreen = GameObject.Find("LoseScreen").GetComponent<LoseScreen>();
+        loseScreen.gameObject.SetActive(false);
+
+        hydrationBar = GameObject.Find("Hydration").GetComponent<Slider>();
+        oxygenBar = GameObject.Find("Oxygen").GetComponent<Slider>();
+        staminaBar = GameObject.Find("Stamina").GetComponent<Slider>();
+
+        playerController = GetComponent<PlayerController>();
+        
     }
 
     private void HandleFireDamage()

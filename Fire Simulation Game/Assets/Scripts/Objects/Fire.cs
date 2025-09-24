@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Fire : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class Fire : MonoBehaviour
     private bool isGrowing;
     [SerializeField] private float growingSpeed;
     private float maxGrowingSpeed;
+
+    private float updateThreshold;
 
     public string type;
     public bool isOnPan;
@@ -44,6 +47,8 @@ public class Fire : MonoBehaviour
         growingSpeed = 0.05f;
         maxGrowingSpeed = 0.25f;
 
+        updateThreshold = 0.5f;
+
         isOnPan = false;
 
         audioSource = GetComponent<AudioSource>();
@@ -69,6 +74,14 @@ public class Fire : MonoBehaviour
         if (intensityValue < 6)
         {
             audioSource.volume = intensityValue / 10;
+        }
+
+        if (intensityValue >= updateThreshold)
+        {
+            updateThreshold += 1.0f;
+            
+            foreach(NPC npc in FindObjectsOfType<NPC>())
+                npc.currentLocation.GetComponent<NavMeshSurface>().BuildNavMesh();
         }
     }
 

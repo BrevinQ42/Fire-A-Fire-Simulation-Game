@@ -1,33 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class NPC : MonoBehaviour
 {
     [Header("Pathfinding")]
-    public Pathfinder pathfinder;
-    [SerializeField] private Node currentNode;
-    
-    // temp
-    [SerializeField] private List<Node> generatedPath;
-    [SerializeField] private string pathTarget;
-    
-    [SerializeField] private int pathIndex;
-    private Vector2 nextPos;
-    private int raycastLayerMask;
+    public Transform currentLocation;
+    public Transform lastHouseLocation;
 
-    public HashSet<Node> blacklist;
+    public NavMeshAgent agent;
+    public HashSet<string> blacklist;
+
+    public Transform evacuationLocation;
 
     [Header("Misc.")]
+    public FireFightingObject heldObject;
     [SerializeField] private Transform head;
     public Vector3 position;
-    public float gravityForce;
     public float walkingSpeed;
     public float runningSpeed;
     public float closeProximityValue;
     public float throwForce;
     public Fire FireOnNPC;
     public bool isPanicking;
+    public bool hasFailedFireFighting;
+    public BaseState lastState;
+    public bool isOnStairs;
 
     [Header("Animation Related")]
     public bool isHoldingObject;
@@ -42,12 +41,11 @@ public class NPC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        pathfinder = GetComponent<Pathfinder>();
+        evacuationLocation = GameObject.Find("Basketball_Court -3D").transform;
 
-        resetPathfindingValues();
-        raycastLayerMask = LayerMask.GetMask("Default", "Ignore Raycast", "TransparentFX", "Water", "UI", "Overlay");
+        blacklist = new HashSet<string>();
 
-        blacklist = new HashSet<Node>();
+        heldObject = null;
 
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
 
@@ -61,8 +59,8 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
-        if (!isGrounded())
-            GetComponent<Rigidbody>().AddForce(new Vector3(0, -gravityForce, 0));
+        if (!isGrounded() && !isOnStairs)
+            GetComponent<Rigidbody>().AddForce(new Vector3(0, -100, 0));
 
         position = transform.position + new Vector3(0.0f, 0.9203703f, 0.0f);
 
@@ -126,206 +124,30 @@ public class NPC : MonoBehaviour
         lastPosition = position;
     }
 
-    public Node getCurrentNode()
+    public void GoTo(Vector3 target, float speed)
     {
-        return currentNode;
+        Debug.Log("Moving to " + target);
+
+        agent.speed = speed;
+        agent.SetDestination(target);
     }
 
-    public void setCurrentNode(Node node)
+    public bool isHalted()
     {
-        currentNode = node;
+        return agent.velocity.magnitude < 0.01f;
     }
 
-    public bool followPath(List<Node> path, string target, float speed, bool willInteractWithTarget, out List<Node> newPath)
+    public bool hasReachedTarget()
     {
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
-
-        newPath = new List<Node>();
-
-        generatedPath = path;
-        pathTarget = target;
-
-        if (pathIndex < path.Count)
-        {
-            try
-            {
-                nextPos = new Vector2(path[pathIndex].transform.position.x, path[pathIndex].transform.position.z);
-            }
-            catch
-            {
-                if (pathIndex == path.Count-1 && target.Equals("Fire"))
-                {
-                    newPath = pathfinder.generatePath(currentNode, "Court");
-                    return true;
-                }
-            }
-
-                                                                        // z-coord
-            transform.LookAt(new Vector3(nextPos.x, transform.position.y, nextPos.y));
-
-            Vector3 direction = path[pathIndex].transform.position - transform.position;
-
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.Normalize(direction), out hit, direction.magnitude, raycastLayerMask))
-            {
-                Debug.Log(pathIndex + " / " + hit.transform.name);
-
-                bool isValid = (target.Equals("WaterSource") && hit.transform.CompareTag(target)) ||
-                                (target.Equals("FireFightingObject") && hit.transform.GetComponent<FireFightingObject>()) ||
-                                !hit.transform.GetComponent<Collider>().enabled;
-                if (!isValid)
-                {
-                    if (target.Equals("Fire") &&
-                        (hit.transform.GetComponent<Fire>() || hit.transform.CompareTag("Smoke")) )
-                    {
-                        bool isFireFound = false;
-
-                        if (hit.transform.GetComponent<Fire>() && hit.transform.GetComponent<Fire>() == FireOnNPC)
-                        {
-                            RaycastHit[] hits = Physics.RaycastAll(transform.position, Vector3.Normalize(direction), direction.magnitude, raycastLayerMask);
-
-                            foreach(RaycastHit obj in hits)
-                            {
-                                if (obj.transform.GetComponent<Fire>())
-                                {
-                                    if (obj.transform.GetComponent<Fire>() != FireOnNPC)
-                                        isFireFound = true;
-                                }
-                                else
-                                {
-                                    pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
-                                    newPath = findNewPath(target);
-                                    return false;
-                                }
-                            }
-                        }
-                        else
-                            isFireFound = true;
-                        
-                        if (isFireFound && hit.distance <= closeProximityValue)
-                        {
-                            Vector3 newDirection = hit.transform.position - position;
-
-                            Vector3 tempPosition = transform.position + transform.forward * 0.15f;
-
-                            int tempLayerMask = LayerMask.GetMask("Default", "Person", "TransparentFX", "Water", "UI", "Overlay");
-
-                            if (Vector3.Normalize(direction) != Vector3.Normalize(newDirection) &&
-                                !Physics.Raycast(tempPosition, Vector3.Normalize(newDirection), newDirection.magnitude, tempLayerMask))
-                            {
-                                Vector3 firePos = hit.transform.position;
-
-                                transform.LookAt(new Vector3(firePos.x, transform.position.y, firePos.z));
-                            }
-
-                            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePosition;
-                            
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        pathfinder.SetEdgeInvalid(currentNode, path[pathIndex]);
-
-                        newPath = findNewPath(target);
-                        if (newPath.Count == 0)
-                        {
-                            Debug.Log("No paths found");
-
-                            NPCStateMachine stateMachine = GetComponent<NPCStateMachine>();
-                            isPanicking = true;
-                            stateMachine.SwitchState(stateMachine.panicState);
-                        }
-                        else
-                        {
-                            resetPathfindingValues();
-                            return false;
-                        }
-                    }
-                }
-                else if ( willInteractWithTarget && pathIndex == path.Count-1 &&
-                            ( direction.magnitude <= closeProximityValue ||
-                            Vector2.Distance(nextPos, new Vector2(position.x, position.z)) <= closeProximityValue ) )
-                {
-                    InteractWithObject(hit.transform);
-                    
-                    return true;
-                }
-            }
-            
-            Vector2 currentPos = new Vector2(position.x, position.z);
-
-            Vector2 newPos = Vector2.MoveTowards(currentPos, nextPos, speed * Time.deltaTime);
-            transform.position = new Vector3(newPos.x, transform.position.y, newPos.y);
-
-            if (newPos == nextPos)
-            {
-                if (target.Equals("Court") && path[pathIndex] == pathfinder.getExitNode())
-                {
-                    Door door = GameObject.FindObjectOfType<Door>();
-
-                    if (!door.isOpen) door.toggleDoor();
-                }
-
-                currentNode = path[pathIndex];
-
-                pathIndex++;
-
-                if (pathIndex < path.Count)
-                {
-                    nextPos = new Vector2(path[pathIndex].transform.position.x, path[pathIndex].transform.position.z);
-                    return false;
-                }
-                else
-                {
-                    resetPathfindingValues();
-                    return true;
-                }
-            }
-            return false;
-        }
-        else
-        {
-            resetPathfindingValues();
-            return true;
-        }
+        return agent.remainingDistance <= agent.stoppingDistance;
     }
 
-    List<Node> findNewPath(string target)
+    public void SetStoppingDistance(float distance)
     {
-        List<Node> newPath = new List<Node>();
-        List<Node> temp;
-        if (target.Equals("FireFightingObject"))
-            temp = pathfinder.generatePath(currentNode, target, blacklist);
-        else
-            temp = pathfinder.generatePath(currentNode, target);
-
-        if (temp.Count > 0)
-        {
-            Vector3 direction = temp[0].transform.position - position;
-
-            if (position != currentNode.transform.position &&
-                Physics.Raycast(position, Vector3.Normalize(direction), direction.magnitude, raycastLayerMask))
-            {
-                newPath.Add(currentNode);
-                newPath.AddRange(temp);
-            }
-            else
-                newPath = temp;
-
-            pathIndex = 0;
-        }
-        
-        return newPath;
+        agent.stoppingDistance = distance;
     }
 
-    void resetPathfindingValues()
-    {
-        pathIndex = 0;
-        nextPos = new Vector2(position.x, position.z);
-    }
-
-    void InteractWithObject(Transform hitTransform)
+    public void InteractWithObject(Transform hitTransform)
     {
         if (hitTransform.CompareTag("WaterSource"))
         {
@@ -334,8 +156,6 @@ public class NPC : MonoBehaviour
         }
         else
         {
-            resetPathfindingValues();
-
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
 
             if (hitRB && hitTransform.CompareTag("Grabbable"))
@@ -375,17 +195,71 @@ public class NPC : MonoBehaviour
         }
     }
 
-    bool isGrounded()
-    {
-        return Physics.Raycast(transform.position, Vector3.down, 1.0f);
-    }
-
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Smoke"))
         {
-            Destroy(collision.gameObject);
+            // Destroy(collision.gameObject);
+            isOnStairs = false;
         }
+        else if (collision.gameObject.GetComponent<Door>())
+        {
+            Door door = collision.gameObject.GetComponent<Door>();
+
+            if (!door.isOpen)
+                door.toggleDoor();
+        }
+        else if (collision.gameObject.name.Equals("Stairs"))
+        {
+            GetComponent<Rigidbody>().AddForce(new Vector3(0, 350, 0));
+            isOnStairs = true;
+        }
+        else
+        {
+            Transform other = collision.gameObject.transform;
+            if (other.parent && other.parent.GetComponent<NavMeshSurface>())
+            {
+                if (currentLocation != other.parent)
+                {
+                    other.parent.GetComponent<NavMeshSurface>().BuildNavMesh();
+
+                    if (agent == null) agent = gameObject.AddComponent<NavMeshAgent>();
+
+                    int areaMask = NavMesh.AllAreas;
+                    areaMask -= 1 << NavMesh.GetAreaFromName("Outside");
+                    agent.areaMask = areaMask;
+                    
+                    currentLocation = other.parent;
+                    lastHouseLocation = currentLocation;
+
+                    if (heldObject)
+                        heldObject.isOutside = false;
+                }
+            }
+            else if (other.name.Equals("Outside Floor") || other.name.Equals("Court"))
+            {
+                currentLocation = other;
+
+                if (other.GetComponent<NavMeshSurface>())
+                {
+                    if (agent == null) agent = gameObject.AddComponent<NavMeshAgent>();
+
+                    int areaMask = NavMesh.AllAreas;
+                    areaMask -= 1 << NavMesh.GetAreaFromName("Walkable");
+                    agent.areaMask = areaMask;
+                }
+
+                if (heldObject)
+                    heldObject.isOutside = true;
+            }
+        
+            isOnStairs = false;
+        }
+    }
+
+    bool isGrounded()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, 1.0f);
     }
 
     public IEnumerator RollOver()

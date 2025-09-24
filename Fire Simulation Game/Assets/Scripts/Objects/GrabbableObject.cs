@@ -12,7 +12,7 @@ public class GrabbableObject : MonoBehaviour
         Debug.Log(gameObject.name + " is used on " + target.name);
     }
 
-    public void Deattach()
+    public virtual void Deattach()
     {
         GetComponent<Collider>().enabled = true;
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;

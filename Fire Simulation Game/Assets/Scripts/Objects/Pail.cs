@@ -60,6 +60,11 @@ public class Pail : FireFightingObject
         isStillHeld = isHeld;
     }
 
+    public override string GetObjectType()
+    {
+        return "Bucket";
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if(collision.collider.CompareTag("WaterDroplet"))

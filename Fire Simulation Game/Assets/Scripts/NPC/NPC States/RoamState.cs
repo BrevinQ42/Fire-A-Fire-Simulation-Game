@@ -5,32 +5,33 @@ using UnityEngine;
 public class RoamState : BaseState
 {
     private NPC npc;
-    private string target;
-    
-    private List<Node> path;
     private float speed;
 
-    private int nodesBeforeStop;
-    private float timeBeforeNextPath;
-    private float timeBeforeAction;
+    private Transform tasksList;
+    private int tasksCount;
+    private int taskIndex;
+
+    private float timeBeforeNextAction;
 
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
-
-        target = "Any";
-        path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
-
         speed = npc.walkingSpeed;
 
-        nodesBeforeStop = Random.Range(5, 11);
-        timeBeforeNextPath = 0.0f;
+        tasksList = npc.currentLocation.parent.GetChild(0);
+        tasksCount = tasksList.childCount;
+        taskIndex = Random.Range(0, tasksCount);
+
+        npc.SetStoppingDistance(0.01f);
+        npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
+
+        timeBeforeNextAction = Random.Range(25, 35);
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
         if (stateMachine.ongoingFire != null &&
-            isNpcCloseToFire(stateMachine.npc, stateMachine.ongoingFire))
+            canNpcSenseFire(stateMachine.ongoingFire))
         {
             if (Random.Range(0, 2) == 0)
             {
@@ -38,47 +39,31 @@ public class RoamState : BaseState
                 stateMachine.SwitchState(stateMachine.panicState);
             }
             else
-                stateMachine.SwitchState(stateMachine.fireFightingState);
+                stateMachine.SwitchState(stateMachine.preparationState);
         }
 
-        List<Node> newPath = new List<Node>();
-
-        if (timeBeforeNextPath > 0.0f)
+        if (npc.hasReachedTarget())
         {
-            timeBeforeNextPath -= Time.deltaTime;
+            npc.transform.rotation = tasksList.GetChild(taskIndex).rotation;
 
-            Debug.Log("timeBeforeNextPath:" + timeBeforeNextPath);
-        }
-        else if (npc.followPath(path, target, speed, false, out newPath))
-        {
-            Node destination = path[path.Count-1];
-
-            if (npc.getCurrentNode() == destination)
+            if (timeBeforeNextAction > 0)
             {
-                if (nodesBeforeStop > 0)
-                {
-                    nodesBeforeStop--;
+                timeBeforeNextAction -= Time.deltaTime;
+            }
+            else
+            {
+                taskIndex = (taskIndex + Random.Range(1, tasksCount)) % tasksCount;
+                npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
 
-                    Debug.Log("NodesBeforeStop: " + nodesBeforeStop);
-
-                    if (nodesBeforeStop == 0)
-                    {
-                        timeBeforeNextPath = Random.Range(3, 8);
-                        nodesBeforeStop = Random.Range(5, 11);
-                    }
-                }
-
-                Debug.Log("NPC has reached " + destination);
+                timeBeforeNextAction = Random.Range(25, 35);
             }
 
-            path = npc.pathfinder.generatePath(npc.getCurrentNode(), target);
         }
-        else
-            if (newPath.Count > 0) path = newPath;
     }
 
-    private bool isNpcCloseToFire(NPC npc, Fire fire)
+    private bool canNpcSenseFire(Fire fire)
     {
-        return Vector2.Distance(npc.transform.position, fire.transform.position) <= fire.intensityValue * 7.5f;
+        Debug.Log(Vector3.Distance(npc.transform.position, fire.transform.position) + " vs " + fire.intensityValue * 7.5f);
+        return Vector3.Distance(npc.transform.position, fire.transform.position) <= fire.intensityValue * 7.5f;
     }
 }

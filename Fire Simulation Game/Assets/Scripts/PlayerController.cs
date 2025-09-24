@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float rollTimePerRotation;
 
     [Header("Player Stamina")]
-    private PlayerBars playerBars;
+    [SerializeField] private PlayerBars playerBars;
     public float staminaRequiredForCrawling;
     public float staminaRequiredForRunning;
     public float staminaRequiredForRolling;
@@ -92,11 +92,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float throwForce;
     [SerializeField] private float gravityForce;
 
-    public NPCStateMachine npcState;
-
     // Start is called before the first frame update
     void Start()
     {
+        ConfigureReferences();
+
         isExtensionsResolved = false;
 
         collidedWith = null;
@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour
 
         cameraRotation = Vector2.zero;
         if (fireManager) Cursor.lockState = CursorLockMode.Locked;
-        layerMask = LayerMask.GetMask("Default", "TransparentFX", "Water", "UI", "Door");
+        layerMask = LayerMask.GetMask("Default", "TransparentFX", "Water", "UI", "Door", "Ignore Navmesh");
 
         isCoveringNose = false;
         isOnFire = false;
@@ -490,6 +490,26 @@ public class PlayerController : MonoBehaviour
         // TestFunction(); // for debugging (i.e. Debug.Log)
     }
 
+    void ConfigureReferences()
+    {
+        levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+        
+        winScreen = GameObject.Find("WinScreen").GetComponent<WinScreen>();
+        winScreen.gameObject.SetActive(false);
+
+        notificationSystem = GameObject.Find("MainPanel").GetComponent<NotificationTriggerEvent>();
+        noseNotificationSystem = GameObject.Find("NoseIcon").GetComponent<NoseNotification>();
+
+        try
+        {
+            GameObject fm = GameObject.Find("FireManager");
+            fireManager = fm.GetComponent<FireManager>();
+        }
+        catch { Debug.Log("Tutorial"); }
+
+        mouseSensText = GameObject.Find("MouseSensText").GetComponent<TextMeshProUGUI>();
+    }
+
     bool CheckIfGrounded()
     {
 
@@ -537,6 +557,9 @@ public class PlayerController : MonoBehaviour
 
         // move character accordingly
         rb.velocity = movementVector.normalized * currentSpeed;
+
+        if (movementVector != Vector3.zero)
+            rb.velocity = new Vector3(rb.velocity.x, 0.05f, rb.velocity.z);
     }
 
     // adjusting camera when looking around
@@ -922,7 +945,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collidedWith)
         {
-            if (collidedWith.name.Equals("Outside"))
+            if (collidedWith.name.Equals("Outside Floor"))
             {
                 // Debug.Log("You Won");
                 winScreen.oneStar.color = new Color(255f, 255f, 255f);
@@ -945,50 +968,6 @@ public class PlayerController : MonoBehaviour
                 winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
                 Cursor.lockState = CursorLockMode.None;
             }
-            else if (collidedWith.name.Equals("Court") && fireManager && npcState.currentStateName == "Evacuate")
-            {           
-                // Debug.Log("You Escaped");
-                winScreen.oneStar.color = new Color(255f, 255f, 255f);
-                if (playerBars.hydrationLevel > 50 && timeElapsed < 300)
-                {
-                    winScreen.twoStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.index <= 6) //3 Stars if they escape from fire caused by neighbor
-                {
-                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
-                {
-                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
-                {
-                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
-                }
-                winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
-                Cursor.lockState = CursorLockMode.None;
-            }
-            else if (collidedWith.name.Equals("Court") && fireManager && npcState.currentStateName != "Evacuate") // -1 star if NPC is not evacuating yet
-            {
-                if (playerBars.hydrationLevel > 50 && timeElapsed < 300)
-                {
-                    winScreen.oneStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.index <= 6) //3 Stars if they escape from fire caused by neighbor
-                {
-                    winScreen.twoStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
-                {
-                    winScreen.twoStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
-                {
-                    winScreen.twoStar.color = new Color(255f, 255f, 255f);
-                }
-                winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
-                Cursor.lockState = CursorLockMode.None;
-            }
         }
     }
 
@@ -996,7 +975,7 @@ public class PlayerController : MonoBehaviour
     {
         if (fireManager)
         {
-            if (fireManager.isPlayerSuccessful && collision.collider.name.Equals("Outside"))
+            if (fireManager.isPlayerSuccessful && collision.collider.name.Equals("Outside Floor"))
             {
                 collidedWith = collision.collider;
 

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5393866012658433588}
   - component: {fileID: 788834111119170740}
   - component: {fileID: 8381414273457593841}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sample Candle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 6880451612318757149}
   - component: {fileID: 7581471872810887446}
   - component: {fileID: 4643623403458489067}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FloatingText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,6 +233,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fire
       objectReference: {fileID: 0}
+    - target: {fileID: 580641712304378339, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 835678449782325604, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -273,6 +277,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1675037213436034017, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: type
       value: Class A
@@ -280,6 +288,26 @@ PrefabInstance:
     - target: {fileID: 1905694323980460655, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
       propertyPath: intensityValue
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2609040698377247807, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2741813744384106840, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4546983897370732219, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5121560318183929225, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5433984347822500175, guid: eefe1b841dd2c6044bdcb9afaaf4661f, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
