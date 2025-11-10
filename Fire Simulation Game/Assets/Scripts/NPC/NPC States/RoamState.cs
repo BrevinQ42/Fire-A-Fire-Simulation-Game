@@ -49,6 +49,21 @@ public class RoamState : BaseState
             if (timeBeforeNextAction > 0)
             {
                 timeBeforeNextAction -= Time.deltaTime;
+                //Idle Animation Stuff
+                if (tasksList.GetChild(taskIndex).name == "Laptop")
+                {
+                    npc.isUsingLaptop = true;
+                }
+
+                if (tasksList.GetChild(taskIndex).name == "Sleep")
+                {
+                    npc.isSleeping = true;
+                }
+
+                if (tasksList.GetChild(taskIndex).name == "Watch TV")
+                {
+                    npc.isWatchingTV = true;
+                }
             }
             else
             {
@@ -56,6 +71,10 @@ public class RoamState : BaseState
                 npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
 
                 timeBeforeNextAction = Random.Range(25, 35);
+                //Idle Animation Stuff
+                npc.isUsingLaptop = false;
+                npc.isSleeping = false;
+                npc.isWatchingTV= false;
             }
 
         }

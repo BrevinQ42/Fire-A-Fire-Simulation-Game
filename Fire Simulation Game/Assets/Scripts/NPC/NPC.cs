@@ -36,6 +36,9 @@ public class NPC : MonoBehaviour
     public bool fireOnDoor;
     public bool isRunning;
     public bool isInPanicState;
+    public bool isUsingLaptop;
+    public bool isSleeping;
+    public bool isWatchingTV;
     public Animator NPCAnimator;
 
     // Start is called before the first frame update
@@ -54,6 +57,9 @@ public class NPC : MonoBehaviour
         isHoldingObject = false;
         isRolling = false;
         coroutinePlaying = false;
+        isUsingLaptop = false;
+        isSleeping= false;
+        isWatchingTV = false;
         NPCAnimator = GetComponent<Animator>();
     }
 
@@ -111,14 +117,41 @@ public class NPC : MonoBehaviour
             coroutinePlaying = false;
         }
 
-        if (position == lastPosition)
+        if (isUsingLaptop == true)
         {
-            NPCAnimator.SetBool("isIdle", true);
+            NPCAnimator.SetBool("isUsingLaptop", true);
         }
-        else
+        else if (isUsingLaptop == false)
         {
-            NPCAnimator.SetBool("isIdle", false);
+            NPCAnimator.SetBool("isUsingLaptop", false);
         }
+
+        if (isSleeping == true)
+        {
+            NPCAnimator.SetBool("isSleeping", true);
+        }
+        else if (isSleeping == false)
+        {
+            NPCAnimator.SetBool("isSleeping", false);
+        }
+
+        if (isWatchingTV == true)
+        {
+            NPCAnimator.SetBool("isWatchingTV", true);
+        }
+        else if (isWatchingTV == false)
+        {
+            NPCAnimator.SetBool("isWatchingTV", false);
+        }
+
+        //if (position == lastPosition)
+        //{
+        //    NPCAnimator.SetBool("isIdle", true);
+        //}
+        //else
+        //{
+        //    NPCAnimator.SetBool("isIdle", false);
+        //}
 
 
         lastPosition = position;
