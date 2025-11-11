@@ -67,6 +67,11 @@ public class RoamState : BaseState
                 {
                     npc.isWatchingTV = true;
                 }
+
+                if (tasksList.GetChild(taskIndex).name == "Cook")
+                {
+                    npc.isCooking = true;
+                }
             }
             else
             {
@@ -78,6 +83,7 @@ public class RoamState : BaseState
                 npc.isUsingLaptop = false;
                 npc.isSleeping = false;
                 npc.isWatchingTV= false;
+                npc.isCooking = false;
             }
 
         }

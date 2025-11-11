@@ -39,6 +39,7 @@ public class NPC : MonoBehaviour
     public bool isUsingLaptop;
     public bool isSleeping;
     public bool isWatchingTV;
+    public bool isCooking;
     public Animator NPCAnimator;
 
     // Start is called before the first frame update
@@ -60,6 +61,7 @@ public class NPC : MonoBehaviour
         isUsingLaptop = false;
         isSleeping= false;
         isWatchingTV = false;
+        isCooking = false;
         NPCAnimator = GetComponent<Animator>();
     }
 
@@ -142,6 +144,15 @@ public class NPC : MonoBehaviour
         else if (isWatchingTV == false)
         {
             NPCAnimator.SetBool("isWatchingTV", false);
+        }
+
+        if (isCooking == true)
+        {
+            NPCAnimator.SetBool("isCooking", true);
+        }
+        else if (isCooking == false)
+        {
+            NPCAnimator.SetBool("isCooking", false);
         }
 
         //if (position == lastPosition)
