@@ -98,7 +98,6 @@ GameObject:
   - component: {fileID: 1839036721221571803}
   - component: {fileID: 5860125778019982601}
   - component: {fileID: 2098250701213314084}
-  - component: {fileID: 3159352968809532147}
   m_Layer: 0
   m_Name: Bucket
   m_TagString: Grabbable
@@ -238,8 +237,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHeld: 0
   fireFightingValue: 1.5
+  parent: {fileID: 0}
+  isOutside: 0
   WaterObject: {fileID: 8066359131496540432, guid: ea6bb195fb9611043a2a2a83c70d69a5, type: 3}
   WaterInPail: {fileID: 3437832890249341886}
+  fractionFilled: 0
   closeProximityValue: 0
   playerCamera: {fileID: 0}
   lookedAt: 0
@@ -342,25 +344,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3159352968809532147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2861179072481878548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73577ba54769dc045b493751e1bae1c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  adjacentNodes: []
-  isEdgeValid: 
-  edgeWeights: []
-  floorLevel: 0
-  cost: 0
-  heuristic: 0
-  previousNode: {fileID: 0}
 --- !u!1 &3437832890249341886
 GameObject:
   m_ObjectHideFlags: 0

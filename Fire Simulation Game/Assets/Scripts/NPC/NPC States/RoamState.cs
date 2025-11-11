@@ -18,18 +18,17 @@ public class RoamState : BaseState
         npc = stateMachine.npc;
         speed = npc.walkingSpeed;
 
-        tasksList = npc.currentLocation.parent.GetChild(0);
-        tasksCount = tasksList.childCount;
-        taskIndex = Random.Range(0, tasksCount);
-
-        npc.SetStoppingDistance(0.01f);
-        npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
+        tasksList = null;
+        GetTask();
 
         timeBeforeNextAction = Random.Range(25, 35);
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
+        if (tasksList == null) GetTask();
+        else return;
+
         if (stateMachine.ongoingFire != null &&
             canNpcSenseFire(stateMachine.ongoingFire))
         {
@@ -44,7 +43,11 @@ public class RoamState : BaseState
 
         if (npc.hasReachedTarget())
         {
-            npc.transform.rotation = tasksList.GetChild(taskIndex).rotation;
+            try
+            {
+                npc.transform.rotation = tasksList.GetChild(taskIndex).rotation;
+            }
+            catch {}
 
             if (timeBeforeNextAction > 0)
             {
@@ -82,7 +85,20 @@ public class RoamState : BaseState
 
     private bool canNpcSenseFire(Fire fire)
     {
-        Debug.Log(Vector3.Distance(npc.transform.position, fire.transform.position) + " vs " + fire.intensityValue * 7.5f);
         return Vector3.Distance(npc.transform.position, fire.transform.position) <= fire.intensityValue * 7.5f;
+    }
+
+    private void GetTask()
+    {
+        try
+        {
+            tasksList = npc.currentLocation.parent.GetChild(0);
+            tasksCount = tasksList.childCount;
+            taskIndex = Random.Range(0, tasksCount);
+
+            npc.SetStoppingDistance(0.01f);
+            npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
+        }
+        catch {}
     }
 }
