@@ -236,7 +236,8 @@ public class NPC : MonoBehaviour
                         heldObject.isOutside = false;
                 }
             }
-            else if (other.name.Equals("Outside Floor") || other.name.Equals("Court"))
+            else if ( !GetComponent<NPCStateMachine>().currentStateName.Equals("Roam") &&
+                        (other.name.Equals("Outside Floor") || other.name.Equals("Court")) )
             {
                 currentLocation = other;
 

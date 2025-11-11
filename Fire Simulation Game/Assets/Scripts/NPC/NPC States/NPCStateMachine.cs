@@ -6,7 +6,7 @@ public class NPCStateMachine : MonoBehaviour
 {
     // STATES
     public string currentStateName;
-    private BaseState currentState;
+    public BaseState currentState;
     public RoamState roamState = new RoamState();
     public PanicState panicState = new PanicState();
     public PreparationState preparationState = new PreparationState();
@@ -29,6 +29,7 @@ public class NPCStateMachine : MonoBehaviour
         else
         {
             currentState = roamState;
+            SetStateName();
             currentState.EnterState(this);
         }
     }
@@ -39,32 +40,33 @@ public class NPCStateMachine : MonoBehaviour
         if (currentState == null && npc.agent != null)
         {
             currentState = roamState;
-            try { currentState.EnterState(this); }
-            catch { return; }
+            SetStateName();
+            currentState.EnterState(this);
         }
-        else if (currentState != null)
-        {
-            try { currentState.UpdateState(this); }
-            catch { return; }
-
-            if (currentState == roamState)
-                currentStateName = "Roam";
-            else if (currentState == panicState)
-                currentStateName = "Panic";
-            else if (currentState == preparationState)
-                currentStateName = "Preparation";
-            else if (currentState == fireFightingState)
-                currentStateName = "Fire Fighting";
-            else if (currentState == evacuateState)
-                currentStateName = "Evacuate";
-            else if (currentState == rollState)
-                currentStateName = "Roll";
-        }
+        
+        if (currentState != null) currentState.UpdateState(this);
     }
 
     public void SwitchState(BaseState state)
     {
         currentState = state;
+        SetStateName();
         state.EnterState(this);
+    }
+
+    void SetStateName()
+    {
+        if (currentState == roamState)
+            currentStateName = "Roam";
+        else if (currentState == panicState)
+            currentStateName = "Panic";
+        else if (currentState == preparationState)
+            currentStateName = "Preparation";
+        else if (currentState == fireFightingState)
+            currentStateName = "Fire Fighting";
+        else if (currentState == evacuateState)
+            currentStateName = "Evacuate";
+        else if (currentState == rollState)
+            currentStateName = "Roll";
     }
 }

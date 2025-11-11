@@ -30,8 +30,6 @@ public class PanicState : BaseState
     {
         panicTimer += Time.deltaTime;
 
-        List<Node> newPath = new List<Node>();
-
         if (npc.isHalted() || npc.hasReachedTarget())
         {
             float angle = Random.Range(0, 360) * Mathf.Deg2Rad;

@@ -93,7 +93,8 @@ public class LevelManager : MonoBehaviour
 		{
 			index = Random.Range(0, characterSpawnPoints.Count);
 
-			Instantiate(npcPrefab, characterSpawnPoints[index].position, characterSpawnPoints[index].rotation);
+			NPC npc = Instantiate(npcPrefab, characterSpawnPoints[index].position, characterSpawnPoints[index].rotation);
+			fireManager.npcStateMachines.Add(npc.GetComponent<NPCStateMachine>());
 			characterSpawnPoints.RemoveAt(index);
 		}
 	}

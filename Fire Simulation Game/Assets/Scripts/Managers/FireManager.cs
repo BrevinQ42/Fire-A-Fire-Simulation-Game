@@ -47,6 +47,8 @@ public class FireManager : MonoBehaviour
 		ongoingFire = null;
 		isPlayerSuccessful = false;
 
+		if (npcStateMachines.Count < 2) npcStateMachines = new List<NPCStateMachine>();
+
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -92,14 +94,7 @@ public class FireManager : MonoBehaviour
 					ongoingFire.isOnPan = true;
 				}
 				else
-				{
-					if (index < 6)
-					{
-						int typeIndex = Random.Range(0, FireTypes.Count);
-						ongoingFire.type = FireTypes[typeIndex];
-					}
-					else ongoingFire.type = "Class A";
-				}
+					ongoingFire.type = "Class A";
 			}
 
 			ongoingFire.Toggle(true);
@@ -125,6 +120,12 @@ public class FireManager : MonoBehaviour
 
 			isPlayerSuccessful = true;
 		}
+
+		if (Input.GetKeyDown(KeyCode.T))
+        {
+        	foreach (NPCStateMachine sm in npcStateMachines)
+            	Debug.Log (sm.currentState + " / " + sm.npc.agent + " => " + (sm.currentState == null && sm.npc.agent != null));
+        }
 	}
 
 	public void AddSpawnPoint(Transform spawnPoint, bool isDuplicate)
