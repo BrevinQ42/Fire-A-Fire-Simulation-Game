@@ -53,25 +53,29 @@ public class RoamState : BaseState
             {
                 timeBeforeNextAction -= Time.deltaTime;
                 //Idle Animation Stuff
-                if (tasksList.GetChild(taskIndex).name == "Laptop")
+                try
                 {
-                    npc.isUsingLaptop = true;
-                }
+                    if (tasksList.GetChild(taskIndex).name == "Laptop")
+                    {
+                        npc.isUsingLaptop = true;
+                    }
 
-                if (tasksList.GetChild(taskIndex).name == "Sleep")
-                {
-                    npc.isSleeping = true;
-                }
+                    if (tasksList.GetChild(taskIndex).name == "Sleep")
+                    {
+                        npc.isSleeping = true;
+                    }
 
-                if (tasksList.GetChild(taskIndex).name == "Watch TV")
-                {
-                    npc.isWatchingTV = true;
-                }
+                    if (tasksList.GetChild(taskIndex).name == "Watch TV")
+                    {
+                        npc.isWatchingTV = true;
+                    }
 
-                if (tasksList.GetChild(taskIndex).name == "Cook")
-                {
-                    npc.isCooking = true;
+                    if (tasksList.GetChild(taskIndex).name == "Cook")
+                    {
+                        npc.isCooking = true;
+                    }
                 }
+                catch {}
             }
             else
             {
