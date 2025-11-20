@@ -15,26 +15,23 @@ public class Door : MonoBehaviour
     public Quaternion closedRotation;
     public Quaternion openRotation;
 
-    public Coroutine moveCoroutine;
-
     public GameObject textName;
     public bool lookedAt;
     public PlayerController playerController;
-    
-    // Start is called before the first frame update
+    public Transform openTargetPosition;
+
     void Start()
     {
         closedPosition = transform.position;
-        openPosition = new Vector3(19.0f, -0.3f, -22.1f);
-
         closedRotation = transform.rotation;
-        openRotation = Quaternion.Euler(0, 270, 0);
+
+        openPosition = openTargetPosition.position;
+        openRotation = transform.rotation * Quaternion.Euler(0, 270, 0);
 
         lookedAt = false;
         textName = GetComponentInChildren<TextMesh>().gameObject;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (isOpen)
@@ -50,16 +47,9 @@ public class Door : MonoBehaviour
             textName.GetComponent<TextMesh>().text = "[E] to open door";
         }
 
-        if (lookedAt == false)
-        {
-            textName.SetActive(false);
-        }
-        if (lookedAt == true)
-        {
-            textName.SetActive(true);
-        }
+        textName.SetActive(lookedAt);
     }
-    
+
     public void toggleDoor()
     {
         isOpen = !isOpen;
