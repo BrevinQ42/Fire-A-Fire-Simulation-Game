@@ -20,17 +20,22 @@ public class FryingPan : MonoBehaviour
     {
         if (other.CompareTag(npcTag))
         {
-            npc = other.GetComponent<NPC>();
+            npc = other.GetComponentInParent<NPC>();
         }
     }
 
+
     private void OnTriggerStay(Collider other)
     {
-        if (rice != null && npc != null && npc.isCooking == true)
+        if (other.CompareTag(npcTag))
         {
-            rice.SetActive(true);
+            if (npc != null && npc.isCooking)
+            {
+                rice.SetActive(true);
+            }
         }
     }
+
 
     private void OnTriggerExit(Collider other)
     {
