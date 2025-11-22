@@ -171,9 +171,22 @@ public class NPC : MonoBehaviour
     public void GoTo(Vector3 target, float speed)
     {
         Debug.Log("Moving to " + target);
+        GetComponent<NavMeshAgent>().enabled = true;
+        GetComponent<Collider>().enabled = true;
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+        agent.updateRotation = true;
 
         agent.speed = speed;
         agent.SetDestination(target);
+    }
+
+    public void WarpTo(Vector3 target)
+    {
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+        GetComponent<NavMeshAgent>().enabled = false;
+        GetComponent<Collider>().enabled = false;
+        agent.updateRotation = false;
+        agent.Warp(target);
     }
 
     public bool isHalted()
