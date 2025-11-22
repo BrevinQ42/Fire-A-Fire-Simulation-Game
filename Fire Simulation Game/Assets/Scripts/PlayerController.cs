@@ -737,7 +737,7 @@ public class PlayerController : MonoBehaviour
                     pail.closeProximityValue = closeProximityValue;
                     pail.playerCamera = transform.GetChild(0);
                     hitTransform.SetPositionAndRotation(
-                        transform.position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
+                        transform.position + transform.forward + transform.right * 0.7f + transform.up * 0.65f, 
                         transform.rotation);
                 }
                 else if (extinguisher)
@@ -757,7 +757,7 @@ public class PlayerController : MonoBehaviour
                     notificationSystem.displayNotification();
 
                     hitTransform.SetPositionAndRotation(
-                        transform.position + transform.forward + transform.right * 0.7f - transform.up * 0.15f, 
+                        transform.position + transform.forward + transform.right * 0.7f + transform.up * 0.65f, 
                         transform.rotation);
                 }
                 else
@@ -768,10 +768,9 @@ public class PlayerController : MonoBehaviour
                         notificationSystem.disableAfterTimer = true;
                         notificationSystem.disableTimer = 6.0f;
                         notificationSystem.displayNotification();
-                        hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
                     }
 
-                    hitTransform.SetPositionAndRotation(transform.position + transform.forward, transform.rotation);
+                    hitTransform.SetPositionAndRotation(transform.position + transform.forward + transform.up * 0.8f, transform.rotation);
                 }
 
                 heldObject = hitTransform.GetComponent<GrabbableObject>();
