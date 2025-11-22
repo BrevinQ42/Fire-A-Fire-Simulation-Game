@@ -88,7 +88,7 @@ public class TutorialManager : MonoBehaviour
 		yield return new WaitForSeconds(3.5f);
 
 		ongoingFire = Instantiate(firePrefab, fireLocation + new Vector3(0f,0f,1.5f), Quaternion.identity).GetComponent<Fire>();
-		ongoingFire.type = "UNSTOPPABLE";
+		ongoingFire.SetType("UNSTOPPABLE");
 
 		yield return new WaitUntil(() => ongoingFire.type.Equals("UNSTOPPABLE"));
 		ongoingFire.Toggle(true);
@@ -122,9 +122,9 @@ public class TutorialManager : MonoBehaviour
 	public void SetupFireType(string type)
 	{
 		fireType = type;
-		ongoingFire.type = fireType;
+		ongoingFire.SetType(fireType);
 
-		string message = "This is a " + ongoingFire.type + " fire.\nFigure out which of these can put it out.";
+		string message = "This is a " + fireType + " fire.\nFigure out which of these can put it out.";
 		tutorialNotifSystem.notificationMessage = message;
 		tutorialNotifSystem.disableAfterTimer = false;
 		tutorialNotifSystem.displayNotification();

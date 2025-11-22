@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player Components")]
     private Rigidbody rb;
-    private Transform cameraTransform;
+    [SerializeField] private Transform cameraTransform;
 
     [Header("Player Info")]
     public string currentState;
@@ -492,20 +492,20 @@ public class PlayerController : MonoBehaviour
 
     void ConfigureReferences()
     {
-        levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
-        
+        try
+        {
+            GameObject lm = GameObject.Find("LevelManager");
+            levelManager = lm.GetComponent<LevelManager>();
+            GameObject fm = GameObject.Find("FireManager");
+            fireManager = fm.GetComponent<FireManager>();
+        }
+        catch { Debug.Log("Tutorial"); }
+
         winScreen = GameObject.Find("WinScreen").GetComponent<WinScreen>();
         winScreen.gameObject.SetActive(false);
 
         notificationSystem = GameObject.Find("MainPanel").GetComponent<NotificationTriggerEvent>();
         noseNotificationSystem = GameObject.Find("NoseIcon").GetComponent<NoseNotification>();
-
-        try
-        {
-            GameObject fm = GameObject.Find("FireManager");
-            fireManager = fm.GetComponent<FireManager>();
-        }
-        catch { Debug.Log("Tutorial"); }
 
         mouseSensText = GameObject.Find("MouseSensText").GetComponent<TextMeshProUGUI>();
     }
@@ -1037,6 +1037,8 @@ public class PlayerController : MonoBehaviour
                 isOnFire = true;
             }
         }
+        else if (collision.collider.name.Equals("Court"))
+            collidedWith = collision.collider;
     }
 
     private void OnCollisionExit(Collision collision)
