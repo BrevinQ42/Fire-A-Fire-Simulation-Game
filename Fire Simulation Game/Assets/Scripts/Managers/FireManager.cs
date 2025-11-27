@@ -10,15 +10,12 @@ public class FireManager : MonoBehaviour
 	[SerializeField] private Fire firePrefab;
 	[SerializeField] private List<Transform> FireSpawnPoints;
 
-	[SerializeField] private int plugsCount;
-	[SerializeField] private int minPlugsCountForFire;
-
 	private List<string> FireTypes;
     public int index;
 
     public float timeBeforeFire;
 	public bool isFireOngoing;
-	private Fire ongoingFire;
+	public Fire ongoingFire;
 	public bool isPlayerSuccessful;
 
 	public List<NPCStateMachine> npcStateMachines;
@@ -27,17 +24,8 @@ public class FireManager : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip helpAFireClip;
 
-	public NPC npc;
-
     void Start()
 	{
-		plugsCount = 0;
-
-		foreach (Transform spawnPoint in FireSpawnPoints)
-		{
-			if (spawnPoint.GetComponent<ElectricPlug>()) plugsCount++;
-		}
-
 		FireTypes = new List<string>{"Electrical", "Grease", "Class A", "Class A"};
 
 		timeBeforeFire = (float) Random.Range(45, 76);
@@ -57,15 +45,6 @@ public class FireManager : MonoBehaviour
 		if (timeBeforeFire > 0.0f) timeBeforeFire -= Time.deltaTime;
 		else if (!isFireOngoing)
 		{
-			if (plugsCount < minPlugsCountForFire)
-			{
-				foreach(ElectricPlug plug in FindObjectsOfType<ElectricPlug>())
-				{
-					if (FireSpawnPoints.Contains(plug.transform))
-						FireSpawnPoints.Remove(plug.transform);
-				}
-			}
-
 			index = Random.Range(0, FireSpawnPoints.Count);
 			Transform spawnTransform = FireSpawnPoints[index];
 
@@ -87,14 +66,14 @@ public class FireManager : MonoBehaviour
 			{
 				ongoingFire = Instantiate(firePrefab, spawnPoint, Quaternion.identity).GetComponent<Fire>();
 
-				if (spawnTransform.GetComponent<ElectricPlug>()) ongoingFire.type = "Electrical";
+				if (spawnTransform.GetComponent<ElectricPlug>()) ongoingFire.SetType("Electrical");
 				else if (spawnTransform.name.Equals("Pan"))
 				{
-					ongoingFire.type = "Grease";
+					ongoingFire.SetType("Grease");
 					ongoingFire.isOnPan = true;
 				}
 				else
-					ongoingFire.type = "Class A";
+					ongoingFire.SetType("Class A");
 			}
 
 			ongoingFire.Toggle(true);
@@ -133,8 +112,6 @@ public class FireManager : MonoBehaviour
 		if (!isFireOngoing)
 		{
 			FireSpawnPoints.Add(spawnPoint);
-
-			if (spawnPoint.GetComponent<ElectricPlug>() && !isDuplicate) plugsCount++;
 		}
 	}
 
@@ -143,9 +120,6 @@ public class FireManager : MonoBehaviour
 		if (!isFireOngoing)
 		{
 			bool isRemoved = true;
-
-			if (FireSpawnPoints.Contains(spawnPoint) && spawnPoint.GetComponent<ElectricPlug>())
-				plugsCount--;
 
 			while(isRemoved)
 			{

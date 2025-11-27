@@ -10,8 +10,6 @@ public class PreparationState : BaseState
 
     private Transform nearestObject;
 
-    private Transform houseExit;
-
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
@@ -30,8 +28,6 @@ public class PreparationState : BaseState
             npc.isRunning = true;
         }
 
-        houseExit = null;
-
         if (npc.heldObject)
         {
             nearestObject = GetNearestWaterSource();
@@ -42,35 +38,15 @@ public class PreparationState : BaseState
                 return;
             }
 
-            if (nearestObject.GetComponent<ObjectNamePopUp>().isOutside && !npc.currentLocation.name.Equals("Outside Floor"))
-            {
-                npc.SetStoppingDistance(0.01f);
-
-                houseExit = npc.currentLocation.GetChild(1).GetChild(0);
-                npc.GoTo(houseExit.position, speed);
-            }
-            else
-            {
-                npc.SetStoppingDistance(1.25f);
-                npc.GoTo(nearestObject.position, speed);
-            }
+            npc.SetStoppingDistance(1.25f);
+            npc.GoTo(nearestObject.position, speed);
         }
         else
         {
             nearestObject = GetNearestObject();
 
-            if (nearestObject.GetComponent<FireFightingObject>().isOutside && !npc.currentLocation.name.Equals("Outside Floor"))
-            {
-                npc.SetStoppingDistance(0.01f);
-
-                houseExit = npc.currentLocation.GetChild(1).GetChild(0);
-                npc.GoTo(houseExit.position, speed);
-            }
-            else
-            {
-                npc.SetStoppingDistance(2.0f);
-                npc.GoTo(nearestObject.position, speed);
-            }            
+            npc.SetStoppingDistance(2.0f);
+            npc.GoTo(nearestObject.position, speed);            
         }
     }
 
@@ -108,24 +84,6 @@ public class PreparationState : BaseState
 
         if (npc.hasReachedTarget())
         {
-            if (houseExit)
-            {
-                houseExit = null;
-
-                if (nearestObject.GetComponent<FireFightingObject>())
-                    npc.SetStoppingDistance(2.0f);
-                else
-                    npc.SetStoppingDistance(1.25f);
-
-                int areaMask = NavMesh.AllAreas;
-                areaMask -= 1 << NavMesh.GetAreaFromName("Walkable");
-                npc.agent.areaMask = areaMask;
-
-                npc.GoTo(nearestObject.position, speed);
-
-                return;
-            }
-
             npc.InteractWithObject(nearestObject);
 
             if (!npc.heldObject && nearestObject.GetComponent<Pail>())
@@ -141,21 +99,6 @@ public class PreparationState : BaseState
                 {
                     npc.InteractWithObject(nearestObject);
                     return;
-                }
-
-                if (nearestObject.GetComponent<ObjectNamePopUp>().isOutside && !npc.currentLocation.name.Equals("Outside Floor"))
-                {
-                    npc.SetStoppingDistance(0.01f);
-
-                    houseExit = npc.currentLocation.GetChild(1).GetChild(0);
-                    npc.GoTo(houseExit.position, speed);
-                }
-                else
-                {
-                    npc.SetStoppingDistance(1.25f);
-                    npc.GoTo(nearestObject.position, speed);
-
-                    houseExit = null;
                 }
 
                 npc.GoTo(nearestObject.position, speed);
@@ -202,15 +145,23 @@ public class PreparationState : BaseState
 
         Transform NonFlammable = null;
 
-        foreach(FireFightingObject obj in npc.currentLocation.parent.GetChild(5).GetComponentsInChildren<FireFightingObject>())
+        foreach(GameObject thing in GameObject.FindGameObjectsWithTag("Grabbable"))
         {
-            if (npc.blacklist.Contains(obj.GetObjectType()) || obj.transform.parent.GetComponent<PlayerController>())
+            if (thing.GetComponent<ElectricPlug>()) continue;
+
+            FireFightingObject obj = thing.GetComponent<FireFightingObject>();
+            if (obj == null) continue;
+
+            if (npc.blacklist.Contains(obj.GetObjectType()))
             {
                 if (obj.GetObjectType().Equals("NonFlammableObject"))
                     NonFlammable = obj.transform;
 
                 continue;
             }
+
+            if (obj.transform.parent && (obj.transform.parent.GetComponent<PlayerController>() || obj.transform.parent.GetComponent<NPC>()))
+                continue;
 
             float newDistance = Vector3.Distance(obj.transform.position, npc.transform.position);
 
@@ -231,17 +182,16 @@ public class PreparationState : BaseState
         Transform nearest = null;
         float minDistance = -1.0f;
 
-        foreach(ObjectNamePopUp obj in npc.currentLocation.parent.GetChild(5).GetComponentsInChildren<ObjectNamePopUp>())
+        foreach(GameObject thing in GameObject.FindGameObjectsWithTag("WaterSource"))
         {
-            if (obj.CompareTag("WaterSource"))
-            {
-                float newDistance = Vector3.Distance(obj.transform.position, npc.transform.position);
+            ObjectNamePopUp obj = thing.GetComponent<ObjectNamePopUp>();
 
-                if (minDistance == -1.0f || newDistance < minDistance)
-                {
-                    nearest = obj.transform;
-                    minDistance = newDistance;
-                }
+            float newDistance = Vector3.Distance(obj.transform.position, npc.transform.position);
+
+            if (minDistance == -1.0f || newDistance < minDistance)
+            {
+                nearest = obj.transform;
+                minDistance = newDistance;
             }
         }
 

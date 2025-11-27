@@ -44,7 +44,7 @@ public class RollState : BaseState
             npc.NPCAnimator.SetBool("isRolling", false);
             
             if (npc.coroutinePlaying == false)
-                stateMachine.SwitchState(npc.lastState);
+                stateMachine.SwitchState(stateMachine.evacuateState);
         }
     }
 }

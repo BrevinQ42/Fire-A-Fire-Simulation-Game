@@ -14,9 +14,7 @@ public class Fire : MonoBehaviour
     [Header("Characteristics")]
     public float intensityValue;
     private bool isGrowing;
-    [SerializeField] private float growingSpeed;
-
-    private float updateThreshold;
+    public float growingSpeed;
 
     public string type;
     public bool isOnPan;
@@ -48,8 +46,6 @@ public class Fire : MonoBehaviour
         else
             growingSpeed = 0.01f;
 
-        updateThreshold = 0.5f;
-
         isOnPan = false;
 
         audioSource = GetComponent<AudioSource>();
@@ -75,14 +71,6 @@ public class Fire : MonoBehaviour
         if (intensityValue < 6)
         {
             audioSource.volume = intensityValue / 10;
-        }
-
-        if (intensityValue >= updateThreshold)
-        {
-            updateThreshold += 1.0f;
-            
-            foreach(NPC npc in FindObjectsOfType<NPC>())
-                npc.currentLocation.GetComponent<NavMeshSurface>().BuildNavMesh();
         }
     }
 
@@ -110,7 +98,7 @@ public class Fire : MonoBehaviour
                 if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * intensityValue;
                 else newScale = transform.localScale * intensityValue / (intensityValue - amt);
 
-                growingSpeed *= 1.001f;
+                growingSpeed *= 1.0001f;
             }
             else
             {

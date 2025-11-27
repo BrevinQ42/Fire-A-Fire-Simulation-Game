@@ -274,18 +274,10 @@ public class NPC : MonoBehaviour
         else
         {
             Transform other = collision.gameObject.transform;
-            if (other.parent && other.parent.GetComponent<NavMeshSurface>())
+            if (other.parent && other.parent.parent && other.parent.parent.CompareTag("House"))
             {
                 if (currentLocation != other.parent)
                 {
-                    other.parent.GetComponent<NavMeshSurface>().BuildNavMesh();
-
-                    if (agent == null) agent = gameObject.AddComponent<NavMeshAgent>();
-
-                    int areaMask = NavMesh.AllAreas;
-                    areaMask -= 1 << NavMesh.GetAreaFromName("Outside");
-                    agent.areaMask = areaMask;
-                    
                     currentLocation = other.parent;
                     lastHouseLocation = currentLocation;
 
@@ -297,15 +289,6 @@ public class NPC : MonoBehaviour
                         (other.name.Equals("Outside Floor") || other.name.Equals("Court")) )
             {
                 currentLocation = other;
-
-                if (other.GetComponent<NavMeshSurface>())
-                {
-                    if (agent == null) agent = gameObject.AddComponent<NavMeshAgent>();
-
-                    int areaMask = NavMesh.AllAreas;
-                    areaMask -= 1 << NavMesh.GetAreaFromName("Walkable");
-                    agent.areaMask = areaMask;
-                }
 
                 if (heldObject)
                     heldObject.isOutside = true;

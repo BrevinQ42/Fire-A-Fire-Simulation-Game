@@ -27,16 +27,29 @@ public class LevelManager : MonoBehaviour
 	[SerializeField] private GameObject OutsideFloor;
 	public int typeIndex;
 	public bool isClassCExtinguisher;
+	private float updateThreshold;
 	
 	void Start()
 	{
 		OutsideFloor.GetComponent<NavMeshSurface>().BuildNavMesh();
+
+		updateThreshold = 0.5f;
 
 		extinguisherTypes = new List<string>{"Class A", "Class C", "Class C", "Class K", "Class K"};
 
 		RandomizeExtinguishers();
 		RandomizeCandles();
 		RandomizeCharacterSpawns();
+	}
+
+	void Update()
+	{
+		if (fireManager && fireManager.ongoingFire && fireManager.ongoingFire.intensityValue >= updateThreshold)
+		{
+			OutsideFloor.GetComponent<NavMeshSurface>().BuildNavMesh();
+
+			updateThreshold += 1.0f;
+		}
 	}
 
 	void RandomizeExtinguishers()
@@ -94,6 +107,9 @@ public class LevelManager : MonoBehaviour
 			index = Random.Range(0, characterSpawnPoints.Count);
 
 			NPC npc = Instantiate(npcPrefab, characterSpawnPoints[index].position, characterSpawnPoints[index].rotation);
+			npc.agent = npc.gameObject.AddComponent<NavMeshAgent>();
+			npc.agent.areaMask = (1 << NavMesh.GetAreaFromName("Walkable"));
+
 			fireManager.npcStateMachines.Add(npc.GetComponent<NPCStateMachine>());
 			characterSpawnPoints.RemoveAt(index);
 		}

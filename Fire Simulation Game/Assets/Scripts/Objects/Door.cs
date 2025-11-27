@@ -53,5 +53,8 @@ public class Door : MonoBehaviour
     public void toggleDoor()
     {
         isOpen = !isOpen;
+
+        if (isOpen)
+            GetComponent<Collider>().enabled = false;
     }
 }

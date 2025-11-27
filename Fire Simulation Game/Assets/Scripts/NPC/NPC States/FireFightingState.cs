@@ -7,8 +7,6 @@ public class FireFightingState : BaseState
     private NPC npc;
     private float speed;
 
-    private Transform houseExit;
-
     private FireExtinguisher lastHeldExtinguisher;
     private bool isExtinguisherEffective;
 
@@ -33,18 +31,8 @@ public class FireFightingState : BaseState
         lastHeldExtinguisher = null;
         isExtinguisherEffective = false;
 
-        if (npc.currentLocation.name.Equals("Outside Floor"))
-        {
-            houseExit = npc.lastHouseLocation.GetChild(1).GetChild(0);
-            npc.SetStoppingDistance(0.01f);
-            npc.GoTo(houseExit.position, speed);
-        }
-        else
-        {
-            houseExit = null;
-            npc.SetStoppingDistance(stateMachine.ongoingFire.intensityValue);
-            npc.GoTo(stateMachine.ongoingFire.transform.position, speed);
-        }
+        npc.SetStoppingDistance(stateMachine.ongoingFire.intensityValue / 2.0f + stateMachine.ongoingFire.intensityValue * 2.0f);
+        npc.GoTo(stateMachine.ongoingFire.transform.position, speed);
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -95,14 +83,6 @@ public class FireFightingState : BaseState
 
         if (npc.hasReachedTarget())
         {
-            if (houseExit)
-            {
-                npc.SetStoppingDistance(stateMachine.ongoingFire.intensityValue);
-                npc.GoTo(stateMachine.ongoingFire.transform.position, speed);
-                houseExit = null;
-                return;
-            }
-
             bool isStillHeld;
             npc.heldObject.Use(npc.throwForce, out isStillHeld);
 
@@ -145,7 +125,10 @@ public class FireFightingState : BaseState
                         npc.blacklist.Add(npc.heldObject.GetObjectType());
 
                         if (bucket) // fire is most likely pretty big if they used a bucket full of water wrongly
+                        {
+                            npc.hasFailedFireFighting = true;
                             stateMachine.SwitchState(stateMachine.evacuateState);
+                        }
 
                         npc.heldObject.Deattach();
                         npc.heldObject = null;

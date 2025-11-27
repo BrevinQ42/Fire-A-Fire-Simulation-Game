@@ -13,6 +13,8 @@ public class RoamState : BaseState
 
     private float timeBeforeNextAction;
 
+    private Vector3 positionBeforeWarp;
+
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
@@ -23,6 +25,8 @@ public class RoamState : BaseState
         tasksList = null;
 
         timeBeforeNextAction = 0;
+
+        positionBeforeWarp = Vector3.one * 100;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -36,13 +40,16 @@ public class RoamState : BaseState
         if (stateMachine.ongoingFire != null &&
             canNpcSenseFire(stateMachine.ongoingFire))
         {
-            if (Random.Range(0, 2) == 0)
-            {
-                npc.isPanicking = true;
-                stateMachine.SwitchState(stateMachine.panicState);
-            }
-            else
-                stateMachine.SwitchState(stateMachine.preparationState);
+            if (npc.isSleeping && positionBeforeWarp.x != 100)
+                npc.WarpTo(positionBeforeWarp);
+
+            //Idle Animation Stuff
+            npc.isUsingLaptop = false;
+            npc.isSleeping = false;
+            npc.isWatchingTV= false;
+            npc.isCooking = false;
+
+            stateMachine.SwitchState(stateMachine.alertedState);
         }
 
         if (timeBeforeNextAction > 0)
@@ -64,6 +71,8 @@ public class RoamState : BaseState
         else if (npc.hasReachedTarget())
         {
             timeBeforeNextAction = Random.Range(25, 35);
+
+            positionBeforeWarp = npc.transform.position;
 
             npc.WarpTo(tasksList.GetChild(taskIndex).position);
             npc.transform.rotation = tasksList.GetChild(taskIndex).rotation;

@@ -8,6 +8,7 @@ public class NPCStateMachine : MonoBehaviour
     public string currentStateName;
     public BaseState currentState;
     public RoamState roamState = new RoamState();
+    public AlertedState alertedState = new AlertedState();
     public PanicState panicState = new PanicState();
     public PreparationState preparationState = new PreparationState();
     public FireFightingState fireFightingState = new FireFightingState();
@@ -58,6 +59,8 @@ public class NPCStateMachine : MonoBehaviour
     {
         if (currentState == roamState)
             currentStateName = "Roam";
+        else if (currentState == alertedState)
+            currentStateName = "Alerted";
         else if (currentState == panicState)
             currentStateName = "Panic";
         else if (currentState == preparationState)
@@ -68,5 +71,7 @@ public class NPCStateMachine : MonoBehaviour
             currentStateName = "Evacuate";
         else if (currentState == rollState)
             currentStateName = "Roll";
+        else
+            currentStateName = "Null";
     }
 }
