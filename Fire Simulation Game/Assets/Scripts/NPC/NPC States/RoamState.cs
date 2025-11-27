@@ -18,16 +18,20 @@ public class RoamState : BaseState
         npc = stateMachine.npc;
         speed = npc.walkingSpeed;
 
-        tasksList = null;
-        GetTask();
+        npc.SetStoppingDistance(0.015f);
 
-        timeBeforeNextAction = Random.Range(25, 35);
+        tasksList = null;
+
+        timeBeforeNextAction = 0;
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
-        if (tasksList == null) GetTask();
-        else return;
+        if (tasksList == null)
+        {
+            GetFirstTask();
+            return;
+        }
 
         if (stateMachine.ongoingFire != null &&
             canNpcSenseFire(stateMachine.ongoingFire))
@@ -41,56 +45,53 @@ public class RoamState : BaseState
                 stateMachine.SwitchState(stateMachine.preparationState);
         }
 
-        if (npc.hasReachedTarget())
+        if (timeBeforeNextAction > 0)
         {
-            try
-            {
-                npc.transform.rotation = tasksList.GetChild(taskIndex).rotation;
-            }
-            catch {}
+            timeBeforeNextAction -= Time.deltaTime;
 
-            if (timeBeforeNextAction > 0)
-            {
-                timeBeforeNextAction -= Time.deltaTime;
-                //Idle Animation Stuff
-                try
-                {
-                    if (tasksList.GetChild(taskIndex).name == "Laptop")
-                    {
-                        npc.isUsingLaptop = true;
-                    }
-
-                    if (tasksList.GetChild(taskIndex).name == "Sleep")
-                    {
-                        npc.isSleeping = true;
-                    }
-
-                    if (tasksList.GetChild(taskIndex).name == "Watch TV")
-                    {
-                        npc.isWatchingTV = true;
-                    }
-
-                    if (tasksList.GetChild(taskIndex).name == "Cook")
-                    {
-                        npc.isCooking = true;
-                    }
-                }
-                catch {}
-            }
-            else
+            if (timeBeforeNextAction <= 0)
             {
                 taskIndex = (taskIndex + Random.Range(1, tasksCount)) % tasksCount;
                 npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
 
-                timeBeforeNextAction = Random.Range(25, 35);
                 //Idle Animation Stuff
                 npc.isUsingLaptop = false;
                 npc.isSleeping = false;
                 npc.isWatchingTV= false;
                 npc.isCooking = false;
             }
-
         }
+        else if (npc.hasReachedTarget())
+        {
+            timeBeforeNextAction = Random.Range(25, 35);
+
+            npc.WarpTo(tasksList.GetChild(taskIndex).position);
+            npc.transform.rotation = tasksList.GetChild(taskIndex).rotation;
+
+            //Idle Animation Stuff
+            if (tasksList.GetChild(taskIndex).name == "Laptop")
+            {
+                npc.isUsingLaptop = true;
+            }
+
+            if (tasksList.GetChild(taskIndex).name == "Sleep")
+            {
+                npc.isSleeping = true;
+            }
+
+            if (tasksList.GetChild(taskIndex).name == "Watch TV")
+            {
+                npc.isWatchingTV = true;
+            }
+
+            if (tasksList.GetChild(taskIndex).name == "Cook")
+            {
+                npc.isCooking = true;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+            Debug.Log(timeBeforeNextAction);
     }
 
     private bool canNpcSenseFire(Fire fire)
@@ -98,7 +99,7 @@ public class RoamState : BaseState
         return Vector3.Distance(npc.transform.position, fire.transform.position) <= fire.intensityValue * 7.5f;
     }
 
-    private void GetTask()
+    private void GetFirstTask()
     {
         try
         {
@@ -106,7 +107,6 @@ public class RoamState : BaseState
             tasksCount = tasksList.childCount;
             taskIndex = Random.Range(0, tasksCount);
 
-            npc.SetStoppingDistance(0.01f);
             npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
         }
         catch {}
