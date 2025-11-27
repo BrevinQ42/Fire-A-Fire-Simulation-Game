@@ -15,7 +15,6 @@ public class Fire : MonoBehaviour
     public float intensityValue;
     private bool isGrowing;
     [SerializeField] private float growingSpeed;
-    private float maxGrowingSpeed;
 
     private float updateThreshold;
 
@@ -44,8 +43,10 @@ public class Fire : MonoBehaviour
 
         transform.localScale = Vector3.one * intensityValue;
 
-        growingSpeed = 0.05f;
-        maxGrowingSpeed = 0.25f;
+        if (type.Equals("Class A"))
+            growingSpeed = 0.005f;
+        else
+            growingSpeed = 0.01f;
 
         updateThreshold = 0.5f;
 
@@ -109,7 +110,7 @@ public class Fire : MonoBehaviour
                 if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * intensityValue;
                 else newScale = transform.localScale * intensityValue / (intensityValue - amt);
 
-                growingSpeed = Math.Min(growingSpeed + 0.00001f, maxGrowingSpeed);
+                growingSpeed *= 1.001f;
             }
             else
             {
@@ -146,6 +147,18 @@ public class Fire : MonoBehaviour
     public void Toggle(bool mustGrow)
     {
         isGrowing = mustGrow;
+    }
+
+    public void SetType(string type)
+    {
+        this.type = type;
+
+        if (type.Equals("Class A"))
+            growingSpeed = 0.005f;
+        else if (type.Equals("UNSTOPPABLE"))
+            growingSpeed = 0.05f;
+        else
+            growingSpeed = 0.01f;
     }
 
     void OnTriggerEnter(Collider collider)
@@ -221,7 +234,6 @@ public class Fire : MonoBehaviour
 
                     if (type.Equals("Electrical"))
                     {
-                        maxGrowingSpeed = 0.5f;
                         AffectFire(obj.fireFightingValue);
 
                         if (isEligibleForNotif)
@@ -311,8 +323,21 @@ public class Fire : MonoBehaviour
                 }
             }
 
-            else if (collider.CompareTag("Outlet") && !type.Equals("Electrical"))
+            // else if (collider.CompareTag("Foam"))
+                // growingSpeed += 0.0175f;
+            // else if (collider.CompareTag("Plastic"))
+                // growingSpeed += 0.015f;
+            // else if (collider.CompareTag("Cardboard"))
+                // growingSpeed += 0.0125f;
+            else if (collider.CompareTag("Outlet")) // || collider.CompareTag("Rubber")
+            {
                 type = "Electrical";
+                growingSpeed += 0.01f;
+            }
+            // else if (collider.CompareTag("Wood"))
+                // growingSpeed += 0.005f;
+            
+            // else if metal or concrete, no increase
         }
     }
 }
