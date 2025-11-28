@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLocation: {fileID: 0}
+  lastHouseLocation: {fileID: 0}
   agent: {fileID: 0}
   evacuationLocation: {fileID: 0}
   heldObject: {fileID: 0}
@@ -219,6 +220,10 @@ MonoBehaviour:
   fireOnDoor: 0
   isRunning: 0
   isInPanicState: 0
+  isUsingLaptop: 0
+  isSleeping: 0
+  isWatchingTV: 0
+  isCooking: 0
   NPCAnimator: {fileID: 0}
 --- !u!95 &6341099517726330055
 Animator:

@@ -274,7 +274,7 @@ public class NPC : MonoBehaviour
         else
         {
             Transform other = collision.gameObject.transform;
-            if (other.parent && other.parent.parent && other.parent.parent.CompareTag("House"))
+            if (other.parent && !other.parent.name.Equals("Roof") && other.parent.parent && other.parent.parent.CompareTag("House"))
             {
                 if (currentLocation != other.parent)
                 {

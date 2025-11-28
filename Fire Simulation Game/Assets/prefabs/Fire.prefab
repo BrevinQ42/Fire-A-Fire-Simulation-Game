@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.15, y: 0.05, z: 1.6}
-  m_LocalScale: {x: 0.5, y: 0.4, z: 0.5}
+  m_LocalScale: {x: 0.5, y: 0.40000004, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7816804803792113527}
@@ -78,6 +78,7 @@ MonoBehaviour:
   intensityValue: 0.49
   growingSpeed: 0
   type: 
+  isOnPan: 0
   audioSource: {fileID: 0}
   fireClip: {fileID: 8300000, guid: d75d40108f6342c4ea33f8d2e24f50d5, type: 3}
 --- !u!82 &7590818831878633105

@@ -41,9 +41,32 @@ public class AlertedState : BaseState
     private bool canNpcSeeFire(Fire fire)
     {
         Vector3 forwardVector = fire.transform.position - npc.position;
-        Vector3 dirToHighestPoint = forwardVector + Vector3.up * fire.intensityValue / 2.0f;
-        
-        return !Physics.Raycast(npc.position, forwardVector, forwardVector.magnitude, layerMask) ||
-                !Physics.Raycast(npc.position, dirToHighestPoint, dirToHighestPoint.magnitude, layerMask);
+        Vector3 dirToHighestPoint = forwardVector + Vector3.up * fire.intensityValue * 1.5f;
+
+        bool noObstructionsFound = true;
+
+        if (Physics.Raycast(npc.position, forwardVector, forwardVector.magnitude, layerMask))
+        {
+            Debug.DrawRay(npc.position, forwardVector, Color.red);
+            noObstructionsFound = false;
+        }
+        else
+        {
+            Debug.DrawRay(npc.position, forwardVector, Color.yellow);
+            noObstructionsFound = true;
+        }
+
+        if (Physics.Raycast(npc.position, dirToHighestPoint, dirToHighestPoint.magnitude, layerMask))
+        {
+            Debug.DrawRay(npc.position, dirToHighestPoint, Color.red);
+            noObstructionsFound = noObstructionsFound || false;
+        }
+        else
+        {
+            Debug.DrawRay(npc.position, dirToHighestPoint, Color.yellow);
+            noObstructionsFound = noObstructionsFound || true;
+        }
+
+        return noObstructionsFound;
     }
 }

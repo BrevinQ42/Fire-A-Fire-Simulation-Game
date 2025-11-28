@@ -98,7 +98,7 @@ public class Fire : MonoBehaviour
                 if (transform.localScale == Vector3.zero) newScale = transform.localScale + Vector3.one * intensityValue;
                 else newScale = transform.localScale * intensityValue / (intensityValue - amt);
 
-                growingSpeed *= 1.0001f;
+                growingSpeed *= 1.0005f;
             }
             else
             {
@@ -309,21 +309,39 @@ public class Fire : MonoBehaviour
                         notificationSystem.displayNotification();
                     }
                 }
+
+                return;
             }
 
-            // else if (collider.CompareTag("Foam"))
-                // growingSpeed += 0.0175f;
-            // else if (collider.CompareTag("Plastic"))
-                // growingSpeed += 0.015f;
-            // else if (collider.CompareTag("Cardboard"))
-                // growingSpeed += 0.0125f;
-            else if (collider.CompareTag("Outlet")) // || collider.CompareTag("Rubber")
+            if (collider.CompareTag("Foam"))
+            {
+                Debug.Log("Collided with Foam");
+
+                growingSpeed += 0.0175f;
+            }
+            else if (collider.CompareTag("Plastic"))
+            {
+                Debug.Log("Collided with Plastic");
+                
+                growingSpeed += 0.015f;
+            }
+            else if (collider.CompareTag("Cardboard"))
+            {
+                Debug.Log("Collided with Cardboard");
+
+                growingSpeed += 0.0125f;
+            }
+            else if (collider.CompareTag("Outlet"))
             {
                 type = "Electrical";
                 growingSpeed += 0.01f;
             }
-            // else if (collider.CompareTag("Wood"))
-                // growingSpeed += 0.005f;
+            else if (collider.CompareTag("Wood"))
+            {
+                Debug.Log("Collided with Wood");
+
+                growingSpeed += 0.005f;
+            }
             
             // else if metal or concrete, no increase
         }
