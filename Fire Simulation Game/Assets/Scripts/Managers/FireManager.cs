@@ -23,6 +23,7 @@ public class FireManager : MonoBehaviour
     //sound effect
     public AudioSource audioSource;
     public AudioClip helpAFireClip;
+	public AudioClip bellClip;
 
     void Start()
 	{
@@ -79,8 +80,16 @@ public class FireManager : MonoBehaviour
 			ongoingFire.Toggle(true);
 			isFireOngoing = true;
 
-			audioSource.clip = helpAFireClip;
-            audioSource.Play();
+			if (audioSource != null && bellClip != null)
+			{
+				audioSource.PlayOneShot(bellClip);
+			}
+
+			if (audioSource != null && helpAFireClip != null)
+			{
+				audioSource.clip = helpAFireClip;
+				audioSource.Play();
+			}
 
             notificationSystem.notificationMessage = "A fire has emerged! Identify the cause of the fire and put it out quickly!";
             notificationSystem.disableAfterTimer = true;
