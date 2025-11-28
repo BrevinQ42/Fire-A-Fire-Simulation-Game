@@ -18,6 +18,7 @@ public class NPCStateMachine : MonoBehaviour
     // MISC.
     public NPC npc;
     public Fire ongoingFire;
+    public bool hasBellRung;
 
     // Start is called before the first frame update
     void Start()

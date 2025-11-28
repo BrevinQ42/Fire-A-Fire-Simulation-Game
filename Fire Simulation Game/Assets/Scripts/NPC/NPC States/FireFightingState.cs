@@ -10,6 +10,8 @@ public class FireFightingState : BaseState
     private FireExtinguisher lastHeldExtinguisher;
     private bool isExtinguisherEffective;
 
+    private float proximity_value;
+
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
@@ -31,7 +33,9 @@ public class FireFightingState : BaseState
         lastHeldExtinguisher = null;
         isExtinguisherEffective = false;
 
-        npc.SetStoppingDistance(stateMachine.ongoingFire.intensityValue / 2.0f + stateMachine.ongoingFire.intensityValue * 2.0f);
+        proximity_value = stateMachine.ongoingFire.intensityValue / 2.0f;
+
+        npc.SetStoppingDistance(0.01f);
         npc.GoTo(stateMachine.ongoingFire.transform.position, speed);
     }
 
@@ -79,9 +83,15 @@ public class FireFightingState : BaseState
             stateMachine.SwitchState(stateMachine.rollState);
         }
 
+        proximity_value = stateMachine.ongoingFire.intensityValue / 2.0f + stateMachine.ongoingFire.growingSpeed;
+
+        npc.SetStoppingDistance(stateMachine.ongoingFire.intensityValue / 2.0f);
+        npc.GoTo(stateMachine.ongoingFire.transform.position, speed);
+
         bool isUsingExtinguisher = false;
 
-        if (npc.hasReachedTarget())
+        if (npc.hasReachedTarget() || isFireWithinRange(stateMachine.ongoingFire) ||
+            Vector3.Distance(stateMachine.ongoingFire.transform.position, npc.position) <= proximity_value)
         {
             bool isStillHeld;
             npc.heldObject.Use(npc.throwForce, out isStillHeld);
@@ -152,5 +162,17 @@ public class FireFightingState : BaseState
                 lastHeldExtinguisher.isBeingUsed = false;
             }
         }
+    }
+
+    bool isFireWithinRange(Fire fire)
+    {
+        Vector3 forwardVector = fire.transform.position - npc.position;
+
+        if (forwardVector.magnitude > proximity_value)
+            return false;
+
+        int layerMask =~ LayerMask.GetMask("Ignore Raycast");
+
+        return !Physics.Raycast(npc.position, forwardVector, forwardVector.magnitude, layerMask);
     }
 }

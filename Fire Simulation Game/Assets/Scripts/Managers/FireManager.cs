@@ -20,6 +20,8 @@ public class FireManager : MonoBehaviour
 
 	public List<NPCStateMachine> npcStateMachines;
 
+	private float timeBeforeBell;
+
     //sound effect
     public AudioSource audioSource;
     public AudioClip helpAFireClip;
@@ -37,6 +39,8 @@ public class FireManager : MonoBehaviour
 		isPlayerSuccessful = false;
 
 		if (npcStateMachines.Count < 2) npcStateMachines = new List<NPCStateMachine>();
+
+		timeBeforeBell = 5.0f;
 
         audioSource = GetComponent<AudioSource>();
     }
@@ -80,11 +84,6 @@ public class FireManager : MonoBehaviour
 			ongoingFire.Toggle(true);
 			isFireOngoing = true;
 
-			if (audioSource != null && bellClip != null)
-			{
-				audioSource.PlayOneShot(bellClip);
-			}
-
 			if (audioSource != null && helpAFireClip != null)
 			{
 				audioSource.clip = helpAFireClip;
@@ -107,6 +106,24 @@ public class FireManager : MonoBehaviour
             notificationSystem.displayNotification();
 
 			isPlayerSuccessful = true;
+		}
+
+		if (isFireOngoing && timeBeforeBell > 0.0f)
+		{
+			timeBeforeBell -= Time.deltaTime;
+
+			if (timeBeforeBell <= 0.0f)
+			{
+				if (audioSource != null && bellClip != null)
+				{
+					audioSource.PlayOneShot(bellClip);
+				}
+
+				foreach (NPCStateMachine sm in npcStateMachines)
+				{
+					sm.hasBellRung = true;
+				}
+			}
 		}
 
 		if (Input.GetKeyDown(KeyCode.T))

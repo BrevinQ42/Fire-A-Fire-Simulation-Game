@@ -82,7 +82,14 @@ public class PreparationState : BaseState
             stateMachine.SwitchState(stateMachine.rollState);
         }
 
-        if (npc.hasReachedTarget())
+        if ( nearestObject.parent &&
+            (nearestObject.GetComponent<PlayerController>() || nearestObject.GetComponent<NPC>()) )
+        {
+            nearestObject = GetNearestObject();
+        }
+
+        if (npc.hasReachedTarget() || canSeeObject(nearestObject) ||
+            Vector3.Distance(nearestObject.position, npc.position) <= 4.0f)
         {
             npc.InteractWithObject(nearestObject);
 
@@ -196,5 +203,17 @@ public class PreparationState : BaseState
         }
 
         return nearest;
+    }
+
+    bool canSeeObject(Transform obj)
+    {
+        Vector3 forwardVector = obj.transform.position - npc.position;
+
+        if (forwardVector.magnitude > 1.25f)
+            return false;
+
+        int layerMask =~ LayerMask.GetMask("Ignore Navmesh");
+
+        return !Physics.Raycast(npc.position, forwardVector, forwardVector.magnitude, layerMask);
     }
 }

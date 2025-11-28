@@ -33,6 +33,7 @@ public class EvacuateState : BaseState
     {
         if (npc.hasReachedTarget())
         {
+            npc.isRunning = false;
             return;
         }
         

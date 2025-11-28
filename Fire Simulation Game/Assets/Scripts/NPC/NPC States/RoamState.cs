@@ -38,7 +38,7 @@ public class RoamState : BaseState
         }
 
         if (stateMachine.ongoingFire != null &&
-            canNpcSenseFire(stateMachine.ongoingFire))
+            (canNpcSenseFire(stateMachine.ongoingFire) || stateMachine.hasBellRung))
         {
             if (npc.isSleeping && positionBeforeWarp.x != 100)
                 npc.WarpTo(positionBeforeWarp);

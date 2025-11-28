@@ -41,7 +41,7 @@ public class AlertedState : BaseState
     private bool canNpcSeeFire(Fire fire)
     {
         Vector3 forwardVector = fire.transform.position - npc.position;
-        Vector3 dirToHighestPoint = forwardVector + Vector3.up * fire.intensityValue * 1.5f;
+        Vector3 dirToHighestPoint = forwardVector + Vector3.up * fire.intensityValue * 2.0f;
 
         bool noObstructionsFound = true;
 
