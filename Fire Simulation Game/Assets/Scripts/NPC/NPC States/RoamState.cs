@@ -41,7 +41,13 @@ public class RoamState : BaseState
             (canNpcSenseFire(stateMachine.ongoingFire) || stateMachine.hasBellRung))
         {
             if (npc.isSleeping && positionBeforeWarp.x != 100)
+            {
+                Debug.Log(npc.transform.position.x + ", " + npc.transform.position.y + ", " + npc.transform.position.z +
+                            " warped to " + positionBeforeWarp.x + ", " + positionBeforeWarp.y + ", " + positionBeforeWarp.z);
                 npc.WarpTo(positionBeforeWarp);
+
+                positionBeforeWarp = Vector3.one * 100;
+            }
 
             //Idle Animation Stuff
             npc.isUsingLaptop = false;
@@ -75,6 +81,10 @@ public class RoamState : BaseState
             positionBeforeWarp = npc.transform.position;
 
             npc.WarpTo(tasksList.GetChild(taskIndex).position);
+
+            Debug.Log(positionBeforeWarp.x + ", " + positionBeforeWarp.y + ", " + positionBeforeWarp.z +
+                            " warped to " + npc.transform.position.x + ", " + npc.transform.position.y + ", " + npc.transform.position.z);
+
             npc.transform.rotation = tasksList.GetChild(taskIndex).rotation;
 
             //Idle Animation Stuff
