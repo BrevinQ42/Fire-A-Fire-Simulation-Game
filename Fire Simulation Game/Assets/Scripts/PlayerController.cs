@@ -416,7 +416,7 @@ public class PlayerController : MonoBehaviour
 
             // actions
             if (Input.GetKeyDown(KeyCode.C)) ToggleCrawl();
-            else if (Input.GetKeyDown(KeyCode.F))
+            else if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 if (playerBars.stamina > staminaRequiredForRunning)
                 {
@@ -483,7 +483,7 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            mouseSensitivity = (float) Math.Round(Math.Min(mouseSensitivity + 0.05f, 1.00f), 2);
+            mouseSensitivity = (float) Math.Round(Math.Min(mouseSensitivity + 0.05f, 2.00f), 2);
             mouseSensText.text = "SENS: " + mouseSensitivity;
         }
 
@@ -825,7 +825,7 @@ public class PlayerController : MonoBehaviour
                     else
                     {
                         fireManager.RemoveSpawnPoint(FireOnCandle.transform);
-                        FireOnCandle.AffectFire(-FireOnCandle.intensityValue);
+                        Destroy(FireOnCandle.gameObject);
 
                         notificationSystem.notificationMessage = "You have blown out the fire on the candle!\nPut out the fires on other unused candles as well!";
                         notificationSystem.disableAfterTimer = true;

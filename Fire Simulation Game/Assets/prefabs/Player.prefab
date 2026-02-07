@@ -407,6 +407,7 @@ MonoBehaviour:
   noseNotificationSystem: {fileID: 0}
   FireOnPlayer: {fileID: 0}
   fireManager: {fileID: 0}
+  cameraTransform: {fileID: 0}
   currentState: 
   walkingSpeed: 2.75
   crawlingSpeed: 1.5
@@ -437,7 +438,7 @@ MonoBehaviour:
   pickUpClip: {fileID: 8300000, guid: 6d2e2f0d453ce304d9541730c19a0e3f, type: 3}
   collidedWith: {fileID: 0}
   throwForce: 350
-  gravityForce: 100
+  gravityForce: 200
 --- !u!114 &6420769185094088457
 MonoBehaviour:
   m_ObjectHideFlags: 0
