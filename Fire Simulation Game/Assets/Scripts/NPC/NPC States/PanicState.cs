@@ -35,28 +35,23 @@ public class PanicState : BaseState
             float angle = Random.Range(0, 360) * Mathf.Deg2Rad;
             npc.GoTo(npc.transform.position + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * 2.5f, speed);
         }
-        
-        if (npc.FireOnNPC != null)
-        {
-            npc.lastState = this;
-
-            npc.isInPanicState = false;
-            stateMachine.SwitchState(stateMachine.rollState);
-        }
 
         if (panicTimer >= panicDuration)
         {
+            npc.isInPanicState = false;
+
+            if (npc.FireOnNPC != null)
+                stateMachine.SwitchState(stateMachine.rollState);
+            
             float roll = Random.Range(0f, 1f);
             if (roll <= 0.25f)
             {
                 Debug.Log($"{npc.name} decides to fight the fire.");
-                npc.isInPanicState = false;
                 stateMachine.SwitchState(stateMachine.preparationState);
             }
             else
             {
                 Debug.Log($"{npc.name} decides to evacuates.");
-                npc.isInPanicState = false;
                 stateMachine.SwitchState(stateMachine.evacuateState);
             }
         }

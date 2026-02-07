@@ -9,34 +9,16 @@ public class RollState : BaseState
 
     public override void EnterState(NPCStateMachine stateMachine)
     {
-        npc = stateMachine.npc;// if npc is not panicking, walking speed
-        // if npc is panicking, 25% chance of calming down (walking speed)
-        if (!npc.isPanicking || Random.Range(0, 4) == 0)
-        {
-            speed = npc.walkingSpeed;
-            npc.isRunning = false;
-            npc.isPanicking = false;
-        }
-        else
-        {
-            speed = npc.runningSpeed;
-            npc.isRunning = true;
-        }
+        npc = stateMachine.npc;
 
-        Vector3 offset = (npc.transform.position - stateMachine.ongoingFire.transform.position)
-                            * stateMachine.ongoingFire.intensityValue;
-
-        npc.GoTo(npc.transform.position + offset, speed);
+        npc.GoTo(npc.transform.position, 0.0f);
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
     {
-        if (npc.isHalted())
-        {
-            //play roll animation
-            npc.NPCAnimator.SetBool("isRolling", true);
-            npc.isRolling = true;
-        }
+        //play roll animation
+        npc.NPCAnimator.SetBool("isRolling", true);
+        npc.isRolling = true;
 
         if (npc.FireOnNPC == null)
         {
@@ -44,7 +26,18 @@ public class RollState : BaseState
             npc.NPCAnimator.SetBool("isRolling", false);
             
             if (npc.coroutinePlaying == false)
-                stateMachine.SwitchState(stateMachine.evacuateState);
+            {
+                if ((npc.lastState == null || npc.lastState != stateMachine.evacuateState) &&
+                    Random.Range(0f, 1f) <= 0.25f)
+                {
+                    stateMachine.SwitchState(stateMachine.preparationState);
+                }
+                else
+                {
+                    npc.lastState = null;
+                    stateMachine.SwitchState(stateMachine.evacuateState);
+                }
+            }
         }
     }
 }

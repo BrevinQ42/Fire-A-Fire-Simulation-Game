@@ -67,7 +67,7 @@ public class PreparationState : BaseState
             stateMachine.SwitchState(stateMachine.evacuateState);
         }
 
-        // if on fire, ROLL
+        // if on fire, PANIC
         if (npc.FireOnNPC != null)
         {
             // drop any held object
@@ -78,8 +78,7 @@ public class PreparationState : BaseState
                 npc.isHoldingObject = false;
             }
 
-            npc.lastState = this;
-            stateMachine.SwitchState(stateMachine.rollState);
+            stateMachine.SwitchState(stateMachine.panicState);
         }
 
         if ( nearestObject.parent &&

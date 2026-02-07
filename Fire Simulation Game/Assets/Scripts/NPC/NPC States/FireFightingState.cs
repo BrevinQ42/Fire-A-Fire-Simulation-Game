@@ -68,7 +68,7 @@ public class FireFightingState : BaseState
             return;
         }
 
-        // if on fire, ROLL
+        // if on fire, PANIC
         if (npc.FireOnNPC != null)
         {
             // drop any held object
@@ -79,19 +79,20 @@ public class FireFightingState : BaseState
                 npc.isHoldingObject = false;
             }
 
-            npc.lastState = this;
-            stateMachine.SwitchState(stateMachine.rollState);
+            stateMachine.SwitchState(stateMachine.panicState);
         }
 
-        proximity_value = stateMachine.ongoingFire.intensityValue / 2.0f + stateMachine.ongoingFire.growingSpeed;
+        proximity_value = Mathf.Max(stateMachine.ongoingFire.intensityValue / 2.0f + stateMachine.ongoingFire.growingSpeed * 5.0f, 3.5f);
 
-        npc.SetStoppingDistance(stateMachine.ongoingFire.intensityValue / 2.0f);
+        npc.SetStoppingDistance(0.01f);
         npc.GoTo(stateMachine.ongoingFire.transform.position, speed);
 
         bool isUsingExtinguisher = false;
 
-        if (npc.hasReachedTarget() || isFireWithinRange(stateMachine.ongoingFire) ||
-            Vector3.Distance(stateMachine.ongoingFire.transform.position, npc.position) <= proximity_value)
+        Debug.Log(Vector3.Distance(stateMachine.ongoingFire.transform.position, npc.position) + " vs " +
+                    proximity_value);
+
+        if (isFireWithinRange(stateMachine.ongoingFire))
         {
             bool isStillHeld;
             npc.heldObject.Use(npc.throwForce, out isStillHeld);
@@ -168,11 +169,20 @@ public class FireFightingState : BaseState
     {
         Vector3 forwardVector = fire.transform.position - npc.position;
 
-        if (forwardVector.magnitude > proximity_value)
+        if (forwardVector.magnitude - fire.intensityValue / 2.0f > proximity_value)
             return false;
 
-        int layerMask =~ LayerMask.GetMask("Ignore Raycast");
+        if (!Physics.Raycast(npc.position, forwardVector, forwardVector.magnitude - fire.intensityValue / 2.0f))
+            return true;
 
-        return !Physics.Raycast(npc.position, forwardVector, forwardVector.magnitude, layerMask);
+        Debug.DrawRay(npc.position, forwardVector, Color.yellow);
+
+        Vector3 forward2DVector = new Vector3(forwardVector.x, 0.0f, forwardVector.z);
+
+        if (!Physics.Raycast(npc.position, forward2DVector, forward2DVector.magnitude - fire.intensityValue / 2.0f))
+            return true;
+
+        Debug.DrawRay(npc.position, forward2DVector, Color.yellow);
+        return false;
     }
 }
