@@ -81,6 +81,32 @@ public class PreparationState : BaseState
             stateMachine.SwitchState(stateMachine.panicState);
         }
 
+        if (nearestObject == null)
+        {
+            if (npc.heldObject)
+            {
+                nearestObject = GetNearestWaterSource();
+             
+                if (Vector3.Distance(nearestObject.position, npc.transform.position) <= 1.25f)
+                {
+                    npc.InteractWithObject(nearestObject);
+                    return;
+                }
+
+                npc.SetStoppingDistance(1.25f);
+                npc.GoTo(nearestObject.position, speed);
+            }
+            else
+            {
+                nearestObject = GetNearestObject();
+
+                npc.SetStoppingDistance(2.0f);
+                npc.GoTo(nearestObject.position, speed);            
+            }
+
+            if (nearestObject == null) return;
+        }
+
         if ( nearestObject.parent &&
             (nearestObject.GetComponent<PlayerController>() || nearestObject.GetComponent<NPC>()) )
         {
@@ -127,7 +153,9 @@ public class PreparationState : BaseState
 
                     stateMachine.SwitchState(stateMachine.fireFightingState);
                 }
-                else if (pail.transform.parent != faucet)
+                else if ( pail.transform.parent != faucet ||
+                            (pail.transform.localPosition.x != 1.15f && pail.transform.localPosition.y != -4.0f &&
+                                pail.transform.localPosition.z != 0.0f) )
                 {
                     pail.transform.SetParent(faucet);
                     pail.transform.SetLocalPositionAndRotation(new Vector3(1.15f, -4.0f, 0.0f),

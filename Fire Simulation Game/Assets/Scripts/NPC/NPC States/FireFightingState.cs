@@ -94,6 +94,9 @@ public class FireFightingState : BaseState
 
         if (isFireWithinRange(stateMachine.ongoingFire))
         {
+            Vector3 firePos = stateMachine.ongoingFire.transform.position;
+            npc.transform.LookAt(new Vector3(firePos.x, npc.transform.position.y, firePos.z));
+
             bool isStillHeld;
             npc.heldObject.Use(npc.throwForce, out isStillHeld);
 

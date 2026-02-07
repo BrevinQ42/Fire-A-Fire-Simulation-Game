@@ -43,6 +43,9 @@ public class AlertedState : BaseState
 
     private bool canNpcSeeFire(Fire fire)
     {
+        if (fire == null)
+            return false;
+
         Vector3 forwardVector = fire.transform.position - npc.position;
         if (!Physics.Raycast(npc.position, forwardVector, forwardVector.magnitude - fire.intensityValue / 2.0f))
             return true;
