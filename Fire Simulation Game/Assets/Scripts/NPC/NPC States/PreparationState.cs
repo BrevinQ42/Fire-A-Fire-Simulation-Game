@@ -199,6 +199,9 @@ public class PreparationState : BaseState
 
             float newDistance = Vector3.Distance(obj.transform.position, npc.transform.position);
 
+            // more weight on difference in y value
+            newDistance += Mathf.Abs(obj.transform.position.y - npc.transform.position.y);
+
             if (minDistance == -1.0f || newDistance < minDistance)
             {
                 nearest = obj.transform;

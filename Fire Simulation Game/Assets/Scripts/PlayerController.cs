@@ -91,6 +91,7 @@ public class PlayerController : MonoBehaviour
     public Collider collidedWith;
     [SerializeField] private float throwForce;
     [SerializeField] private float gravityForce;
+    private bool isGameEnded;
 
     // Start is called before the first frame update
     void Start()
@@ -123,6 +124,8 @@ public class PlayerController : MonoBehaviour
         heldObject = null;
 
         playerBars = GetComponent<PlayerBars>();
+
+        isGameEnded = false;
 
         if (fireManager)
         {
@@ -397,6 +400,9 @@ public class PlayerController : MonoBehaviour
             isOnFire = false;
         }
 
+        // end game
+        if (fireManager.isPlayerSuccessful && !isGameEnded) EndGame();
+
         timeElapsed += Time.deltaTime;
 
         if (currentState.Equals("Rolling"))
@@ -446,7 +452,6 @@ public class PlayerController : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.E)) InteractWithObject();
             else if (Input.GetKeyDown(KeyCode.G)) DropObject();
-            else if (Input.GetKeyDown(KeyCode.Return)) EndGame();
 
             if (!heldObject)
             {
@@ -939,32 +944,41 @@ public class PlayerController : MonoBehaviour
 
     void EndGame()
     {
-        if (collidedWith)
+        isGameEnded = true;
+
+        try
         {
-            if (collidedWith.name.Equals("Outside Floor"))
-            {
-                // Debug.Log("You Won");
-                winScreen.oneStar.color = new Color(255f, 255f, 255f);
-                if (playerBars.hydrationLevel > 50 && timeElapsed < 300)
-                {
-                    winScreen.twoStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.index <= 6) //3 Stars if they escape from fire caused by neighbor
-                {
-                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
-                {
-                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
-                }
-                if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
-                {
-                    winScreen.threeStar.color = new Color(255f, 255f, 255f);
-                }
-                winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
-                Cursor.lockState = CursorLockMode.None;
-            }
+            StopCoroutine(playerBars.FireDamageOverTime());
+            Destroy(FireOnPlayer.gameObject);
         }
+        catch {}
+
+        try
+        {
+            StopCoroutine(playerBars.OxygenDamageOverTime());
+        }
+        catch {}
+
+        // Debug.Log("You Won");
+        winScreen.oneStar.color = new Color(255f, 255f, 255f);
+        if (playerBars.hydrationLevel > 50 && timeElapsed < 300)
+        {
+            winScreen.twoStar.color = new Color(255f, 255f, 255f);
+        }
+        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.index <= 6) //3 Stars if they escape from fire caused by neighbor
+        {
+            winScreen.threeStar.color = new Color(255f, 255f, 255f);
+        }
+        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
+        {
+            winScreen.threeStar.color = new Color(255f, 255f, 255f);
+        }
+        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
+        {
+            winScreen.threeStar.color = new Color(255f, 255f, 255f);
+        }
+        winScreen.Setup(Mathf.FloorToInt(playerBars.hydrationLevel), Mathf.FloorToInt(timeElapsed));
+        Cursor.lockState = CursorLockMode.None;
     }
 
     void OnCollisionEnter(Collision collision)
@@ -983,9 +997,11 @@ public class PlayerController : MonoBehaviour
             {
                 collidedWith = collision.collider;
 
-                notificationSystem.notificationMessage = "You successfully escaped!\nPress [Enter] to Call the Fire Department and End the Game";
+                notificationSystem.notificationMessage = "You successfully escaped!\n";
                 notificationSystem.disableAfterTimer = false;
                 notificationSystem.displayNotification();
+
+                EndGame();
 
                 return;
             }

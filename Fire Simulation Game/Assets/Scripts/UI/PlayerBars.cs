@@ -249,7 +249,7 @@ public class PlayerBars : MonoBehaviour
     }
 
     // Coroutine to handle oxygen damage over time
-    IEnumerator OxygenDamageOverTime()
+    public IEnumerator OxygenDamageOverTime()
     {
         isLosingOxygen = true;
 
@@ -264,7 +264,7 @@ public class PlayerBars : MonoBehaviour
     }
 
     // Coroutine to handle fire damage over time
-    IEnumerator FireDamageOverTime()
+    public IEnumerator FireDamageOverTime()
     {
         while (hydrationLevel > 0)
         {

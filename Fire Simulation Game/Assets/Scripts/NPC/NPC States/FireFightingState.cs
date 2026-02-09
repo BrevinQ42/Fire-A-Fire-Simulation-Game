@@ -84,9 +84,6 @@ public class FireFightingState : BaseState
 
         proximity_value = Mathf.Max(stateMachine.ongoingFire.intensityValue / 2.0f + stateMachine.ongoingFire.growingSpeed * 5.0f, 3.5f);
 
-        npc.SetStoppingDistance(0.01f);
-        npc.GoTo(stateMachine.ongoingFire.transform.position, speed);
-
         bool isUsingExtinguisher = false;
 
         Debug.Log(Vector3.Distance(stateMachine.ongoingFire.transform.position, npc.position) + " vs " +

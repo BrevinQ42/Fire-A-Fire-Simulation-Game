@@ -27,13 +27,13 @@ public class LevelManager : MonoBehaviour
 	[SerializeField] private GameObject OutsideFloor;
 	public int typeIndex;
 	public bool isClassCExtinguisher;
-	private float updateThreshold;
+	private float updateTimer;
 	
 	void Start()
 	{
 		OutsideFloor.GetComponent<NavMeshSurface>().BuildNavMesh();
 
-		updateThreshold = 0.5f;
+		updateTimer = 2.5f;
 
 		extinguisherTypes = new List<string>{"Class A", "Class C", "Class C", "Class K", "Class K"};
 
@@ -44,11 +44,16 @@ public class LevelManager : MonoBehaviour
 
 	void Update()
 	{
-		if (fireManager && fireManager.ongoingFire && fireManager.ongoingFire.intensityValue >= updateThreshold)
+		if (fireManager && fireManager.ongoingFire)
 		{
-			OutsideFloor.GetComponent<NavMeshSurface>().BuildNavMesh();
+			updateTimer -= Time.deltaTime;
 
-			updateThreshold += 1.0f;
+			if (updateTimer <= 0.0f)
+			{
+				OutsideFloor.GetComponent<NavMeshSurface>().BuildNavMesh();
+
+				updateTimer = 2.5f;
+			}
 		}
 	}
 
