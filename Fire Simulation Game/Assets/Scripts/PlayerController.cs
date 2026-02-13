@@ -158,7 +158,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if ((heldObject && !heldObject.GetComponent<ElectricPlug>() && !heldObject.GetComponent<NonFlammableObject>()) || currentState.Equals("Rolling"))
+        if (currentState.Equals("Rolling"))
         {
             hitTransform = null;
             ResetLastObjLookedAt();
@@ -698,21 +698,21 @@ public class PlayerController : MonoBehaviour
     {
         if (hitTransform)
         {
-            if (heldObject && (heldObject.GetComponent<ElectricPlug>() || heldObject.GetComponent<NonFlammableObject>()))
-            {
-                notificationSystem.notificationMessage = "[G] to Drop Held Object first!";
-                notificationSystem.disableTimer = 3.0f;
-                notificationSystem.disableAfterTimer = true;
-                notificationSystem.displayNotification();
-
-                // disregard when holding an electric plug or fire resistant object
-                return;
-            }
-
             Rigidbody hitRB = hitTransform.GetComponent<Rigidbody>();
 
             if (hitRB && hitTransform.CompareTag("Grabbable"))
             {
+                if (heldObject)
+                {
+                    notificationSystem.notificationMessage = "[G] to Drop Held Object first!";
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.displayNotification();
+
+                    // disregard when holding an object
+                    return;
+                }
+
                 hitRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
 
                 hitTransform.GetComponent<Collider>().enabled = false;
@@ -841,6 +841,17 @@ public class PlayerController : MonoBehaviour
             }
             else if (hitTransform.GetComponent<Door>())
             {
+                if (heldObject)
+                {
+                    notificationSystem.notificationMessage = "[G] to Drop Held Object first!";
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.displayNotification();
+
+                    // disregard when holding an object
+                    return;
+                }
+                
                 Door door = hitTransform.GetComponent<Door>();
                 door.toggleDoor();
             }
