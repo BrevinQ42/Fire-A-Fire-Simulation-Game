@@ -5,6 +5,7 @@ using UnityEngine;
 public class Candle : MonoBehaviour
 {
     private Fire FireOnCandle;
+    private AudioSource fireAudioSource;
 
     [Header("FloatingText")]
     public bool lookedAt;
@@ -14,6 +15,16 @@ public class Candle : MonoBehaviour
     void Start()
     {
         FireOnCandle = GetComponentInChildren<Fire>();
+
+        if (FireOnCandle != null)
+        {
+            fireAudioSource = FireOnCandle.GetComponent<AudioSource>();
+
+            if (fireAudioSource != null)
+            {
+                fireAudioSource.mute = true;
+            }
+        }
 
         lookedAt = false;
         textName = GetComponentInChildren<TextMesh>().gameObject;
