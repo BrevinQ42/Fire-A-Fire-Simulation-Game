@@ -51,6 +51,34 @@ public class SmokeSystemManager : MonoBehaviour
     public GameObject joshSmallHouse1SmokeLayer1;
     public GameObject joshSmallHouse1SmokeLayer2;
 
+    //JoshMainHouse
+    public GameObject joshMainHouseSmokeLayer1;
+    public GameObject joshMainHouseSmokeLayer2;
+
+    //MainHouse1
+    public GameObject mainHouse1SmokeLayer1;
+    public GameObject mainHouse1SmokeLayer2;
+
+    //SmallHouse2
+    public GameObject smallHouse2SmokeLayer1;
+    public GameObject smallHouse2SmokeLayer2;
+
+    //SmallHouse3
+    public GameObject smallHouse3SmokeLayer1;
+    public GameObject smallHouse3SmokeLayer2;
+    public GameObject smallHouse3SmokeLayer3;
+    public GameObject smallHouse3SmokeLayer4;
+    public GameObject smallHouse3SmokeLayer5;
+    public GameObject smallHouse3SmokeLayer6;
+
+    //JoshSmallHouse2
+    public GameObject joshSmallHouse2SmokeLayer1;
+    public GameObject joshSmallHouse2SmokeLayer2;
+
+    //HalfHouse2
+    public GameObject halfHouse2SmokeLayer1;
+    public GameObject halfHouse2SmokeLayer2;
+
     private float elapsedTime = 0f;    
 
     // Fire Started
@@ -110,6 +138,34 @@ public class SmokeSystemManager : MonoBehaviour
         //JoshSmallHouse1
         joshSmallHouse1SmokeLayer1.SetActive(false);
         joshSmallHouse1SmokeLayer2.SetActive(false);
+
+        //JoshMainHouse
+        joshMainHouseSmokeLayer1.SetActive(false);
+        joshMainHouseSmokeLayer2.SetActive(false);
+
+        //MainHouse1
+        mainHouse1SmokeLayer1.SetActive(false);
+        mainHouse1SmokeLayer2.SetActive(false);
+
+        //SmallHouse2
+        smallHouse2SmokeLayer1.SetActive(false);
+        smallHouse2SmokeLayer2.SetActive(false);
+
+        //SmallHouse3
+        smallHouse3SmokeLayer1.SetActive(false);
+        smallHouse3SmokeLayer2.SetActive(false);
+        smallHouse3SmokeLayer3.SetActive(false);
+        smallHouse3SmokeLayer4.SetActive(false);
+        smallHouse3SmokeLayer5.SetActive(false);
+        smallHouse3SmokeLayer6.SetActive(false);
+
+        //JoshSmallHouse2
+        joshSmallHouse2SmokeLayer1.SetActive(false);
+        joshSmallHouse2SmokeLayer2.SetActive(false);
+
+        //HalfHouse2
+        halfHouse2SmokeLayer1.SetActive(false);
+        halfHouse2SmokeLayer2.SetActive(false);
     }
 
     void Update()
@@ -125,7 +181,7 @@ public class SmokeSystemManager : MonoBehaviour
                     DeleteSmokeSpheres();
                     mainHouseSmokeLayer1.SetActive(true);
 
-                    if(isLayer1MessageDisplayed == false)
+                    if (isLayer1MessageDisplayed == false)
                     {
                         notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
                         notificationSystem.disableAfterTimer = true;
@@ -457,6 +513,264 @@ public class SmokeSystemManager : MonoBehaviour
                 {
                     DeleteSmokeSpheres();
                     joshSmallHouse1SmokeLayer2.SetActive(true);
+
+                    if (isLayer2MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer2MessageDisplayed = true;
+                    }
+                }
+            }
+
+            if (houseName == "JoshMainHouse")
+            {
+                if (elapsedTime >= timeToActivateLayer1)
+                {
+                    DeleteSmokeSpheres();
+                    joshMainHouseSmokeLayer1.SetActive(true);
+
+                    if (isLayer1MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer1MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer2)
+                {
+                    DeleteSmokeSpheres();
+                    joshMainHouseSmokeLayer2.SetActive(true);
+
+                    if (isLayer2MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer2MessageDisplayed = true;
+                    }
+                }
+            }
+
+            if (houseName == "MainHouse1")
+            {
+                if (elapsedTime >= timeToActivateLayer1)
+                {
+                    DeleteSmokeSpheres();
+                    mainHouse1SmokeLayer1.SetActive(true);
+
+                    if (isLayer1MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer1MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer2)
+                {
+                    DeleteSmokeSpheres();
+                    mainHouse1SmokeLayer2.SetActive(true);
+
+                    if (isLayer2MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer2MessageDisplayed = true;
+                    }
+                }
+            }
+
+            if (houseName == "SmallHouse2")
+            {
+                if (elapsedTime >= timeToActivateLayer1)
+                {
+                    DeleteSmokeSpheres();
+                    smallHouse2SmokeLayer1.SetActive(true);
+
+                    if (isLayer1MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer1MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer2)
+                {
+                    DeleteSmokeSpheres();
+                    smallHouse2SmokeLayer2.SetActive(true);
+
+                    if (isLayer2MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer2MessageDisplayed = true;
+                    }
+                }
+            }
+
+            if (houseName == "SmallHouse3")
+            {
+                if (elapsedTime >= timeToActivateLayer1)
+                {
+                    DeleteSmokeSpheres();
+                    smallHouse3SmokeLayer1.SetActive(true);
+
+                    if (isLayer1MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer1MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer2)
+                {
+                    DeleteSmokeSpheres();
+                    smallHouse3SmokeLayer2.SetActive(true);
+
+                    if (isLayer2MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer2MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer3)
+                {
+                    DeleteSmokeSpheres();
+                    smallHouse3SmokeLayer3.SetActive(true);
+
+                    if (isLayer3MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer3MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer4)
+                {
+                    DeleteSmokeSpheres();
+                    smallHouse3SmokeLayer4.SetActive(true);
+
+                    if (isLayer4MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer4MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer5)
+                {
+                    DeleteSmokeSpheres();
+                    smallHouse3SmokeLayer5.SetActive(true);
+
+                    if (isLayer5MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer5MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer6)
+                {
+                    DeleteSmokeSpheres();
+                    smallHouse3SmokeLayer6.SetActive(true);
+
+                    if (isLayer6MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer6MessageDisplayed = true;
+                    }
+                }
+            }
+
+            if (houseName == "JoshSmallHouse2")
+            {
+                if (elapsedTime >= timeToActivateLayer1)
+                {
+                    DeleteSmokeSpheres();
+                    joshSmallHouse2SmokeLayer1.SetActive(true);
+
+                    if (isLayer1MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer1MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer2)
+                {
+                    DeleteSmokeSpheres();
+                    joshSmallHouse2SmokeLayer2.SetActive(true);
+
+                    if (isLayer2MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer2MessageDisplayed = true;
+                    }
+                }
+            }
+
+            if (houseName == "HalfHouse2")
+            {
+                if (elapsedTime >= timeToActivateLayer1)
+                {
+                    DeleteSmokeSpheres();
+                    halfHouse2SmokeLayer1.SetActive(true);
+
+                    if (isLayer1MessageDisplayed == false)
+                    {
+                        notificationSystem.notificationMessage = "The smoke orbs have filled up and become a full layer, \n don't go near it or let the smoke orbs get to you!\n[C] to crawl / stand back up";
+                        notificationSystem.disableAfterTimer = true;
+                        notificationSystem.disableTimer = 5.0f;
+                        notificationSystem.displayNotification();
+                        isLayer1MessageDisplayed = true;
+                    }
+                }
+
+                if (elapsedTime >= timeToActivateLayer2)
+                {
+                    DeleteSmokeSpheres();
+                    halfHouse2SmokeLayer2.SetActive(true);
 
                     if (isLayer2MessageDisplayed == false)
                     {
