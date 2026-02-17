@@ -30,6 +30,9 @@ public class SmokeSystemManager : MonoBehaviour
     private bool isSmokeLayer5Activated = false;
     private bool isSmokeLayer6Activated = false;
 
+    // Fire Started
+    public bool isFireAssigned;
+
     void Start()
     {
         smokeLayer1.SetActive(false);
@@ -38,6 +41,7 @@ public class SmokeSystemManager : MonoBehaviour
         smokeLayer4.SetActive(false);
         smokeLayer5.SetActive(false);
         smokeLayer6.SetActive(false);
+        isFireAssigned = false;
     }
 
     void Update()

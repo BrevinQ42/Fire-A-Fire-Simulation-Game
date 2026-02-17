@@ -26,6 +26,9 @@ public class Fire : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip fireClip;
 
+    //Smoke Layer Related
+    private House currentHouse;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -67,6 +70,20 @@ public class Fire : MonoBehaviour
                                                                 1.0f + transform.localScale.y / 2.0f,
                                                                 0.0f),
                                                                 transform.rotation);
+
+            //Smoke Layer Related
+            Collider[] hits = Physics.OverlapSphere(transform.position, 0.5f);
+
+            foreach (Collider hit in hits)
+            {
+                House house = hit.GetComponentInParent<House>();
+                if (house != null)
+                {
+                    currentHouse = house;
+                    currentHouse.RegisterFire(this);
+                    break;
+                }
+            }
         }
         if (intensityValue < 6)
         {
