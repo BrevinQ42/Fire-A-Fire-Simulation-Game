@@ -8,13 +8,10 @@ public class House : MonoBehaviour
 
     void Update()
     {
-        if (activeFire != null)
-        {
-            Debug.Log("Fire is in this house: " + gameObject.name);
-        }
-        else
-        {
-        }
+        //if (activeFire != null)
+        //{
+            //Debug.Log("Fire is in this house: " + gameObject.name);
+        //}
 
     }
 
@@ -23,6 +20,8 @@ public class House : MonoBehaviour
         if (smokeSystemManager.isFireAssigned == false)
         {
             activeFire = fire;
+            smokeSystemManager.isFireAssigned = true;
+            smokeSystemManager.houseName = gameObject.name;
         }
         else
         {
