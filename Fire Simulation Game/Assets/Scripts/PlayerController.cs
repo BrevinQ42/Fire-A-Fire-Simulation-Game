@@ -521,7 +521,14 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.0f))
         {
-            return true; 
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                Debug.Log(hit.collider.gameObject.name);
+            }
+            if (hit.collider.gameObject.name != "FryingPan") // HalfHouse1 Stairs Fix
+            {
+                return true;
+            }
         }
         return false; 
     }
