@@ -22,7 +22,7 @@ public class PanicState : BaseState
         panicTimer = 0f;
 
         float angle = Random.Range(0, 360) * Mathf.Deg2Rad;
-        npc.SetStoppingDistance(0.01f);
+        npc.SetStoppingDistance(1.0f);
         npc.GoTo(npc.transform.position + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * 2.5f, speed);
     }
 

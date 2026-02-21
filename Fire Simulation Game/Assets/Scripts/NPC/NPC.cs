@@ -196,7 +196,7 @@ public class NPC : MonoBehaviour
 
     public bool hasReachedTarget()
     {
-        return agent.remainingDistance <= agent.stoppingDistance && Mathf.Abs(agent.destination.y - transform.position.y) <= 2.5f;
+        return Vector3.Distance(agent.destination, transform.position) <= agent.stoppingDistance;
     }
 
     public void SetStoppingDistance(float distance)

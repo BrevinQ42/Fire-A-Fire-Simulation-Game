@@ -20,7 +20,7 @@ public class RoamState : BaseState
         npc = stateMachine.npc;
         speed = npc.walkingSpeed;
 
-        npc.SetStoppingDistance(0.015f);
+        npc.SetStoppingDistance(2.0f);
 
         tasksList = null;
 
@@ -64,6 +64,9 @@ public class RoamState : BaseState
 
             if (timeBeforeNextAction <= 0)
             {
+                npc.WarpTo(positionBeforeWarp);
+                positionBeforeWarp = Vector3.one * 100;
+
                 taskIndex = (taskIndex + Random.Range(1, tasksCount)) % tasksCount;
                 npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
 
