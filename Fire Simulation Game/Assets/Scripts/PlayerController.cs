@@ -158,11 +158,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (currentState.Equals("Rolling"))
-        {
-            hitTransform = null;
-            ResetLastObjLookedAt();
-        }
+        ResetLastObjLookedAt();
+
+        if (currentState.Equals("Rolling")) hitTransform = null;
         else
         {
             RaycastHit hit;
