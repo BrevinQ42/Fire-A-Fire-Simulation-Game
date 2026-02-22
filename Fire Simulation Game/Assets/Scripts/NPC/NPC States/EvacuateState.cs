@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class EvacuateState : BaseState
 {
     private NPC npc;
-    private float speed;
 
     public override void EnterState(NPCStateMachine stateMachine)
     {
@@ -16,17 +15,17 @@ public class EvacuateState : BaseState
         // if npc is panicking, 25% chance of calming down (walking speed)
         if (!npc.isPanicking || Random.Range(0, 4) == 0)
         {
-            speed = npc.walkingSpeed;
+            npc.currentSpeed = npc.walkingSpeed;
             npc.isRunning = false;
             npc.isPanicking = false;
         }
         else
         {
-            speed = npc.runningSpeed;
+            npc.currentSpeed = npc.runningSpeed;
             npc.isRunning = true;
         }
 
-        npc.GoTo(npc.evacuationLocation.position, speed);
+        npc.GoTo(npc.evacuationLocation.position, npc.currentSpeed);
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -36,12 +35,12 @@ public class EvacuateState : BaseState
             npc.isRunning = false;
             return;
         }
-        
-        if (npc.FireOnNPC != null)
-        {
-            npc.lastState = this;
-            stateMachine.SwitchState(stateMachine.rollState);
+
+        if (npc.FireOnNPC != null){
+            stateMachine.SwitchState(stateMachine.panicState);
         }
+
+        npc.StuckCheck();
 
         // if npc has stopped and has not yet reached the evacuation spot
         if (npc.isHalted() && npc.currentLocation != npc.evacuationLocation && !npc.currentLocation.name.Equals("Outside Floor"))

@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class PreparationState : BaseState
 {
     private NPC npc;
-    private float speed;
 
     private Transform nearestObject;
 
@@ -18,13 +17,13 @@ public class PreparationState : BaseState
         // if npc is panicking, 25% chance of calming down (walking speed)
         if (!npc.isPanicking || Random.Range(0, 4) == 0)
         {
-            speed = npc.walkingSpeed;
+            npc.currentSpeed = npc.walkingSpeed;
             npc.isRunning = false;
             npc.isPanicking = false;
         }
         else
         {
-            speed = npc.runningSpeed;
+            npc.currentSpeed = npc.runningSpeed;
             npc.isRunning = true;
         }
 
@@ -39,14 +38,14 @@ public class PreparationState : BaseState
             }
 
             npc.SetStoppingDistance(1.25f);
-            npc.GoTo(nearestObject.position, speed);
+            npc.GoTo(nearestObject.position, npc.currentSpeed);
         }
         else
         {
             nearestObject = GetNearestObject();
 
             npc.SetStoppingDistance(2.0f);
-            npc.GoTo(nearestObject.position, speed);            
+            npc.GoTo(nearestObject.position, npc.currentSpeed);            
         }
     }
 
@@ -83,6 +82,8 @@ public class PreparationState : BaseState
 
         if (nearestObject == null)
         {
+            npc.ResetBuffer();
+
             if (npc.heldObject)
             {
                 nearestObject = GetNearestWaterSource();
@@ -94,28 +95,32 @@ public class PreparationState : BaseState
                 }
 
                 npc.SetStoppingDistance(1.25f);
-                npc.GoTo(nearestObject.position, speed);
+                npc.GoTo(nearestObject.position, npc.currentSpeed);
             }
             else
             {
                 nearestObject = GetNearestObject();
 
                 npc.SetStoppingDistance(2.0f);
-                npc.GoTo(nearestObject.position, speed);            
+                npc.GoTo(nearestObject.position, npc.currentSpeed);            
             }
 
             if (nearestObject == null) return;
         }
 
         if ( nearestObject.parent &&
-            (nearestObject.GetComponent<PlayerController>() || nearestObject.GetComponent<NPC>()) )
+            (nearestObject.parent.GetComponent<PlayerController>() || nearestObject.parent.GetComponent<NPC>()) )
         {
+            npc.ResetBuffer();
+
             nearestObject = GetNearestObject();
         }
 
         if (npc.hasReachedTarget() || canSeeObject(nearestObject) ||
             Vector3.Distance(nearestObject.position, npc.position) <= 4.0f)
         {
+            npc.ResetBuffer();
+
             npc.InteractWithObject(nearestObject);
 
             if (!npc.heldObject && nearestObject.GetComponent<Pail>())
@@ -133,7 +138,7 @@ public class PreparationState : BaseState
                     return;
                 }
 
-                npc.GoTo(nearestObject.position, speed);
+                npc.GoTo(nearestObject.position, npc.currentSpeed);
             }
             else if (nearestObject.CompareTag("WaterSource"))
             {
@@ -170,6 +175,7 @@ public class PreparationState : BaseState
                 stateMachine.SwitchState(stateMachine.fireFightingState);
             }
         }
+        else npc.StuckCheck();
     }
 
     private Transform GetNearestObject()

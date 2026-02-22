@@ -53,6 +53,9 @@ public class NPCStateMachine : MonoBehaviour
     {
         currentState = state;
         SetStateName();
+
+        npc.ResetBuffer();
+
         state.EnterState(this);
     }
 

@@ -5,7 +5,6 @@ using UnityEngine;
 public class FireFightingState : BaseState
 {
     private NPC npc;
-    private float speed;
 
     private FireExtinguisher lastHeldExtinguisher;
     private bool isExtinguisherEffective;
@@ -20,13 +19,13 @@ public class FireFightingState : BaseState
         // if npc is panicking, 25% chance of calming down (walking speed)
         if (!npc.isPanicking || Random.Range(0, 4) == 0)
         {
-            speed = npc.walkingSpeed;
+            npc.currentSpeed = npc.walkingSpeed;
             npc.isRunning = false;
             npc.isPanicking = false;
         }
         else
         {
-            speed = npc.runningSpeed;
+            npc.currentSpeed = npc.runningSpeed;
             npc.isRunning = true;
         }
 
@@ -36,7 +35,7 @@ public class FireFightingState : BaseState
         proximity_value = stateMachine.ongoingFire.intensityValue / 2.0f;
 
         npc.SetStoppingDistance(2.0f);
-        npc.GoTo(stateMachine.ongoingFire.transform.position, speed);
+        npc.GoTo(stateMachine.ongoingFire.transform.position, npc.currentSpeed);
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -91,6 +90,8 @@ public class FireFightingState : BaseState
 
         if (isFireWithinRange(stateMachine.ongoingFire))
         {
+            npc.ResetBuffer();
+
             Vector3 firePos = stateMachine.ongoingFire.transform.position;
             npc.transform.LookAt(new Vector3(firePos.x, npc.transform.position.y, firePos.z));
 
@@ -154,6 +155,7 @@ public class FireFightingState : BaseState
                 }
             }
         }
+        else npc.StuckCheck();
 
         if (!isUsingExtinguisher)
         {

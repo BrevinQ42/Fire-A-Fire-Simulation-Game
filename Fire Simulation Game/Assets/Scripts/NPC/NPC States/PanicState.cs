@@ -5,7 +5,6 @@ using UnityEngine;
 public class PanicState : BaseState
 {
     private NPC npc;
-    private float speed;
 
     private float panicDuration;
     private float panicTimer;
@@ -13,7 +12,7 @@ public class PanicState : BaseState
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
-        speed = npc.runningSpeed;
+        npc.currentSpeed = npc.runningSpeed;
 
         npc.isRunning = true;
         npc.isInPanicState = true;
@@ -23,7 +22,7 @@ public class PanicState : BaseState
 
         float angle = Random.Range(0, 360) * Mathf.Deg2Rad;
         npc.SetStoppingDistance(1.0f);
-        npc.GoTo(npc.transform.position + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * 2.5f, speed);
+        npc.GoTo(npc.transform.position + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * 2.5f, npc.currentSpeed);
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -33,7 +32,7 @@ public class PanicState : BaseState
         if (npc.isHalted() || npc.hasReachedTarget())
         {
             float angle = Random.Range(0, 360) * Mathf.Deg2Rad;
-            npc.GoTo(npc.transform.position + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * 2.5f, speed);
+            npc.GoTo(npc.transform.position + new Vector3(Mathf.Cos(angle), 0.0f, Mathf.Sin(angle)) * 2.5f, npc.currentSpeed);
         }
 
         if (panicTimer >= panicDuration)

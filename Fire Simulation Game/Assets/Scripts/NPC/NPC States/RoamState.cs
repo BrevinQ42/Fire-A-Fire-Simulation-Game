@@ -5,7 +5,6 @@ using UnityEngine;
 public class RoamState : BaseState
 {
     private NPC npc;
-    private float speed;
 
     private Transform tasksList;
     private int tasksCount;
@@ -18,7 +17,7 @@ public class RoamState : BaseState
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
-        speed = npc.walkingSpeed;
+        npc.currentSpeed = npc.walkingSpeed;
 
         npc.SetStoppingDistance(2.0f);
 
@@ -44,7 +43,7 @@ public class RoamState : BaseState
             {
                 Debug.Log(npc.transform.position.x + ", " + npc.transform.position.y + ", " + npc.transform.position.z +
                             " warped to " + positionBeforeWarp.x + ", " + positionBeforeWarp.y + ", " + positionBeforeWarp.z);
-                npc.WarpTo(positionBeforeWarp);
+                npc.WarpTo(positionBeforeWarp, false);
 
                 positionBeforeWarp = Vector3.one * 100;
             }
@@ -64,11 +63,13 @@ public class RoamState : BaseState
 
             if (timeBeforeNextAction <= 0)
             {
-                npc.WarpTo(positionBeforeWarp);
+                npc.WarpTo(positionBeforeWarp, false);
                 positionBeforeWarp = Vector3.one * 100;
 
                 taskIndex = (taskIndex + Random.Range(1, tasksCount)) % tasksCount;
-                npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
+                npc.GoTo(tasksList.GetChild(taskIndex).position, npc.currentSpeed);
+
+                npc.ResetBuffer();
 
                 //Idle Animation Stuff
                 npc.isUsingLaptop = false;
@@ -83,7 +84,7 @@ public class RoamState : BaseState
 
             positionBeforeWarp = npc.transform.position;
 
-            npc.WarpTo(tasksList.GetChild(taskIndex).position);
+            npc.WarpTo(tasksList.GetChild(taskIndex).position, true);
 
             Debug.Log(positionBeforeWarp.x + ", " + positionBeforeWarp.y + ", " + positionBeforeWarp.z +
                             " warped to " + npc.transform.position.x + ", " + npc.transform.position.y + ", " + npc.transform.position.z);
@@ -111,9 +112,7 @@ public class RoamState : BaseState
                 npc.isCooking = true;
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.T))
-            Debug.Log(timeBeforeNextAction);
+        else npc.StuckCheck();
     }
 
     private bool canNpcSenseFire(Fire fire)
@@ -129,7 +128,7 @@ public class RoamState : BaseState
             tasksCount = tasksList.childCount;
             taskIndex = Random.Range(0, tasksCount);
 
-            npc.GoTo(tasksList.GetChild(taskIndex).position, speed);
+            npc.GoTo(tasksList.GetChild(taskIndex).position, npc.currentSpeed);
         }
         catch {}
     }

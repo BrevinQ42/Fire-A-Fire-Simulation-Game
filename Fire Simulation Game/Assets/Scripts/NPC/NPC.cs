@@ -13,6 +13,7 @@ public class NPC : MonoBehaviour
     public HashSet<string> blacklist;
 
     public Transform evacuationLocation;
+    public float bufferTime;
 
     [Header("Misc.")]
     public FireFightingObject heldObject;
@@ -20,6 +21,7 @@ public class NPC : MonoBehaviour
     public Vector3 position;
     public float walkingSpeed;
     public float runningSpeed;
+    public float currentSpeed;
     public float closeProximityValue;
     public float throwForce;
     public Fire FireOnNPC;
@@ -46,6 +48,7 @@ public class NPC : MonoBehaviour
     void Start()
     {
         evacuationLocation = GameObject.Find("Basketball_Court -3D").transform;
+        bufferTime = 1.5f;
 
         blacklist = new HashSet<string>();
 
@@ -180,12 +183,16 @@ public class NPC : MonoBehaviour
         agent.SetDestination(target);
     }
 
-    public void WarpTo(Vector3 target)
+    public void WarpTo(Vector3 target, bool willDoTask)
     {
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
-        GetComponent<NavMeshAgent>().enabled = false;
-        GetComponent<Collider>().enabled = false;
-        agent.updateRotation = false;
+        if (willDoTask)
+        {
+            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+            GetComponent<NavMeshAgent>().enabled = false;
+            GetComponent<Collider>().enabled = false;
+            agent.updateRotation = false;
+        }
+
         agent.Warp(target);
     }
 
@@ -311,5 +318,27 @@ public class NPC : MonoBehaviour
             FireOnNPC.AffectFire(-0.01f);
             yield return null;
         }
+    }
+
+    public void StuckCheck()
+    {
+        if (bufferTime >= 0.0f) bufferTime -= Time.deltaTime;
+
+        if (agent.enabled && agent.velocity.magnitude <= 0.0f && bufferTime <= 0.0f)
+        {
+            Vector3 destination = agent.destination;
+
+            WarpTo(transform.position, true);
+            GoTo(destination, currentSpeed);
+
+            Debug.Log("Reset NPC pathfinding");
+
+            ResetBuffer();
+        }
+    }
+
+    public void ResetBuffer()
+    {
+        bufferTime = Mathf.Max(Time.deltaTime * 5.0f, 2.5f);
     }
 }

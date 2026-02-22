@@ -5,11 +5,12 @@ using UnityEngine;
 public class AlertedState : BaseState
 {
     private NPC npc;
-    private float speed;
     
     public override void EnterState(NPCStateMachine stateMachine)
     {
         npc = stateMachine.npc;
+
+        npc.currentSpeed = npc.walkingSpeed;
 
         npc.GoTo(stateMachine.ongoingFire.transform.position, npc.walkingSpeed);
         npc.SetStoppingDistance(Mathf.Min(stateMachine.ongoingFire.intensityValue / 2.0f, 2.5f));
@@ -24,6 +25,8 @@ public class AlertedState : BaseState
 
             npc.SetStoppingDistance(Mathf.Min(stateMachine.ongoingFire.intensityValue / 2.0f, 2.5f));
             
+            npc.StuckCheck();
+
             // if on fire, PANIC
             if (npc.FireOnNPC != null)
                 stateMachine.SwitchState(stateMachine.panicState);
