@@ -19,7 +19,7 @@ public class RoamState : BaseState
         npc = stateMachine.npc;
         npc.currentSpeed = npc.walkingSpeed;
 
-        npc.SetStoppingDistance(2.0f);
+        npc.SetStoppingDistance(2.5f);
 
         tasksList = null;
 
