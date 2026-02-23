@@ -8,6 +8,7 @@ public class ControlsToggle : MonoBehaviour
     void Start()
     {
         controlsPanel = GameObject.Find("ControlsPage");
+        controlsPanel.SetActive(false);
     }
 
     void Update()
