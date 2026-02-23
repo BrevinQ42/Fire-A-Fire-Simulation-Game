@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4312190076094179507}
   - component: {fileID: 1662315476311984430}
   - component: {fileID: 5383504853994811313}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: FireResistant
   m_TagString: Grabbable
   m_Icon: {fileID: 0}
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 22.964, y: 1.697, z: -17.241}
-  m_LocalScale: {x: 0.5, y: 0.1, z: 0.5}
+  m_LocalScale: {x: 0.5, y: 0.10000001, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3928336186042378663}
@@ -172,7 +172,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4805094030868273134, guid: 78363a172b0cc73469f99384e7fd053d, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6414790780886613238, guid: 78363a172b0cc73469f99384e7fd053d, type: 3}
       propertyPath: m_LocalScale.x
