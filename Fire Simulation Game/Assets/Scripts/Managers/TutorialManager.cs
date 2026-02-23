@@ -106,7 +106,7 @@ public class TutorialManager : MonoBehaviour
 		objPosition = new Vector3(objPosition.x + 1.5f, objPosition.y, objPosition.z);
 
 		NonFlammableObject fireResistant = Instantiate(FireResistant, objPosition, Quaternion.identity);
-		objPosition = new Vector3(objPosition.x + 1.5f, objPosition.y, objPosition.z);
+		objPosition = new Vector3(objPosition.x + 1.5f, objPosition.y + 0.5f, objPosition.z);
 
 		List<string> fireExtinguisherTypes = new List<string>{"Class A", "Class C", "Class K"};
 

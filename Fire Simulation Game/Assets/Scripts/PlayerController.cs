@@ -166,8 +166,6 @@ public class PlayerController : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, closeProximityValue, layerMask))
             {
-                // Debug.Log(hit.transform.name + ": " + hit.distance);
-
                 hitTransform = hit.transform;
                 if (hitTransform.GetComponent<NonFlammableObject>())    
                 {
@@ -299,7 +297,7 @@ public class PlayerController : MonoBehaviour
                 // reset looked at of last object to false
                 ResetLastObjLookedAt();
 
-                // Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.white);
+                // Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 2.0f, Color.red);
                 // Debug.Log("Did not Hit");
                 hitTransform = null;
             }
@@ -399,7 +397,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // end game
-        if (fireManager.isPlayerSuccessful && !isGameEnded) EndGame();
+        if (fireManager && fireManager.isPlayerSuccessful && !isGameEnded) EndGame();
 
         timeElapsed += Time.deltaTime;
 
