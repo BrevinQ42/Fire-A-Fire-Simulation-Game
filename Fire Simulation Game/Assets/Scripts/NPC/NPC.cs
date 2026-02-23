@@ -148,7 +148,22 @@ public class NPC : MonoBehaviour
         if (isSleeping && !wasSleeping)
         {
             originalPosition = transform.position;
-            transform.position -= new Vector3(0, 0.25f, 0);
+
+            float extraDrop = 0f;
+
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 2.0f))
+            {
+                Debug.Log("Hello Standing on: " + hit.collider.gameObject.name);
+
+                if (hit.collider.gameObject.name.Equals("BedFloor"))
+                {
+                    extraDrop = 0.12f;
+                    Debug.Log("Detected Cardboard Bed");
+                }
+            }
+            transform.position -= new Vector3(0, 0.25f + extraDrop, 0);
             wasSleeping = true;
         }
         else if (!isSleeping && wasSleeping)
