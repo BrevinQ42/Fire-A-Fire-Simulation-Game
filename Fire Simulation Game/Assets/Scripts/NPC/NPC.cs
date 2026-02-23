@@ -43,6 +43,11 @@ public class NPC : MonoBehaviour
     public bool isWatchingTV;
     public bool isCooking;
     public Animator NPCAnimator;
+    //Sleep
+    private Vector3 originalPosition;
+    private bool wasSleeping = false;
+    private bool isTouchingBed = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -138,6 +143,18 @@ public class NPC : MonoBehaviour
         else if (isSleeping == false)
         {
             NPCAnimator.SetBool("isSleeping", false);
+        }
+
+        if (isSleeping && !wasSleeping)
+        {
+            originalPosition = transform.position;
+            transform.position -= new Vector3(0, 0.25f, 0);
+            wasSleeping = true;
+        }
+        else if (!isSleeping && wasSleeping)
+        {
+            transform.position = originalPosition;
+            wasSleeping = false;
         }
 
         if (isWatchingTV == true)
