@@ -981,15 +981,15 @@ public class PlayerController : MonoBehaviour
         {
             winScreen.twoStar.color = new Color(255f, 255f, 255f);
         }
-        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.index <= 6) //3 Stars if they escape from fire caused by neighbor
-        {
-            winScreen.threeStar.color = new Color(255f, 255f, 255f);
-        }
         if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
         {
             winScreen.threeStar.color = new Color(255f, 255f, 255f);
         }
         if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
+        {
+            winScreen.threeStar.color = new Color(255f, 255f, 255f);
+        }
+        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassKExtinguisher == false) //3 Stars if they escape from a grease fire and there is no grease extinguisher 
         {
             winScreen.threeStar.color = new Color(255f, 255f, 255f);
         }

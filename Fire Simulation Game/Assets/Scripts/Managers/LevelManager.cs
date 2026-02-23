@@ -27,6 +27,7 @@ public class LevelManager : MonoBehaviour
 	[SerializeField] private GameObject OutsideFloor;
 	public int typeIndex;
 	public bool isClassCExtinguisher;
+	public bool isClassKExtinguisher;
 	private float updateTimer;
 	
 	void Start()
@@ -75,7 +76,15 @@ public class LevelManager : MonoBehaviour
 			{
 				isClassCExtinguisher = false;
 			}
-			extinguisher.SetType(extinguisherTypes[typeIndex]);
+            if (typeIndex == 3 || typeIndex == 4)
+            {
+                isClassKExtinguisher = true;
+            }
+            else
+            {
+                isClassKExtinguisher = false;
+            }
+            extinguisher.SetType(extinguisherTypes[typeIndex]);
 
 			extinguisherSpawnPoints.RemoveAt(extinguisherIndex);
 		}
