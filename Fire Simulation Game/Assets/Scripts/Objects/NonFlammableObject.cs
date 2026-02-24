@@ -81,7 +81,8 @@ public class NonFlammableObject : FireFightingObject
             notifMessage = "Fire got taken out!";
             messageDuration = 3.0f;
 
-            fireManager.RemoveSpawnPoint(pan.GetChild(1));
+            if (fireManager)
+                fireManager.RemoveSpawnPoint(pan.GetChild(1));
         }
 
         isOnPan = true;
