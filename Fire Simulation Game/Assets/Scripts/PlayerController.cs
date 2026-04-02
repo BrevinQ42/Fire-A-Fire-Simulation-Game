@@ -97,6 +97,9 @@ public class PlayerController : MonoBehaviour
     public int firePreventionTasksDone;
     public TextMeshProUGUI firePreventionText;
 
+    //Extinguisher Type
+    public TextMeshProUGUI extinguisherTypeText;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -510,6 +513,11 @@ public class PlayerController : MonoBehaviour
         }
 
         firePreventionText.text = "Fire Prevention Tasks Done: " + firePreventionTasksDone;
+        if (heldObject == null)
+        {
+            extinguisherTypeText.text = "X";
+            extinguisherTypeText.color = Color.red;
+        }
         // TestFunction(); // for debugging (i.e. Debug.Log)
     }
 
@@ -532,6 +540,7 @@ public class PlayerController : MonoBehaviour
 
         mouseSensText = GameObject.Find("MouseSensText").GetComponent<TextMeshProUGUI>();
         firePreventionText = GameObject.Find("FirePreventionText").GetComponent<TextMeshProUGUI>();
+        extinguisherTypeText = GameObject.Find("ExtinguisherTypeText").GetComponent<TextMeshProUGUI>();
     }
 
     bool CheckIfGrounded()
@@ -779,6 +788,9 @@ public class PlayerController : MonoBehaviour
                         notificationSystem.notificationMessage = "AIM at the fire, & Hold [Left Click] to SQUEEZE the handle.\n SWEEP the nozzle side to side";
                         notificationSystem.disableTimer = 8.0f;
                     }
+
+                    extinguisherTypeText.text = extinguisher.letterOnlyType;
+                    extinguisherTypeText.color = Color.black;
 
                     notificationSystem.disableAfterTimer = true;
                     notificationSystem.displayNotification();

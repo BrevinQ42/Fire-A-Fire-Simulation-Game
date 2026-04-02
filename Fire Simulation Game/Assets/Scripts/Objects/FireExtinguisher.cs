@@ -25,6 +25,8 @@ public class FireExtinguisher : FireFightingObject
     public AudioClip pullingClip;
     public AudioClip sweepingClip;
 
+    public string letterOnlyType;
+
     void Start()
 	{
 		isHeld = false;
@@ -95,7 +97,20 @@ public class FireExtinguisher : FireFightingObject
         }
         else if (isHeld && isBeingUsed && transform.parent.GetComponent<NPC>())
         	StartCoroutine(OnOffExtinguisher(Time.deltaTime));
-	}
+
+        if (type == "Class A")
+        {
+            letterOnlyType = "A";
+        }
+        else if (type == "Class K")
+        {
+            letterOnlyType = "K";
+        }
+        else if (type == "Class C")
+        {
+            letterOnlyType = "C";
+        }
+    }
 
 	IEnumerator OnOffExtinguisher(float time)
     {
