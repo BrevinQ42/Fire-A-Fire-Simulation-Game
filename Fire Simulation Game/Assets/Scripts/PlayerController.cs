@@ -512,6 +512,11 @@ public class PlayerController : MonoBehaviour
             mouseSensText.text = "SENS: " + mouseSensitivity;
         }
 
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+
         firePreventionText.text = "Fire Prevention Tasks Done: " + firePreventionTasksDone;
         if (heldObject == null)
         {

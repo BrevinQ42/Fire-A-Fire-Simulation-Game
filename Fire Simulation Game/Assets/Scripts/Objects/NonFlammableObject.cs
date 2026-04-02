@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NonFlammableObject : FireFightingObject
 {
@@ -26,10 +27,13 @@ public class NonFlammableObject : FireFightingObject
 
     void Update()
     {
-        if (playerFound == false)
+        if (SceneManager.GetActiveScene().name == "GameScene")
         {
-            player = GameObject.Find("Player(Clone)").GetComponent<PlayerController>();
-            playerFound = true;
+            if (playerFound == false)
+            {
+                player = GameObject.Find("Player(Clone)").GetComponent<PlayerController>();
+                playerFound = true;
+            }
         }
         if (lookedAt == false)
         {
