@@ -95,6 +95,7 @@ public class PlayerController : MonoBehaviour
 
     //Fire Prevention
     public int firePreventionTasksDone;
+    public TextMeshProUGUI firePreventionText;
 
     // Start is called before the first frame update
     void Start()
@@ -508,6 +509,7 @@ public class PlayerController : MonoBehaviour
             mouseSensText.text = "SENS: " + mouseSensitivity;
         }
 
+        firePreventionText.text = "Fire Prevention Tasks Done: " + firePreventionTasksDone;
         // TestFunction(); // for debugging (i.e. Debug.Log)
     }
 
@@ -529,6 +531,7 @@ public class PlayerController : MonoBehaviour
         noseNotificationSystem = GameObject.Find("NoseIcon").GetComponent<NoseNotification>();
 
         mouseSensText = GameObject.Find("MouseSensText").GetComponent<TextMeshProUGUI>();
+        firePreventionText = GameObject.Find("FirePreventionText").GetComponent<TextMeshProUGUI>();
     }
 
     bool CheckIfGrounded()
@@ -1008,19 +1011,19 @@ public class PlayerController : MonoBehaviour
 
         // Debug.Log("You Won");
         winScreen.oneStar.color = new Color(255f, 255f, 255f);
-        if (playerBars.hydrationLevel > 50 && timeElapsed < 300)
+        if (playerBars.hydrationLevel > 50 && timeElapsed < 300 && firePreventionTasksDone >= 5)
         {
             winScreen.twoStar.color = new Color(255f, 255f, 255f);
         }
-        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful) //3 Stars if they put out the fire 
+        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && fireManager.isPlayerSuccessful && firePreventionTasksDone >= 10) //3 Stars if they put out the fire 
         {
             winScreen.threeStar.color = new Color(255f, 255f, 255f);
         }
-        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
+        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassCExtinguisher == false && firePreventionTasksDone >= 10) //3 Stars if they escape from an electrical fire and there is no electrical extinguisher 
         {
             winScreen.threeStar.color = new Color(255f, 255f, 255f);
         }
-        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassKExtinguisher == false) //3 Stars if they escape from a grease fire and there is no grease extinguisher 
+        if (playerBars.hydrationLevel > 84 && playerBars.hydrationLevel < 101 && timeElapsed < 180 && levelManager.isClassKExtinguisher == false && firePreventionTasksDone >= 10) //3 Stars if they escape from a grease fire and there is no grease extinguisher 
         {
             winScreen.threeStar.color = new Color(255f, 255f, 255f);
         }
