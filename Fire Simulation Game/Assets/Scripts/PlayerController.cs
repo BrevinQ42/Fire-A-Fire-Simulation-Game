@@ -93,6 +93,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float gravityForce;
     public bool isGameEnded;
 
+    //Fire Prevention
+    public int firePreventionTasksDone;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -126,6 +129,8 @@ public class PlayerController : MonoBehaviour
         playerBars = GetComponent<PlayerBars>();
 
         isGameEnded = false;
+
+        firePreventionTasksDone = 0;
 
         if (fireManager)
         {

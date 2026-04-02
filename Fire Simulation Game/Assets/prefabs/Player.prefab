@@ -248,9 +248,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 2.5671089
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.28355443, z: 0}
 --- !u!54 &2511319270707687869
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -334,6 +334,7 @@ MonoBehaviour:
   throwForce: 350
   gravityForce: 200
   isGameEnded: 0
+  firePreventionTasksDone: 0
 --- !u!114 &6420769185094088457
 MonoBehaviour:
   m_ObjectHideFlags: 0
