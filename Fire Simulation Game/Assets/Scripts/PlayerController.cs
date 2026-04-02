@@ -823,6 +823,13 @@ public class PlayerController : MonoBehaviour
                         notificationSystem.displayNotification();
                     }
 
+                    if (plug.pluggedInto != null)
+                    {
+                        if (fireManager.isFireOngoing == false)
+                        {
+                            firePreventionTasksDone++;
+                        }
+                    }
                     plug.Unplug();
                 }
             }
@@ -855,6 +862,11 @@ public class PlayerController : MonoBehaviour
                         notificationSystem.disableAfterTimer = true;
                         notificationSystem.disableTimer = 8.0f;
                         notificationSystem.displayNotification();
+
+                        if (fireManager.isFireOngoing == false)
+                        {
+                            firePreventionTasksDone++;
+                        }
                     }
                 }
             }
@@ -914,6 +926,11 @@ public class PlayerController : MonoBehaviour
             heldObject.Use(hitTransform);
             
             if (!heldObject.isHeld) heldObject = null;
+
+            if (fireManager.isFireOngoing == false)
+            {
+                firePreventionTasksDone--;
+            }
         }
     }
 

@@ -10,6 +10,8 @@ public class NonFlammableObject : FireFightingObject
     public GameObject textName;
 
     public bool isOnPan;
+    public PlayerController player;
+    public bool playerFound;
 
     void Start()
     {
@@ -17,12 +19,18 @@ public class NonFlammableObject : FireFightingObject
         textName = GetComponentInChildren<TextMesh>().gameObject;
 
         isOnPan = false;
+        playerFound = false;
 
         InitializeFireManager();
     }
 
     void Update()
-    { 
+    {
+        if (playerFound == false)
+        {
+            player = GameObject.Find("Player(Clone)").GetComponent<PlayerController>();
+            playerFound = true;
+        }
         if (lookedAt == false)
         {
             textName.SetActive(false);
@@ -80,6 +88,11 @@ public class NonFlammableObject : FireFightingObject
 
             notifMessage = "Fire got taken out!";
             messageDuration = 3.0f;
+
+            if (fireManager.isFireOngoing == false)
+            {
+                player.firePreventionTasksDone++;
+            }
 
             if (fireManager)
                 fireManager.RemoveSpawnPoint(pan.GetChild(1));
