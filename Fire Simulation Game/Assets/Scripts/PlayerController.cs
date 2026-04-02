@@ -523,6 +523,20 @@ public class PlayerController : MonoBehaviour
             extinguisherTypeText.text = "X";
             extinguisherTypeText.color = Color.red;
         }
+
+        if (isGameEnded)
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                winScreen.CriteriaPage.gameObject.SetActive(true);
+                Debug.Log("Tab is being held");
+            }
+            if (Input.GetKeyUp(KeyCode.Tab))
+            {
+                winScreen.CriteriaPage.gameObject.SetActive(false);
+                Debug.Log("Tab is released");
+            }
+        }
         // TestFunction(); // for debugging (i.e. Debug.Log)
     }
 

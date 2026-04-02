@@ -10,6 +10,7 @@ public class WinScreen : MonoBehaviour
     public Image oneStar;
     public Image twoStar;
     public Image threeStar;
+    public Image CriteriaPage;
 
     // Sound effect
     public AudioSource audioSource;
@@ -23,5 +24,6 @@ public class WinScreen : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = victoryClip;
         audioSource.Play();
+        CriteriaPage.gameObject.SetActive(false);
     }
 }
