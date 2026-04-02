@@ -116,6 +116,7 @@ public class FireManager : MonoBehaviour
 			{
 				if (audioSource != null && bellClip != null)
 				{
+					audioSource.volume = 0.2f;
 					audioSource.PlayOneShot(bellClip);
 				}
 

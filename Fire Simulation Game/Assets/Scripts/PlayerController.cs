@@ -965,6 +965,12 @@ public class PlayerController : MonoBehaviour
 
         try
         {
+            StopCoroutine(RollOver());
+        }
+        catch {}
+
+        try
+        {
             StopCoroutine(playerBars.FireDamageOverTime());
             Destroy(FireOnPlayer.gameObject);
         }
