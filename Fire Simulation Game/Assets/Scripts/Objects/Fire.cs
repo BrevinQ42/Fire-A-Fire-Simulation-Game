@@ -180,7 +180,7 @@ public class Fire : MonoBehaviour
             if (player.FireOnPlayer)
             {
                 if (player.FireOnPlayer != this)
-                    player.FireOnPlayer.AffectFire(intensityValue / 1.05f);
+                    player.FireOnPlayer.AffectFire(intensityValue / 4.0f);
             }
             else
             {
@@ -191,7 +191,7 @@ public class Fire : MonoBehaviour
                 player.FireOnPlayer.GetComponent<Collider>().enabled = false;
 
                 player.FireOnPlayer.transform.SetParent(player.transform);
-                player.FireOnPlayer.intensityValue = intensityValue / 1.05f;
+                player.FireOnPlayer.intensityValue = intensityValue / 2.0f;
                 player.isOnFire = true;
             }
         }
@@ -202,7 +202,7 @@ public class Fire : MonoBehaviour
             if (npc.FireOnNPC)
             {
                 if (npc.FireOnNPC != this)
-                    npc.FireOnNPC.AffectFire(intensityValue / 1.05f);
+                    npc.FireOnNPC.AffectFire(intensityValue / 4.0f);
             }
             else
             {
@@ -212,7 +212,7 @@ public class Fire : MonoBehaviour
 
                 npc.FireOnNPC.GetComponent<Collider>().enabled = false;
 
-                npc.FireOnNPC.intensityValue = intensityValue / 1.05f;
+                npc.FireOnNPC.intensityValue = intensityValue / 2.0f;
 
                 npc.FireOnNPC.transform.SetParent(npc.transform);
             }

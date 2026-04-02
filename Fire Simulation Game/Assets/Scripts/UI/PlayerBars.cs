@@ -322,7 +322,7 @@ public class PlayerBars : MonoBehaviour
         while (stamina > 0)
         {
             float multiplier = GetCurrentOxygenMultiplier();
-            stamina -= 20f * multiplier; 
+            stamina -= 15f * multiplier; 
             ClampStamina();
             yield return new WaitForSeconds(1f);
         }

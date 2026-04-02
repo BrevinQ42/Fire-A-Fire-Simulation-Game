@@ -383,6 +383,9 @@ public class PlayerController : MonoBehaviour
         {
             // switch them to crawling state
             transform.eulerAngles = previousEulerAngles;
+            currentState = "Crawling";
+
+            // make them stand
             ToggleCrawl();
         }
         //Stamina needed updates
@@ -407,6 +410,9 @@ public class PlayerController : MonoBehaviour
             {
                 // switch them to crawling state
                 transform.eulerAngles = previousEulerAngles;
+                currentState = "Crawling";
+
+                // make them stand
                 ToggleCrawl();
             }
         }
@@ -437,6 +443,11 @@ public class PlayerController : MonoBehaviour
                 if (playerBars.stamina > staminaRequiredForRolling)
                 {
                     InitiateRollOver();
+
+                    notificationSystem.notificationMessage = "[R] to stop rolling!";
+                    notificationSystem.disableAfterTimer = true;
+                    notificationSystem.disableTimer = 3.0f;
+                    notificationSystem.displayNotification();
                 }
                 else
                 {
@@ -641,23 +652,20 @@ public class PlayerController : MonoBehaviour
 
     void InitiateRollOver()
     {
-        if (!heldObject)
-        {
-            SetupCrawlState();
+        SetupCrawlState();
 
-            isHorizontalTiltEnabled = false;
-            previousEulerAngles = transform.eulerAngles;
-            cameraTransform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+        isHorizontalTiltEnabled = false;
+        previousEulerAngles = transform.eulerAngles;
+        cameraTransform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
 
-            rollingTimeLeft = 5.0f;
-            rotationCount = 37;
-            rollRotation = 5.0f;
+        rollingTimeLeft = 5.0f;
+        rotationCount = 37;
+        rollRotation = 5.0f;
 
-            currentSpeed = 0;
-            currentState = "Rolling";
+        currentSpeed = 0;
+        currentState = "Rolling";
 
-            StartCoroutine(RollOver());
-        }
+        StartCoroutine(RollOver());
     }
 
     IEnumerator RollOver()
@@ -675,9 +683,9 @@ public class PlayerController : MonoBehaviour
 
             if (FireOnPlayer)
             {
-                FireOnPlayer.AffectFire(-0.01f);
+                FireOnPlayer.AffectFire(-0.03f);
 
-                if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.01f)
+                if (Math.Round(FireOnPlayer.intensityValue, 2) <= 0.03f)
                 {
                     FireOnPlayer = null;
                     Debug.Log("IsOnFire: " + isOnFire);
@@ -691,7 +699,11 @@ public class PlayerController : MonoBehaviour
 
             if (rollingTimeLeft <= 0.0f)
             {
+                // transition to crawling
                 transform.eulerAngles = previousEulerAngles;
+                currentState = "Crawling";
+
+                // make them stand
                 ToggleCrawl();
             }
         }
@@ -705,16 +717,11 @@ public class PlayerController : MonoBehaviour
 
             if (hitRB && hitTransform.CompareTag("Grabbable"))
             {
-                if (heldObject)
-                {
-                    notificationSystem.notificationMessage = "[G] to Drop Held Object first!";
-                    notificationSystem.disableTimer = 3.0f;
-                    notificationSystem.disableAfterTimer = true;
-                    notificationSystem.displayNotification();
+                // drop held object if currently holding an object
+                DropObject();
 
-                    // disregard when holding an object
-                    return;
-                }
+                // will be replaced with new object to be interacted with
+
 
                 hitRB.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
 
@@ -772,7 +779,7 @@ public class PlayerController : MonoBehaviour
                 {
                     if (nonFlammable)
                     {
-                        notificationSystem.notificationMessage = "You can [Left Click] to throw this directly at a fire to put it out!\n[G] to Drop Object";
+                        notificationSystem.notificationMessage = "[Left Click] to throw this at a fire or place on frying pan when aiming at it!\n[G] to Drop Object";
                         notificationSystem.disableAfterTimer = true;
                         notificationSystem.disableTimer = 6.0f;
                         notificationSystem.displayNotification();
@@ -844,17 +851,6 @@ public class PlayerController : MonoBehaviour
             }
             else if (hitTransform.GetComponent<Door>())
             {
-                if (heldObject)
-                {
-                    notificationSystem.notificationMessage = "[G] to Drop Held Object first!";
-                    notificationSystem.disableTimer = 3.0f;
-                    notificationSystem.disableAfterTimer = true;
-                    notificationSystem.displayNotification();
-
-                    // disregard when holding an object
-                    return;
-                }
-                
                 Door door = hitTransform.GetComponent<Door>();
                 door.toggleDoor();
             }
