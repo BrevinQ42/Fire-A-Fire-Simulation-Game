@@ -280,7 +280,7 @@ public class NPC : MonoBehaviour
 
                     hitTransform.SetPositionAndRotation(
                         transform.position + transform.forward * 0.5f + transform.right * 0.3f, 
-                        transform.rotation);
+                        transform.rotation * Quaternion.Euler(0f, 180f, 0f));
                     isHoldingObject = true;
                 }
                 else if (nonFlammable)

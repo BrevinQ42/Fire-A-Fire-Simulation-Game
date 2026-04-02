@@ -783,9 +783,14 @@ public class PlayerController : MonoBehaviour
                     notificationSystem.disableAfterTimer = true;
                     notificationSystem.displayNotification();
 
+                    // Old Configuration 
+                    //hitTransform.SetPositionAndRotation(
+                        //transform.position + transform.forward + transform.right * 0.7f + transform.up * 0.65f, 
+                        //transform.rotation);
+
                     hitTransform.SetPositionAndRotation(
-                        transform.position + transform.forward + transform.right * 0.7f + transform.up * 0.65f, 
-                        transform.rotation);
+                        transform.position + transform.forward + transform.right * 0.7f + transform.up * 0.65f,
+                        transform.rotation * Quaternion.Euler(0f, 180f, 0f));
                 }
                 else
                 {
