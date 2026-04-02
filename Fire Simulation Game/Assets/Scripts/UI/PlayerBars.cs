@@ -53,7 +53,7 @@ public class PlayerBars : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleFireDamage();
+        if (playerController.isGameEnded) return;
 
         if (hydrationLevel <= 0f)
         {
@@ -61,6 +61,10 @@ public class PlayerBars : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Debug.Log("Player has burned to death!");
             // Insert player death code here
+
+            playerController.EndGame();
+
+            return;
         }
 
         if (oxygen <= 0f)
@@ -70,8 +74,13 @@ public class PlayerBars : MonoBehaviour
             oxygenBar.value = 0f;
             Debug.Log("Player has run out of oxygen!");
             // Insert player death code here
+
+            playerController.EndGame();
+
+            return;
         }
 
+        HandleFireDamage();
         HandleStaminaRegeneration();
     }
 

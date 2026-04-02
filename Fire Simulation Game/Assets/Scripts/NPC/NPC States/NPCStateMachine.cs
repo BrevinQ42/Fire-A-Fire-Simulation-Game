@@ -19,12 +19,15 @@ public class NPCStateMachine : MonoBehaviour
     public NPC npc;
     public Fire ongoingFire;
     public bool hasBellRung;
+    public bool isGameEnded;
 
     // Start is called before the first frame update
     void Start()
     {
         npc = GetComponent<NPC>();
         ongoingFire = null;
+        hasBellRung = false;
+        isGameEnded = false;
 
         if (npc.agent == null)
             currentState = null;
@@ -39,6 +42,8 @@ public class NPCStateMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isGameEnded) return; // dont continue if game has ended
+
         if (currentState == null && npc.agent != null)
         {
             currentState = roamState;

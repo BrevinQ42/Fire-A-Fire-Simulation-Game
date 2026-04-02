@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
     public Collider collidedWith;
     [SerializeField] private float throwForce;
     [SerializeField] private float gravityForce;
-    private bool isGameEnded;
+    public bool isGameEnded;
 
     // Start is called before the first frame update
     void Start()
@@ -158,6 +158,8 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isGameEnded) return;
+
         ResetLastObjLookedAt();
 
         if (currentState.Equals("Rolling")) hitTransform = null;
@@ -307,6 +309,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isGameEnded) return;
+
         // Sound Effects
         if (playerBars.isRunning && !isOnFire) // Running audio
         {
@@ -952,9 +956,12 @@ public class PlayerController : MonoBehaviour
         currentState = "Crawling";
     }
 
-    void EndGame()
+    public void EndGame()
     {
+        if (isGameEnded) return;
+
         isGameEnded = true;
+        fireManager.EndGame();
 
         try
         {
@@ -968,6 +975,8 @@ public class PlayerController : MonoBehaviour
             StopCoroutine(playerBars.OxygenDamageOverTime());
         }
         catch {}
+
+        if (playerBars.hydrationLevel <= 0f || playerBars.oxygen <= 0f) return;
 
         // Debug.Log("You Won");
         winScreen.oneStar.color = new Color(255f, 255f, 255f);

@@ -153,4 +153,19 @@ public class FireManager : MonoBehaviour
 			}
 		}
 	}
+
+	public void EndGame()
+	{
+		// if there is still a fire at game end,
+		if (ongoingFire)
+		{
+			// make fire very small and stop it from spreading
+			ongoingFire.AffectFire(-ongoingFire.intensityValue + 0.01f);
+			ongoingFire.Toggle(false);
+		}
+
+		// tell NPCs that game has ended
+		foreach (NPCStateMachine npc in npcStateMachines)
+			npc.isGameEnded = true;
+	}
 }
