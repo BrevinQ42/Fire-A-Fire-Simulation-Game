@@ -7,6 +7,7 @@ public class TutorialManager : MonoBehaviour
 {
 	[SerializeField] private PlayerController player;
 	[SerializeField] private NotificationTriggerEvent tutorialNotifSystem;
+	[SerializeField] private VisualIndicator indicator;
 
 	[Header("Fire Fighting Objects")]
 	[SerializeField] private Pail Bucket;
@@ -93,6 +94,9 @@ public class TutorialManager : MonoBehaviour
 		yield return new WaitUntil(() => ongoingFire.type.Equals("UNSTOPPABLE"));
 		ongoingFire.Toggle(true);
 
+		indicator.fire = ongoingFire.gameObject;
+		indicator.gameObject.SetActive(true);
+
 		tutorialNotifSystem.notificationMessage = "There is a growing, unstoppable fire!\nGo to an open area like the basketball court outside";
 		tutorialNotifSystem.displayNotification();
 	}
@@ -138,5 +142,7 @@ public class TutorialManager : MonoBehaviour
 			ongoingFire.transform.position = greaseFireLocation.position;
 			ongoingFire.isOnPan = true;
 		}
+
+		indicator.fire = ongoingFire.gameObject;
 	}
 }

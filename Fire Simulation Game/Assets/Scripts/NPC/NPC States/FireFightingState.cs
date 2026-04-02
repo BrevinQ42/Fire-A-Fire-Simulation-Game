@@ -85,8 +85,8 @@ public class FireFightingState : BaseState
 
         bool isUsingExtinguisher = false;
 
-        Debug.Log(Vector3.Distance(stateMachine.ongoingFire.transform.position, npc.position) + " vs " +
-                    proximity_value);
+        // Debug.Log(Vector3.Distance(stateMachine.ongoingFire.transform.position, npc.position) + " vs " +
+        //             proximity_value);
 
         if (isFireWithinRange(stateMachine.ongoingFire))
         {

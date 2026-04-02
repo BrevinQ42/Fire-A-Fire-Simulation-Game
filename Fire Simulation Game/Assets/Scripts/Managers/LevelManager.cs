@@ -22,6 +22,7 @@ public class LevelManager : MonoBehaviour
 	[SerializeField] private PlayerController playerPrefab;
 	[SerializeField] private NPC npcPrefab;
 	[SerializeField] private List<Transform> characterSpawnPoints;
+	private int npcCount = 4;
 
 	[Header("Misc.")]
 	[SerializeField] private GameObject OutsideFloor;
@@ -116,7 +117,7 @@ public class LevelManager : MonoBehaviour
 		Instantiate(playerPrefab, characterSpawnPoints[index].position, characterSpawnPoints[index].rotation);
 		characterSpawnPoints.RemoveAt(index);
 
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < npcCount; i++)
 		{
 			index = Random.Range(0, characterSpawnPoints.Count);
 

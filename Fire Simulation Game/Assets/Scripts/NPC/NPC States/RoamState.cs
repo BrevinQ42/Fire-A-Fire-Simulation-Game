@@ -41,8 +41,8 @@ public class RoamState : BaseState
         {
             if (npc.isSleeping && positionBeforeWarp.x != 100)
             {
-                Debug.Log(npc.transform.position.x + ", " + npc.transform.position.y + ", " + npc.transform.position.z +
-                            " warped to " + positionBeforeWarp.x + ", " + positionBeforeWarp.y + ", " + positionBeforeWarp.z);
+                // Debug.Log(npc.transform.position.x + ", " + npc.transform.position.y + ", " + npc.transform.position.z +
+                //             " warped to " + positionBeforeWarp.x + ", " + positionBeforeWarp.y + ", " + positionBeforeWarp.z);
                 npc.WarpTo(positionBeforeWarp, false);
 
                 positionBeforeWarp = Vector3.one * 100;
@@ -86,8 +86,8 @@ public class RoamState : BaseState
 
             npc.WarpTo(tasksList.GetChild(taskIndex).position, true);
 
-            Debug.Log(positionBeforeWarp.x + ", " + positionBeforeWarp.y + ", " + positionBeforeWarp.z +
-                            " warped to " + npc.transform.position.x + ", " + npc.transform.position.y + ", " + npc.transform.position.z);
+            // Debug.Log(positionBeforeWarp.x + ", " + positionBeforeWarp.y + ", " + positionBeforeWarp.z +
+            //                 " warped to " + npc.transform.position.x + ", " + npc.transform.position.y + ", " + npc.transform.position.z);
 
             npc.transform.rotation = tasksList.GetChild(taskIndex).rotation;
 

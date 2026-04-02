@@ -7,6 +7,7 @@ public class FireManager : MonoBehaviour
 	// Notification system reference
     public NotificationTriggerEvent notificationSystem;
 
+    [Header("Fire")]
 	[SerializeField] private Fire firePrefab;
 	[SerializeField] private List<Transform> FireSpawnPoints;
 
@@ -16,13 +17,15 @@ public class FireManager : MonoBehaviour
     public float timeBeforeFire;
 	public bool isFireOngoing;
 	public Fire ongoingFire;
+	
+	[Header("Misc.")]
 	public bool isPlayerSuccessful;
-
 	public List<NPCStateMachine> npcStateMachines;
-
+	public VisualIndicator indicator;
+	
 	private float timeBeforeBell;
 
-    //sound effect
+    [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip helpAFireClip;
 	public AudioClip bellClip;
@@ -97,6 +100,10 @@ public class FireManager : MonoBehaviour
 
             foreach(NPCStateMachine sm in npcStateMachines)
             	sm.ongoingFire = ongoingFire;
+
+            indicator.fire = ongoingFire.gameObject;
+            indicator.player = GameObject.Find("Player(Clone)");
+            indicator.gameObject.SetActive(true);
 		}
 		else if (ongoingFire == null && !isPlayerSuccessful)
 		{
