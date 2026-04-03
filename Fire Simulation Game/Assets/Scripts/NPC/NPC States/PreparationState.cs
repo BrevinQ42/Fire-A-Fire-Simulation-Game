@@ -37,14 +37,14 @@ public class PreparationState : BaseState
                 return;
             }
 
-            npc.SetStoppingDistance(1.25f);
+            npc.SetStoppingDistance(1.0f);
             npc.GoTo(nearestObject.position, npc.currentSpeed);
         }
         else
         {
             nearestObject = GetNearestObject();
 
-            npc.SetStoppingDistance(2.0f);
+            npc.SetStoppingDistance(1.75f);
             npc.GoTo(nearestObject.position, npc.currentSpeed);            
         }
     }
@@ -94,14 +94,14 @@ public class PreparationState : BaseState
                     return;
                 }
 
-                npc.SetStoppingDistance(1.25f);
+                npc.SetStoppingDistance(1.0f);
                 npc.GoTo(nearestObject.position, npc.currentSpeed);
             }
             else
             {
                 nearestObject = GetNearestObject();
 
-                npc.SetStoppingDistance(2.0f);
+                npc.SetStoppingDistance(1.75f);
                 npc.GoTo(nearestObject.position, npc.currentSpeed);            
             }
 
@@ -128,7 +128,7 @@ public class PreparationState : BaseState
                 npc.heldObject = nearestObject.GetComponent<FireFightingObject>();
                 npc.isHoldingObject = true;
 
-                npc.SetStoppingDistance(1.25f);
+                npc.SetStoppingDistance(1.0f);
                 
                 nearestObject = GetNearestWaterSource();
 

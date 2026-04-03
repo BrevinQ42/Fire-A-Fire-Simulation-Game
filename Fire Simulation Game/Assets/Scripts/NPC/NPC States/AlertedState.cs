@@ -13,7 +13,7 @@ public class AlertedState : BaseState
         npc.currentSpeed = npc.walkingSpeed;
 
         npc.GoTo(stateMachine.ongoingFire.transform.position, npc.walkingSpeed);
-        npc.SetStoppingDistance(Mathf.Min(stateMachine.ongoingFire.intensityValue / 2.0f, 2.5f));
+        npc.SetStoppingDistance(Mathf.Min(stateMachine.ongoingFire.intensityValue / 2.0f, 2.25f));
     }
 
     public override void UpdateState(NPCStateMachine stateMachine)
@@ -23,7 +23,7 @@ public class AlertedState : BaseState
             if (stateMachine.ongoingFire == null)
                 stateMachine.SwitchState(stateMachine.evacuateState);
 
-            npc.SetStoppingDistance(Mathf.Min(stateMachine.ongoingFire.intensityValue / 2.0f, 2.5f));
+            npc.SetStoppingDistance(Mathf.Min(stateMachine.ongoingFire.intensityValue / 2.0f, 2.25f));
             
             npc.StuckCheck();
 

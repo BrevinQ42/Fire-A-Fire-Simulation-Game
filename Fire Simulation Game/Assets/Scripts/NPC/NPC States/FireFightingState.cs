@@ -34,7 +34,7 @@ public class FireFightingState : BaseState
 
         proximity_value = stateMachine.ongoingFire.intensityValue / 2.0f;
 
-        npc.SetStoppingDistance(2.0f);
+        npc.SetStoppingDistance(1.75f);
         npc.GoTo(stateMachine.ongoingFire.transform.position, npc.currentSpeed);
     }
 
