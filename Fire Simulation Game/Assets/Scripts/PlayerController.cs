@@ -529,11 +529,11 @@ public class PlayerController : MonoBehaviour
             mouseSensText.text = "SENS: " + mouseSensitivity;
         }
 
-        // if (Input.GetKey(KeyCode.Escape))
-        // {
-        //     Cursor.lockState = CursorLockMode.None;
-        //     SceneManager.LoadScene("MainMenu");
-        // }
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            SceneManager.LoadScene("MainMenu");
+        }
 
         firePreventionText.text = "Fire Prevention Tasks Done: " + firePreventionTasksDone;
         if (heldObject == null)
