@@ -318,7 +318,21 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isGameEnded) return;
+        if (isGameEnded)
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                winScreen.CriteriaPage.gameObject.SetActive(true);
+                Debug.Log("Tab is being held");
+            }
+            if (Input.GetKeyUp(KeyCode.Tab))
+            {
+                winScreen.CriteriaPage.gameObject.SetActive(false);
+                Debug.Log("Tab is released");
+            }
+
+            return;
+        }
 
         // Sound Effects
         if (playerBars.isRunning && !isOnFire) // Running audio
@@ -524,19 +538,6 @@ public class PlayerController : MonoBehaviour
             extinguisherTypeText.color = Color.red;
         }
 
-        if (isGameEnded)
-        {
-            if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                winScreen.CriteriaPage.gameObject.SetActive(true);
-                Debug.Log("Tab is being held");
-            }
-            if (Input.GetKeyUp(KeyCode.Tab))
-            {
-                winScreen.CriteriaPage.gameObject.SetActive(false);
-                Debug.Log("Tab is released");
-            }
-        }
         // TestFunction(); // for debugging (i.e. Debug.Log)
     }
 

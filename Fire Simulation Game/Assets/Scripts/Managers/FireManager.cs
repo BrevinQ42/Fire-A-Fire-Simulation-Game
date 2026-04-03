@@ -34,7 +34,7 @@ public class FireManager : MonoBehaviour
 	{
 		FireTypes = new List<string>{"Electrical", "Grease", "Class A", "Class A"};
 
-		timeBeforeFire = 75.0f;
+		// timeBeforeFire = 75.0f;
 		// timeBeforeFire = 20;
 
 		isFireOngoing = false;
@@ -65,6 +65,9 @@ public class FireManager : MonoBehaviour
 					fire.transform.localScale = Vector3.one * fire.intensityValue;
 					ongoingFire = fire;
 					ongoingFire.AffectFire(0.35f);
+
+					// unmute fire sound
+					ongoingFire.GetComponent<AudioSource>().mute = false;
 				}
 			}
 
