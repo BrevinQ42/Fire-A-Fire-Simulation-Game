@@ -96,6 +96,8 @@ public class PlayerController : MonoBehaviour
     //Fire Prevention
     public int firePreventionTasksDone;
     public TextMeshProUGUI firePreventionText;
+    public TextMeshProUGUI firePreventionText2;
+
 
     //Extinguisher Type
     public TextMeshProUGUI extinguisherTypeText;
@@ -320,6 +322,8 @@ public class PlayerController : MonoBehaviour
     {
         if (isGameEnded)
         {
+            firePreventionText2 = winScreen.transform.Find("FirePreventionText2").GetComponent<TextMeshProUGUI>();
+            firePreventionText2.text = "Fire Prevention Tasks Done: " + firePreventionTasksDone;
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 winScreen.CriteriaPage.gameObject.SetActive(true);
@@ -330,7 +334,6 @@ public class PlayerController : MonoBehaviour
                 winScreen.CriteriaPage.gameObject.SetActive(false);
                 Debug.Log("Tab is released");
             }
-
             return;
         }
 
@@ -1023,6 +1026,7 @@ public class PlayerController : MonoBehaviour
         if (isGameEnded) return;
 
         isGameEnded = true;
+
         fireManager.EndGame();
 
         try
